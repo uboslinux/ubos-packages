@@ -1,0 +1,63 @@
+#
+# Upstream maintainer: Daniel Wallace <danielwallace at gtmanfred dot com>
+# Patches from: https://www.uplinklabs.net/projects/arch-linux-on-ec2/
+# Patches from: Indie Computing Corp.
+#
+
+pkgname=cloud-init
+pkgver=0.7.6
+pkgrel=2
+pkgdesc="Provides configuration and customization for cloud instances"
+arch=(any)
+license=("GPL3")
+url=https://launchpad.net/cloud-init
+
+# cloud-init python lib requirements (according to Requires file):
+depends=(systemd
+         net-tools
+         python2-boto
+         python2-cheetah
+         python2-configobj
+         python2-jsonpatch
+         python2-jsonpointer
+         python2-oauth
+         python2-prettytable
+         python2-yaml
+         )
+# snoonan also has these dependencies:
+#         python2-grequests
+#         python2-oauth2
+#         python2-requests
+
+makedepends=('python2' 'python2-setuptools')
+options=(!emptydirs)
+# Archlinux specific cloud.cfg
+source=(https://launchpad.net/$pkgname/trunk/$pkgver/+download/$pkgname-$pkgver.tar.gz)
+sha1sums=('9af02f68d68abce91463bec22b17964d1618e1da')
+backup=(etc/cloud/cloud.cfg etc/cloud/cloud.cfg.d/05_logging.cfg)
+
+prepare(){
+echo find
+
+    find $pkgname-$pkgver -name \*.py -exec sed -i '1s/python$/&2/' {} +
+echo sed 1
+    sed -i '1s/python$/&2/' $pkgname-$pkgver/tools/read*
+echo sed 2
+    sed -i 's:/etc/systemd:/usr/lib/systemd:g' $pkgname-$pkgver/setup.py
+
+    cd $pkgname-$pkgver
+echo patch 1
+    patch -Np1 -i "${startdir}/systemd-network-online.patch"
+echo patch 2
+    patch -Np1 -i "${startdir}/fix-logging.patch"
+}
+
+package() {
+  cd ${srcdir}/${pkgname}-${pkgver}
+  python2 ./setup.py install --root=${pkgdir} --init-system systemd
+
+  # Use a cloud.cfg crafted for UBOS
+  mv "$pkgdir/etc/cloud/cloud.cfg" "${pkgdir}/etc/cloud/cloud.cfg.ubuntu_default"
+  cp "${startdir}/ubos.cloud.cfg" "${pkgdir}/etc/cloud/cloud.cfg"
+}
+

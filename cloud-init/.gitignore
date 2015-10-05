@@ -1,0 +1,4 @@
+src/
+pkg/
+cloud-init-*.pkg.tar*
+cloud-init-*.tar.gz
