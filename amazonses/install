@@ -1,0 +1,37 @@
+#!/bin/sh
+#
+
+set -e
+
+mapFile=/etc/amazonses/sender_dependent_relayhost_map
+saslFile=/etc/amazonses/smtp_sasl_password_map
+
+post_install() {
+    # add mapHash to sender_dependent_relayhost_map
+    mapHash="regexp:${mapFile}"
+    currentValue=`postconf -h sender_dependent_relayhost_maps`
+    newValue=`echo "${currentValue}" | perl -pe "s#${mapHash}\s*,?##g"`
+    if [ ! -z "${newValue}" ]; then
+       newValue="${newValue},${mapHash}"
+    else
+       newValue="${mapHash}"
+    fi
+    postconf -e "sender_dependent_relayhost_maps = ${newValue}"
+
+    postconf -e "smtp_sasl_auth_enable = yes"
+    postconf -e "smtp_sasl_security_options = noanonymous"
+    postconf -e "smtp_sasl_password_maps = regexp:${saslFile}"
+    postconf -e "smtp_sender_dependent_authentication = yes"
+    postconf -e "smtp_use_tls = yes"
+    # If this is set to encrypt, mac.com mail cannot be delivered
+    postconf -e "smtp_tls_security_level = may"
+    postconf -e "smtp_tls_note_starttls_offer = yes"
+    postconf -e "smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt"
+
+    # IPv6 produces errors in the logs ("Network is unreachable")
+    postconf -e "inet_protocols = ipv4"
+
+    perl -MAmazonSes -e 'AmazonSes::regeneratePostfixFilesAndRestart()'
+}
+
+exit 0;

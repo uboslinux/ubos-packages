@@ -1,0 +1,41 @@
+{
+    "type" : "app",
+
+    "cardinality" : "onepersite",
+
+    "roles" : {
+        "apache2" : {
+            "appconfigitems" : [
+                {
+                    "type"         : "perlscript",
+                    "name"         : "bin/manage-site.pl"
+                }
+            ]
+        },
+    },
+    "customizationpoints" : {
+        "AWSAccessKeyId" : {
+            "name" : "AWS access key",
+            "type"     : "string",
+            "required" : true
+        },
+        "AWSSecretKey" : {
+            "name" : "AWS secret key",
+            "type"     : "password",
+            "required" : true
+        },
+        "Domains" : {
+            "name" : "Domains to send via SES",
+            "type" : "string",
+            "required" : false
+        },
+        "SesMailServer" : {
+            "name" : "Hostname of the SES mail server",
+            "type" : "string",
+            "required" : true,
+            "default" : {
+                "value" : "email-smtp.us-east-1.amazonaws.com"
+            }
+        }
+    }
+}
