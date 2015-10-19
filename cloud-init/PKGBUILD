@@ -6,7 +6,7 @@
 
 pkgname=cloud-init
 pkgver=0.7.6
-pkgrel=2
+pkgrel=3
 pkgdesc="Provides configuration and customization for cloud instances"
 arch=(any)
 license=("GPL3")
@@ -31,7 +31,7 @@ depends=(systemd
 
 makedepends=('python2' 'python2-setuptools')
 options=(!emptydirs)
-# Archlinux specific cloud.cfg
+
 source=(https://launchpad.net/$pkgname/trunk/$pkgver/+download/$pkgname-$pkgver.tar.gz)
 sha1sums=('9af02f68d68abce91463bec22b17964d1618e1da')
 backup=(etc/cloud/cloud.cfg etc/cloud/cloud.cfg.d/05_logging.cfg)
@@ -57,7 +57,7 @@ package() {
   python2 ./setup.py install --root=${pkgdir} --init-system systemd
 
   # Use a cloud.cfg crafted for UBOS
-  mv "$pkgdir/etc/cloud/cloud.cfg" "${pkgdir}/etc/cloud/cloud.cfg.ubuntu_default"
+  mv "$pkgdir/etc/cloud/cloud.cfg" "${pkgdir}/etc/cloud/cloud.cfg.ubos_default"
   cp "${startdir}/ubos.cloud.cfg" "${pkgdir}/etc/cloud/cloud.cfg"
 }
 
