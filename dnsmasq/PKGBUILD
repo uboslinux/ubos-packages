@@ -1,0 +1,62 @@
+# $Id$
+# Maintainer: Dave Reisner <dreisner@archlinux.org>
+# Contributor: Paul Mattal <paul@archlinux.org>
+# Contributor: Tom Newsom <Jeepster@gmx.co.uk>
+# Adapted for UBOS by: Indie Computing Corp.
+
+pkgname=dnsmasq
+pkgver=2.75
+pkgrel=1
+pkgdesc="Lightweight, easy to configure DNS forwarder and DHCP server"
+url="http://www.thekelleys.org.uk/dnsmasq/doc.html"
+arch=('i686' 'x86_64')
+license=('GPL')
+depends=('glibc' 'libdbus' 'gmp' 'nettle')
+install=$pkgname.install
+backup=('etc/dnsmasq.conf')
+source=("http://www.thekelleys.org.uk/$pkgname/$pkgname-$pkgver.tar.xz"{,.asc}
+        'dnsmasq.service')
+md5sums=('887236f1ddde6eb57cdb9d01916c9f72'
+         'SKIP'
+         'b87f68013c3e8b4bb37117de968d4603')
+validpgpkeys=('269322E7D9255916E0394DD628FC869A289B82B7')  # Simon Kelley
+
+build_copts="-DHAVE_DNSSEC -DHAVE_DBUS"
+
+build() {
+  cd "$pkgname-$pkgver"
+
+  make \
+    CFLAGS="$CPPFLAGS $CFLAGS" \
+    LDFLAGS="$LDFLAGS" \
+    COPTS="$build_copts"
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+
+  # need to pass COPTS here to avoid rebuilding the binary.
+  make \
+    COPTS="$build_copts" \
+    BINDIR=/usr/bin PREFIX=/usr DESTDIR="$pkgdir" install
+
+  install -Dm644 "dbus/dnsmasq.conf" "$pkgdir"/etc/dbus-1/system.d/dnsmasq.conf
+
+  # UBOS
+  # install -Dm644 "dnsmasq.conf.example" "$pkgdir"/etc/dnsmasq.conf
+  install -Dm644 "dnsmasq.conf.example" "$pkgdir"/usr/share/doc/${pkgname}/examples/
+  install -Dm644 ${startdir}/dnsmasq.conf ${pkgdir}/etc/dnsmasq.conf
+  mkdir -M755 ${pkgdir}/etc/dnsmasq.d
+  install -Dm644 ${startdir}/dnsmasq.d/* ${pkgdir}/etc/dnsmasq.d/
+  mkdir -M755 ${pkgdir}/etc/dnsmasq.ubos.d
+  install -Dm644 ${startdir}/dnsmasq.ubos.d/* ${pkgdir}/etc/dnsmasq.ubos.d/
+
+  install -Dm644 "$srcdir/dnsmasq.service" "$pkgdir"/usr/lib/systemd/system/dnsmasq.service
+
+  # Currently not doing DNSSEC
+  # DNSSEC setup
+  # sed -i 's,%%PREFIX%%,/usr,' "$pkgdir"/etc/dnsmasq.conf
+  # install -Dm644 "trust-anchors.conf" "$pkgdir"/usr/share/dnsmasq/trust-anchors.conf
+}
+
+# vim: ts=2 sw=2 et ft=sh
