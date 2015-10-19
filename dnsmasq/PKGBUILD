@@ -44,12 +44,11 @@ package() {
 
   # UBOS
   # install -Dm644 "dnsmasq.conf.example" "$pkgdir"/etc/dnsmasq.conf
-  install -Dm644 "dnsmasq.conf.example" "$pkgdir"/usr/share/doc/${pkgname}/examples/
+  install -Dm644 "dnsmasq.conf.example" "$pkgdir"/usr/share/doc/${pkgname}/examples/dnsmasq.conf.example
   install -Dm644 ${startdir}/dnsmasq.conf ${pkgdir}/etc/dnsmasq.conf
-  mkdir -M755 ${pkgdir}/etc/dnsmasq.d
+  mkdir -m755 ${pkgdir}/etc/dnsmasq.d
   install -Dm644 ${startdir}/dnsmasq.d/* ${pkgdir}/etc/dnsmasq.d/
-  mkdir -M755 ${pkgdir}/etc/dnsmasq.ubos.d
-  install -Dm644 ${startdir}/dnsmasq.ubos.d/* ${pkgdir}/etc/dnsmasq.ubos.d/
+  mkdir -m755 ${pkgdir}/etc/dnsmasq.ubos.d
 
   install -Dm644 "$srcdir/dnsmasq.service" "$pkgdir"/usr/lib/systemd/system/dnsmasq.service
 
