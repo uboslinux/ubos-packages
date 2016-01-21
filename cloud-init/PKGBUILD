@@ -6,7 +6,7 @@
 
 pkgname=cloud-init
 pkgver=0.7.6
-pkgrel=3
+pkgrel=4
 pkgdesc="Provides configuration and customization for cloud instances"
 arch=(any)
 license=("GPL3")
@@ -57,7 +57,6 @@ package() {
   python2 ./setup.py install --root=${pkgdir} --init-system systemd
 
   # Use a cloud.cfg crafted for UBOS
-  mv "$pkgdir/etc/cloud/cloud.cfg" "${pkgdir}/etc/cloud/cloud.cfg.ubos_default"
   cp "${startdir}/ubos.cloud.cfg" "${pkgdir}/etc/cloud/cloud.cfg"
 }
 
