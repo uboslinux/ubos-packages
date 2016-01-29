@@ -1,0 +1,6 @@
+#!/bin/sh
+
+post_remove() {
+   echo You need to manually delete information about zerotier networks and secrets
+   echo by removing /var/lib/zerotier-one and the files in it.
+}
