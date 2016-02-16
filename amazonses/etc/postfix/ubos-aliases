@@ -1,0 +1,4 @@
+# Basic system aliases -- these MUST be present
+
+MAILER-DAEMON:  postmaster
+postmaster:     root

@@ -4,35 +4,30 @@
     "cardinality" : "onepersite",
 
     "roles" : {
-        "apache2" : {
+        "generic" : {
             "appconfigitems" : [
                 {
                     "type"         : "perlscript",
-                    "name"         : "bin/manage-site.pl"
+                    "source"       : "bin/manage-site.pl"
                 }
             ]
         },
     },
     "customizationpoints" : {
-        "AWSAccessKeyId" : {
+        "aws_access_key_id" : {
             "name" : "AWS access key",
             "type"     : "string",
             "required" : true
         },
-        "AWSSecretKey" : {
+        "aws_secret_key" : {
             "name" : "AWS secret key",
             "type"     : "password",
             "required" : true
         },
-        "Domains" : {
-            "name" : "Domains to send via SES",
-            "type" : "string",
-            "required" : false
-        },
-        "SesMailServer" : {
+        "ses_mail_server" : {
             "name" : "Hostname of the SES mail server",
             "type" : "string",
-            "required" : true,
+            "required" : false,
             "default" : {
                 "value" : "email-smtp.us-east-1.amazonaws.com"
             }

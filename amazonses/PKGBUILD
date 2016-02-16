@@ -3,7 +3,7 @@ url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
 pkgver=0.1
-pkgrel=1
+pkgrel=2
 pkgdesc="Configures local SMTP to send e-mail for an originating domain via Amazon SES"
 arch=('any')
 license=("GPL")
@@ -23,6 +23,8 @@ package() {
 # Config files go here
     mkdir -p ${pkgdir}/etc/amazonses
     mkdir -p ${pkgdir}/etc/amazonses/{sender_dependent_relayhost_map.d,smtp_sasl_password_map.d}
+    mkdir -p ${pkgdir}/etc/postfix
+    install -m644 ${startdir}/etc/postfix/ubos-aliases ${pkgdir}/etc/postfix/
     
 # Code
     mkdir -p ${pkgdir}/usr/share/${pkgname}/bin

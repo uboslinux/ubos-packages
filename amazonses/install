@@ -31,7 +31,8 @@ post_install() {
     # IPv6 produces errors in the logs ("Network is unreachable")
     postconf -e "inet_protocols = ipv4"
 
+    postconf -e "alias_maps = hash:/etc/postfix/ubos-aliases"
+    postalias /etc/postfix/ubos-aliases
+
     perl -MAmazonSes -e 'AmazonSes::regeneratePostfixFilesAndRestart()'
 }
-
-exit 0;
