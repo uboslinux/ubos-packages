@@ -37,6 +37,7 @@ my $mapFile  = '/etc/amazonses/sender_dependent_relayhost_map';
 my $saslFile = '/etc/amazonses/smtp_sasl_password_map';
 my $mapDir   = '/etc/amazonses/sender_dependent_relayhost_map.d';
 my $saslDir  = '/etc/amazonses/smtp_sasl_password_map.d';
+my $sesPort  = 465; # 25 is blocked by many ISPs
 
 ##
 # Regenerate the postfix config files from the fragments deposited into
@@ -106,7 +107,7 @@ sub generatePostfixFileFragment {
         $escapedDomain =~ s/\./\\./g;
 
         $mapNewContent .= <<CONTENT;
-/.*\@$escapedDomain/ [$mailServer]:25
+/.*\@$escapedDomain/ [$mailServer]:$sesPort
 CONTENT
 
         $saslNewContent .= <<CONTENT;
