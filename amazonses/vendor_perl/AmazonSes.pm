@@ -64,7 +64,7 @@ sub _regenerateFile {
     foreach my $file ( sort @files ) {
         $content .= UBOS::Utils::slurpFile( "$dir/$file" );
     }
-    UBOS::Utils::saveFile( $dest, $content );
+    UBOS::Utils::saveFile( $dest, $content, 0600, 'postfix', 'postfix' ); # may contain SES credentials
 }
 
 ##

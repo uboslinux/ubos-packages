@@ -3,7 +3,7 @@ url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
 pkgver=0.1
-pkgrel=3
+pkgrel=4
 pkgdesc="Configures local SMTP to send e-mail for an originating domain via Amazon SES"
 arch=('any')
 license=("GPL")
@@ -21,11 +21,15 @@ package() {
 #    install -m644 ${startdir}/appicons/{72x72,144x144}.png ${pkgdir}/srv/http/_appicons/$pkgname/
 
 # Config files go here
-    mkdir -p ${pkgdir}/etc/amazonses
-    mkdir -p ${pkgdir}/etc/amazonses/{sender_dependent_relayhost_map.d,smtp_sasl_password_map.d}
+    mkdir -p -m700 ${pkgdir}/etc/amazonses
+    mkdir -p -m700 ${pkgdir}/etc/amazonses/{sender_dependent_relayhost_map.d,smtp_sasl_password_map.d}
+    chown 73:73 ${pkgdir}/etc/amazonses
+    chown 73:73 ${pkgdir}/etc/amazonses/{sender_dependent_relayhost_map.d,smtp_sasl_password_map.d}
+    # 73: postfix
+
     mkdir -p ${pkgdir}/etc/postfix
     install -m644 ${startdir}/etc/postfix/ubos-aliases ${pkgdir}/etc/postfix/
-    
+
 # Code
     mkdir -p ${pkgdir}/usr/share/${pkgname}/bin
     install -m755 ${startdir}/bin/manage-site.pl ${pkgdir}/usr/share/${pkgname}/bin/
