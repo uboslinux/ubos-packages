@@ -1,0 +1,20 @@
+developer=http://indiecomputing.com/
+url=${developer}
+maintainer=http://indiecomputing.com/
+pkgname=$(basename $(pwd))
+pkgver=0.1
+pkgrel=1
+pkgdesc="Functionality that allows UBOS to interact with Amazon S3"
+arch=('any')
+license=("GPL")
+options=('!strip')
+depends=('ubos-admin' 'aws-cli')
+
+package() {
+# Config files go here
+    mkdir -p -m700 ${pkgdir}/etc/${pkgname}
+
+# Code
+    mkdir -p ${pkgdir}/usr/lib/perl5/vendor_perl/UBOS/Commands
+    install -m755 ${startdir}/vendor_perl/UBOS/Commands/BackupToAmazonS3.pm ${pkgdir}/usr/lib/perl5/vendor_perl/UBOS/Commands/
+}
