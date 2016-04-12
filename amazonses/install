@@ -23,10 +23,10 @@ post_install() {
     postconf -e "smtp_sasl_password_maps = regexp:${saslFile}"
     postconf -e "smtp_sender_dependent_authentication = yes"
     postconf -e "smtp_use_tls = yes"
-    postconf -e "smtp_tls_security_level = encrypt"
-    postconf -e "smtp_tls_note_starttls_offer = yes"
+    postconf -e "smtp_tls_security_level = may"
+    postconf -e "smtp_tls_note_starttls_offer = yes" # otherwise cannot connect to non-SES SMTP
     postconf -e "smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt"
-    postconf -e "smtp_tls_wrappermode = yes"
+    postconf -e "smtp_tls_wrappermode = no"
 
     # IPv6 produces errors in the logs ("Network is unreachable")
     postconf -e "inet_protocols = ipv4"
