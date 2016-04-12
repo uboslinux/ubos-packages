@@ -92,9 +92,9 @@ sub run {
         my $now = sprintf( "%04d%02d%02d%02d%02d%02d", $year+1900, $mon+1, $mday, $hour, $min, $sec );
 
         if( @siteIds == 1 ) {
-            $name = sprintf( "%s-%s.ubos-backup", $siteIds[0], $now );
+            $name = sprintf( "site-%s-%s.ubos-backup", $siteIds[0], $now );
         } else {
-            $name = $hostId . "-$now.cldstr-backup";
+            $name = sprintf( "multi-%s-%s.ubos-backup", $hostId, $now );
         }
     }
 
