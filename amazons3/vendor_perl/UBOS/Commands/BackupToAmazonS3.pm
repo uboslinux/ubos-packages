@@ -58,8 +58,10 @@ sub run {
     my @appConfigIds  = ();
     my $region        = undef;
     my $bucket        = undef;
+    my $createBucket  = undef;
     my $name          = undef;
     my $noTls         = undef;
+    my $encryptId     = undef;
 
     my $parseOk = GetOptionsFromArray(
             \@args,
@@ -70,8 +72,10 @@ sub run {
             'appconfigid=s' => \@appConfigIds,
             'region=s'      => \$region,
             'bucket=s'      => \$bucket,
+            'createbucket'  => \$createBucket,
             'name=s'        => \$name,
-            'notls'         => \$noTls );
+            'notls'         => \$noTls,
+            'encryptid=s'   => \$encryptId );
 
     UBOS::Logging::initialize( 'ubos-admin', 'backup-to-amazon-s3', $verbose, $logConfigFile );
 
@@ -102,15 +106,17 @@ sub run {
         _createConfig( $configFile );
     }
 
-    my $cmd = 's3api create-bucket';
-    $cmd .= ' --acl private';
-    $cmd .= " --bucket '$bucket'";
-    $cmd .= " --region '$region'";
-    if( 'us-east-1' ne $region ) {
-        $cmd .= " --create-bucket-configuration 'LocationConstraint=$region'"; # strange API
-    }
+    if( $createBucket ) {
+        my $cmd = 's3api create-bucket';
+        $cmd .= ' --acl private';
+        $cmd .= " --bucket '$bucket'";
+        $cmd .= " --region '$region'";
+        if( 'us-east-1' ne $region ) {
+            $cmd .= " --create-bucket-configuration 'LocationConstraint=$region'"; # strange API
+        }
 
-    _aws( $configFile, $cmd ); # ignore error
+        _aws( $configFile, $cmd );
+    }
 
     my $out = File::Temp->new( DIR => $TMP_DIR );
     
@@ -120,8 +126,15 @@ sub run {
     my $backup = UBOS::Backup::ZipFileBackup->new();
     my $ret = UBOS::BackupUtils::performBackup( $backup, $out->filename, \@siteIds, \@appConfigIds, $noTls );
 
-    _aws( $configFile, "s3 cp '" . $out->filename . "' 's3://$bucket/$name'" );
+    if( $encryptId ) {
+        my $gpgFile = $out->filename . '.gpg';
+        UBOS::Utils::myexec( "gpg --encrypt -r '$encryptId' " . $out->filename );
 
+        _aws( $configFile, "s3 cp '" . $gpgFile . "' 's3://$bucket/$name.gpg'", $gpgFile );
+
+    } else {
+        _aws( $configFile, "s3 cp '" . $out->filename . "' 's3://$bucket/$name'" );
+    }
     return $ret;
 }
 
@@ -155,18 +168,22 @@ CONTENT
 # Invoke an aws command
 # $configFile: the AWS config file to use
 # $cmd: the command
+# $deleteThis: name of a file to delete before bailing out
 sub _aws {
     my $configFile   = shift;
     my $cmd          = shift;
+    my $deleteThis   = shift;
 
     my $out;
     my $err;
     my $ret = UBOS::Utils::myexec( "AWS_SHARED_CREDENTIALS_FILE='$configFile' aws --profile '$PROFILE_NAME' " . $cmd, undef, \$out, \$err );
 
     if( $ret ) {
-        if( $err =~ m!BucketAlreadyExists! ) {
-            # that's fine
-        } elsif( $err =~ m!AccessDenied! ) {
+        if( $deleteThis && -e $deleteThis ) {
+            unlink( $deleteThis );
+        }
+
+        if( $err =~ m!AccessDenied! ) {
             fatal( 'S3 denied access. Check your AWS credentials, and you have permissions to write to the bucket.' );
         } else {
             fatal( $err );
@@ -212,7 +229,7 @@ sub _ask {
 sub synopsisHelp {
     return {
         <<SSS => <<HHH,
-    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--name <name>] --siteid <siteid>
+    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--bucket <bucket> [--createbucket [--region <region>]]] [--name <name>] --siteid <siteid>
 SSS
     Back up all data from all apps and accessories installed at a currently
     deployed site with siteid to S3 file <name> according to <configfile>. More than
@@ -220,7 +237,7 @@ SSS
     <configfile> defaults to $DEFAULT_CONFIG_FILE
 HHH
         <<SSS => <<HHH,
-    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--name <name>] --appconfigid <appconfigid>
+    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--bucket <bucket> [--createbucket [--region <region>]]] [--name <name>] --appconfigid <appconfigid>
 SSS
     Back up all data from the currently deployed app and its accessories at
     AppConfiguration appconfigid to S3 file <name> according to <configfile>. More than
@@ -228,7 +245,7 @@ SSS
     <configfile> defaults to $DEFAULT_CONFIG_FILE
 HHH
         <<SSS => <<HHH
-    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--name <name>]
+    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--bucket <bucket> [--createbucket [--region <region>]]] [--name <name>]
 SSS
     Back up all data from all currently deployed apps and accessories at all
     deployed sites to S3 file <name> according to <configfile>.
