@@ -37,7 +37,7 @@ my $mapFile  = '/etc/amazonses/sender_dependent_relayhost_map';
 my $saslFile = '/etc/amazonses/smtp_sasl_password_map';
 my $mapDir   = '/etc/amazonses/sender_dependent_relayhost_map.d';
 my $saslDir  = '/etc/amazonses/smtp_sasl_password_map.d';
-my $sesPort  = 465; # 25 is blocked by many ISPs
+my $sesPort  = 587; # 25 is blocked by many ISPs. STARTTLS not wrappermode
 
 ##
 # Regenerate the postfix config files from the fragments deposited into
