@@ -55,6 +55,7 @@ sub run {
     my $logConfigFile = undef;
     my $configFile    = $DEFAULT_CONFIG_FILE;
     my @siteIds       = ();
+    my @hostnames     = ();
     my @appConfigIds  = ();
     my $region        = undef;
     my $bucket        = undef;
@@ -69,6 +70,7 @@ sub run {
             'logConfig=s'   => \$logConfigFile,
             'config=s',     => \$configFile,
             'siteid=s'      => \@siteIds,
+            'hostname=s'    => \@hostnames,
             'appconfigid=s' => \@appConfigIds,
             'region=s'      => \$region,
             'bucket=s'      => \$bucket,
@@ -79,8 +81,18 @@ sub run {
 
     UBOS::Logging::initialize( 'ubos-admin', 'backup-to-amazon-s3', $verbose, $logConfigFile );
 
-    if( !$parseOk || @args || ( $verbose && $logConfigFile ) || ( !$name && ( @appConfigIds || ( @siteIds > 1 )))) {
+    if(    !$parseOk
+        || @args
+        || ( $verbose && $logConfigFile )
+        || ( !$name && ( @appConfigIds || ( @siteIds + @hostnames > 1 )))
+        || ( @siteIds && @hostnames ))
+    {
         fatal( 'Invalid invocation: backup', @_, '(add --help for help)' );
+    }
+
+    foreach my $host ( @hostnames ) {
+        my $site = UBOS::Host::findSiteByHostname( $host );
+        push @siteIds, $site->siteId;
     }
 
     my $hostId = lc( UBOS::Host::gpgHostKeyFingerprint());
@@ -229,11 +241,12 @@ sub _ask {
 sub synopsisHelp {
     return {
         <<SSS => <<HHH,
-    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--bucket <bucket> [--createbucket [--region <region>]]] [--name <name>] --siteid <siteid>
+    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--bucket <bucket> [--createbucket [--region <region>]]] [--name <name>] ( --siteid <siteid> | --hostname <hostname> )
 SSS
     Back up all data from all apps and accessories installed at a currently
     deployed site with siteid to S3 file <name> according to <configfile>. More than
-    one siteid may be specified.
+    one siteid may be specified. Alternatively, specify a hostname instead of a
+    siteid.
     <configfile> defaults to $DEFAULT_CONFIG_FILE
 HHH
         <<SSS => <<HHH,
