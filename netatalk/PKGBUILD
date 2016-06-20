@@ -1,5 +1,6 @@
 # UBOS note: This is currently not in Arch, only in AUR, so we maintain it ourselves.
-# So far, there are no changes to upstream
+# So far, there are no changes to upstream.
+# https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=netatalk
 #
 # Maintainer: Denis Yantarev <denis dot yantarev at gmail dot com>
 # Contributor: SJ_UnderWater
@@ -8,7 +9,7 @@
 # Contributor: Farhan Yousaf <farhany at xaviya dot com>
 
 pkgname=netatalk
-pkgver=3.1.7
+pkgver=3.1.8
 pkgrel=1
 pkgdesc='Open-source implementation of the Apple Filing Protocol'
 arch=('i686' 'x86_64' 'armv6h' 'armv7h')
@@ -22,14 +23,13 @@ install=$pkgname.install
 source=(http://downloads.sourceforge.net/project/$pkgname/$pkgname/$pkgver/$pkgname-$pkgver.tar.bz2
 	avahi-client.patch
 	python2.patch)
-md5sums=('831ec8bf9e084b64f965d16c528af299'
-	'00379aacb88dcac8c1e0513da1a5f24c'
-	'97bc0467dd8a866d9f0835d6440e3c19')
+sha512sums=('734745743b2d5fe39f3d6716f377e6255d6a061e3c615a4fe30db388ec6d848f6db063d733dfa24ccf967f1e9042841bce4824f4bed391952c4304ee11e11b0d'
+            '61ffecb2962ad5ada8d73658956ea25e13e04a40dd901bbb91fed14eaa39728b37c12c5f78c32fdf91b074618ee8aa9b46d9babf2692fdaa2da9f9b26c730585'
+            '1c53f057ce19afcec15e3efa76aad310dc89bf14be7779c59066fd7389744198ae0008ea17c9ca23c1d5be93a8f5bbe1772c7da56fbce99a276260d59bb9f42a')
 
 prepare() {
 	cd "$srcdir/$pkgname-$pkgver"
 	patch -p0 < "$srcdir/python2.patch"
-	patch -p0 < "$srcdir/avahi-client.patch"
 }
 
 build() {
