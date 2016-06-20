@@ -5,7 +5,7 @@
 # Adapted for UBOS by: Indie Computing Corp.
 
 pkgname=dnsmasq
-pkgver=2.75
+pkgver=2.76
 pkgrel=1
 pkgdesc="Lightweight, easy to configure DNS forwarder and DHCP server"
 url="http://www.thekelleys.org.uk/dnsmasq/doc.html"
@@ -16,9 +16,9 @@ install=$pkgname.install
 backup=('etc/dnsmasq.conf')
 source=("http://www.thekelleys.org.uk/$pkgname/$pkgname-$pkgver.tar.xz"{,.asc}
         'dnsmasq.service')
-md5sums=('887236f1ddde6eb57cdb9d01916c9f72'
-         'SKIP'
-         'b87f68013c3e8b4bb37117de968d4603')
+sha512sums=('8a930f3e7cdc0c291ce89bea8128a4b8438b9aa9e660a2ac037e0baa4c5c74f4482a8f83b0410066a759444b3c4e1cf62a9beb625e38509690227996de10e06a'
+            'SKIP'
+            '997845e48547918dfb9173764dddadf82f2e8f8b4b921bc54633c5089a6b7579b25c7772130dafc2ff742ed2e18d0719bce240155273e37b466019c90aaac731')
 validpgpkeys=('269322E7D9255916E0394DD628FC869A289B82B7')  # Simon Kelley
 
 build_copts="-DHAVE_DNSSEC -DHAVE_DBUS"
