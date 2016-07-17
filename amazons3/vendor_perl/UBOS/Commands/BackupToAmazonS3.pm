@@ -45,6 +45,7 @@ my $PROFILE_NAME   = 'backup';
 # Execute this command.
 # return: desired exit code
 sub run {
+    my $cmd  = shift;
     my @args = @_;
 
     if ( $< != 0 ) {
@@ -79,7 +80,8 @@ sub run {
             'notls'         => \$noTls,
             'encryptid=s'   => \$encryptId );
 
-    UBOS::Logging::initialize( 'ubos-admin', 'backup-to-amazon-s3', $verbose, $logConfigFile );
+    UBOS::Logging::initialize( 'ubos-admin', $cmd, $verbose, $logConfigFile );
+    info( 'ubos-admin', $cmd, @_ );
 
     if(    !$parseOk
         || @args
@@ -87,7 +89,7 @@ sub run {
         || ( !$name && ( @appConfigIds || ( @siteIds + @hostnames > 1 )))
         || ( @siteIds && @hostnames ))
     {
-        fatal( 'Invalid invocation: backup', @_, '(add --help for help)' );
+        fatal( 'Invalid invocation:', $cmd, @_, '(add --help for help)' );
     }
 
     foreach my $host ( @hostnames ) {
