@@ -241,30 +241,34 @@ sub _ask {
 sub synopsisHelp {
     return {
         <<SSS => <<HHH,
-    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--bucket <bucket> [--createbucket [--region <region>]]] [--name <name>] ( --siteid <siteid> | --hostname <hostname> )
+    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--bucket <bucket> [--createbucket [--region <region>]]] [--name <name>] [--encryptid <id>] ( --siteid <siteid> | --hostname <hostname> )
 SSS
     Back up all data from all apps and accessories installed at a currently
     deployed site with siteid to S3 file <name> according to <configfile>. More than
     one siteid may be specified. Alternatively, specify a hostname instead of a
     siteid.
+    If <id> is given, the backup will be gpg-encrypted with the corresponding private key.
     <configfile> defaults to $DEFAULT_CONFIG_FILE
 HHH
         <<SSS => <<HHH,
-    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--bucket <bucket> [--createbucket [--region <region>]]] [--name <name>] --appconfigid <appconfigid>
+    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--bucket <bucket> [--createbucket [--region <region>]]] [--name <name>] [--encryptid <id>] --appconfigid <appconfigid>
 SSS
     Back up all data from the currently deployed app and its accessories at
     AppConfiguration appconfigid to S3 file <name> according to <configfile>. More than
     one appconfigid may be specified.
+    If <id> is given, the backup will be gpg-encrypted with the corresponding private key.
     <configfile> defaults to $DEFAULT_CONFIG_FILE
 HHH
         <<SSS => <<HHH
-    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--bucket <bucket> [--createbucket [--region <region>]]] [--name <name>]
+    [--verbose | --logConfig <file>] [--notls] [--config <configfile>] [--bucket <bucket> [--createbucket [--region <region>]]] [--name <name>] [--encryptid <id>] 
 SSS
     Back up all data from all currently deployed apps and accessories at all
     deployed sites to S3 file <name> according to <configfile>.
+    If <id> is given, the backup will be gpg-encrypted with the corresponding private key.
     <configfile> defaults to $DEFAULT_CONFIG_FILE
 HHH
     };
 }
+            'encryptid=s'   => \$encryptId );
 
 1;
