@@ -144,9 +144,14 @@ sub run {
 
         _aws( $configFile, "s3 cp '" . $gpgFile . "' 's3://$bucket/$name.gpg'", $gpgFile );
 
+        info( 'Backed up to', "s3://$bucket/$name.gpg" );
+
     } else {
         _aws( $configFile, "s3 cp '" . $out->filename . "' 's3://$bucket/$name'" );
+
+        info( 'Backed up to', "s3://$bucket/$name" );
     }
+
     return $ret;
 }
 
