@@ -1,0 +1,21 @@
+developer=http://indiecomputing.com/
+url=${developer}
+maintainer=http://indiecomputing.com/
+pkgname=$(basename $(pwd))
+pkgver=0.1
+pkgrel=1
+pkgdesc="Functionality that allows UBOS to interact with UBOS Live"
+arch=('any')
+license=("GPL")
+options=('!strip')
+depends=('ubos-admin' 'openvpn')
+
+package() {
+# Config
+    mkdir -p -m700 ${pkgdir}/etc/openvpn
+    mkdir -p -m700 ${pkgdir}/etc/ubos-live
+
+# Code
+    mkdir -p ${pkgdir}/usr/lib/perl5/vendor_perl/UBOS/Commands
+    install -m755 ${startdir}/vendor_perl/UBOS/Commands/*.pm ${pkgdir}/usr/lib/perl5/vendor_perl/UBOS/Commands/
+}
