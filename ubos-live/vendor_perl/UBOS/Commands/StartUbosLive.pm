@@ -32,6 +32,10 @@ use UBOS::Logging;
 use UBOS::Utils;
 
 my $OPENVPN_CLIENT_CONFIG = '/etc/openvpn/ubos-live.conf';
+my $CONF_DIR              = '/etc/ubos-live';
+my $OPENVPN_CLIENT_KEY    = $CONF_DIR . '/client.key';
+my $OPENVPN_CLIENT_CSR    = $CONF_DIR . '/client.csr';
+my $OPENVPN_CLIENT_CRT    = $CONF_DIR . '/client.crt';
 
 ##
 # Execute this command.
@@ -61,6 +65,60 @@ sub run {
         fatal( 'Invalid invocation:', $cmd, @_, '(add --help for help)' );
     }
 
+    _ensureOpenvpnKeyCsr();
+    _ensureRegistered( $token );
+    _ensureOpenvpnClientConfig();
+
+    UBOS::Utils::myexec( 'systemctl start openvpn@ubos-live.service' );
+    UBOS::Utils::myexec( 'systemctl enable openvpn@ubos-live.service' );
+
+    return 1;
+}
+
+##
+# Ensure that there is an OpenVPN client key and csr
+sub _ensureOpenvpnKeyCsr {
+    unless( -e $OPENVPN_CLIENT_KEY ) {
+        UBOS::Utils::myexec( "openssl genrsa -out '$OPENVPN_CLIENT_KEY' 4096" );
+    }
+    unless( -e $OPENVPN_CLIENT_KEY ) {
+        fatal( 'Failed to generate UBOS Live client VPN key' );
+    }
+    chmod 0600, $OPENVPN_CLIENT_KEY;
+
+    unless( -e $OPENVPN_CLIENT_CSR ) {
+        my $id = UBOS::Host::gpgHostKeyFingerprint();
+        $id = lc( $id );
+        UBOS::Utils::myexec( "openssl req -new -key '$OPENVPN_CLIENT_KEY' -out '$OPENVPN_CLIENT_CSR' -subj '/CN=$id.ubos-live.indiecomp.com'" );
+    }
+    unless( -e $OPENVPN_CLIENT_CSR ) {
+        fatal( 'Failed to generate UBOS Live client VPN certificate request' );
+    }
+}
+
+##
+# Ensure that the device is registered and has the appropriate key
+# $token: the registration token entered by the user
+sub _ensureRegistered {
+    my $token = shift || '';
+
+    unless( -e $OPENVPN_CLIENT_CRT ) {
+        while( $token !~ m!^\s*[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}\s*$! ) {
+            print "Enter the token you obtained to register (looks like XXXX-XXXX):\n";
+            $token = <STDIN>;
+        }
+print "*** Simulated: generate cert from this CSR, put into $OPENVPN_CLIENT_CRT and hit return\n";
+print UBOS::Utils::slurpFile( $OPENVPN_CLIENT_CSR );
+my $ret = <STDIN>;
+    }
+    unless( -e $OPENVPN_CLIENT_CRT ) {
+        fatal( 'Failed to register with UBOS Live.' );
+    }
+}
+
+##
+# Ensure that the OpenVPN client is set up correctly
+sub _ensureOpenvpnClientConfig {
     unless( -e $OPENVPN_CLIENT_CONFIG ) {
         UBOS::Utils::saveFile( $OPENVPN_CLIENT_CONFIG, <<CONTENT );
 #
@@ -69,7 +127,8 @@ sub run {
 # DO NOT MODIFY. UBOS WILL OVERWRITE MERCILESSLY.
 #
 client
-dev tun
+dev tun99
+tun-ipv6
 proto udp
 remote openvpn-ubos-live.indiecomp.com 1194
 resolv-retry infinite
@@ -79,9 +138,9 @@ group nobody
 persist-key
 persist-tun
 ;mute-replay-warnings
-ca ca.crt
-cert client.crt
-key client.key
+ca $CONF_DIR/ca.indiecomp.com.crt
+cert $OPENVPN_CLIENT_CRT
+key $OPENVPN_CLIENT_KEY
 ;remote-cert-tls server
 ;tls-auth ta.key 1
 comp-lzo
@@ -89,11 +148,6 @@ verb 3
 ;mute 20
 CONTENT
     }
-
-    UBOS::Utils::myexec( 'systemctl start openvpn@ubos-live.service' );
-    UBOS::Utils::myexec( 'systemctl enable openvpn@ubos-live.service' );
-
-    return 1;
 }
 
 ##

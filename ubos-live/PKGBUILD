@@ -12,8 +12,10 @@ depends=('ubos-admin' 'openvpn')
 
 package() {
 # Config
-    mkdir -p -m700 ${pkgdir}/etc/openvpn
-    mkdir -p -m700 ${pkgdir}/etc/ubos-live
+    mkdir -p -m755 ${pkgdir}/etc/openvpn
+
+    # ca.indiecomp.com, client.key and client.crt live here
+    mkdir -p -m755 ${pkgdir}/etc/ubos-live
 
 # Code
     mkdir -p ${pkgdir}/usr/lib/perl5/vendor_perl/UBOS/Commands
