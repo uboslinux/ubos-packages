@@ -1,2 +1,2 @@
-LoadModule xsendfile modules/mod_xsendfile.so
+LoadModule xsendfile_module modules/mod_xsendfile.so
 
