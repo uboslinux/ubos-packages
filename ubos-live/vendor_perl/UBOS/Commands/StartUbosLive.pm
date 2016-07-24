@@ -31,11 +31,13 @@ use UBOS::Host;
 use UBOS::Logging;
 use UBOS::Utils;
 
-my $OPENVPN_CLIENT_CONFIG = '/etc/openvpn/ubos-live.conf';
-my $CONF_DIR              = '/etc/ubos-live';
-my $OPENVPN_CLIENT_KEY    = $CONF_DIR . '/client.key';
-my $OPENVPN_CLIENT_CSR    = $CONF_DIR . '/client.csr';
-my $OPENVPN_CLIENT_CRT    = $CONF_DIR . '/client.crt';
+my $OPENVPN_CLIENT_CONFIG  = '/etc/openvpn/ubos-live.conf';
+my $CONF_DIR               = '/etc/ubos-live';
+my $OPENVPN_CLIENT_KEY     = $CONF_DIR . '/client.key';
+my $OPENVPN_CLIENT_CSR     = $CONF_DIR . '/client.csr';
+my $OPENVPN_CLIENT_CRT     = $CONF_DIR . '/client.crt';
+my $MAX_REGISTRATION_TRIES = 5;
+my $REGISTRATION_URL       = 'https://cldstr.com/reg/register-device';
 
 ##
 # Execute this command.
@@ -48,15 +50,17 @@ sub run {
         fatal( "This command must be run as root" ); 
     }
 
-    my $verbose       = 0;
-    my $logConfigFile = undef;
-    my $token         = undef;
+    my $verbose         = 0;
+    my $logConfigFile   = undef;
+    my $token           = undef;
+    my $registrationurl = undef;
 
     my $parseOk = GetOptionsFromArray(
             \@args,
-            'verbose+'     => \$verbose,
-            'logConfig=s'  => \$logConfigFile,
-            'token=s'      => \$token );
+            'verbose+'          => \$verbose,
+            'logConfig=s'       => \$logConfigFile,
+            'token=s'           => \$token,
+            'registrationurl=s' => \$registrationurl );
 
     UBOS::Logging::initialize( 'ubos-admin', $cmd, $verbose, $logConfigFile );
     info( 'ubos-admin', $cmd, @_ );
@@ -66,7 +70,7 @@ sub run {
     }
 
     _ensureOpenvpnKeyCsr();
-    _ensureRegistered( $token );
+    _ensureRegistered( $token, $registrationurl || $REGISTRATION_URL );
     _ensureOpenvpnClientConfig();
 
     UBOS::Utils::myexec( 'systemctl start openvpn@ubos-live.service' );
@@ -99,17 +103,30 @@ sub _ensureOpenvpnKeyCsr {
 ##
 # Ensure that the device is registered and has the appropriate key
 # $token: the registration token entered by the user
+# $registrationurl: URL to post the registration to
 sub _ensureRegistered {
-    my $token = shift || '';
+    my $token           = shift || '';
+    my $registrationurl = shift;
 
     unless( -e $OPENVPN_CLIENT_CRT ) {
         while( $token !~ m!^\s*[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}\s*$! ) {
             print "Enter the token you obtained to register (looks like XXXX-XXXX):\n";
             $token = <STDIN>;
         }
-print "*** Simulated: generate cert from this CSR, put into $OPENVPN_CLIENT_CRT and hit return\n";
-print UBOS::Utils::slurpFile( $OPENVPN_CLIENT_CSR );
-my $ret = <STDIN>;
+        for( my $i=0 ; $i<$MAX_REGISTRATION_TRIES ; ++$i ) {
+            my $cmd = "curl";
+            $cmd   .= " -XPOST";
+            $cmd   .= " --data-raw=@" . $OPENVPN_CLIENT_CSR;
+            $cmd   .= $registrationurl . '&token=' . $token;
+
+            my $out;
+            my $err;
+            my $ret = UBOS::Utils::myexec( $cmd, undef, \$out, \$err );
+            unless( $ret ) {
+                UBOS::Utils::saveFile( $OPENVPN_CLIENT_CRT, $out );
+                break;
+            }
+        }
     }
     unless( -e $OPENVPN_CLIENT_CRT ) {
         fatal( 'Failed to register with UBOS Live.' );
