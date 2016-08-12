@@ -276,6 +276,5 @@ SSS
 HHH
     };
 }
-            'encryptid=s'   => \$encryptId );
 
 1;
