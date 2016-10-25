@@ -5,8 +5,8 @@
 #
 
 pkgname=cloud-init
-pkgver=0.7.6
-pkgrel=5
+pkgver=0.7.8
+pkgrel=1
 pkgdesc="Provides configuration and customization for cloud instances"
 arch=(any)
 license=("GPL3")
@@ -33,22 +33,17 @@ makedepends=('python2' 'python2-setuptools')
 options=(!emptydirs)
 
 source=(https://launchpad.net/$pkgname/trunk/$pkgver/+download/$pkgname-$pkgver.tar.gz)
-sha1sums=('9af02f68d68abce91463bec22b17964d1618e1da')
+sha512sums=('ff6c3837afe702359879f0ae1d7443247b0ed97d60ecf0cbe85fc364dc833e553962aae221f48becb104ad3f951a28cbd742a3b8521ef25dfb8fd19439759447')
 backup=(etc/cloud/cloud.cfg etc/cloud/cloud.cfg.d/05_logging.cfg)
 
 prepare(){
-echo find
-
+    # change python to python2
     find $pkgname-$pkgver -name \*.py -exec sed -i '1s/python$/&2/' {} +
-echo sed 1
     sed -i '1s/python$/&2/' $pkgname-$pkgver/tools/read*
-echo sed 2
     sed -i 's:/etc/systemd:/usr/lib/systemd:g' $pkgname-$pkgver/setup.py
 
     cd $pkgname-$pkgver
-echo patch 1
-    patch -Np1 -i "${startdir}/systemd-network-online.patch"
-echo patch 2
+    perl -pi -e 's/network-online.target/network.target/g' systemd/*.service
     patch -Np1 -i "${startdir}/fix-logging.patch"
 }
 

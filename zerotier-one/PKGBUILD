@@ -2,7 +2,7 @@ developer=http://zerotier.com/
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=1.1.4
+pkgver=1.1.12
 pkgrel=1
 pkgdesc='ZeroTier is a software defined networking layer for Earth.'
 arch=('x86_64' 'armv6h' 'armv7h')
@@ -13,13 +13,12 @@ source=(
     ${pkgname}-${pkgver}::https://github.com/zerotier/ZeroTierOne/archive/${pkgver}.tar.gz
     ${pkgname}.install
 )
-sha512sums=(
-    '2f9b7005bbc33efe0714be0c7feb71f0b59cda94148dad8a5a5b475644825b2cb510ab259ebc9ddf3e111b4f9333432cc714b6ce361604042a1b66224b480298'
-    '940c260d59728dc6487c8f56d67d926cc78f12394e68aa7c1a54c51f4e243806367f6cbcf14b19cb1e0df1dd5ca78a6afd301ebdb51bee2e66734e1fb9d1f764')
+sha512sums=('40cec8164b62a128d9421f75bc52819c2d07d898c8a758fc9864c49c96acfa6c8b8c9453dbfa3b94a2fb3574b2a38ca7f99b792d5515666dd59f4c08270d6d3b'
+            '940c260d59728dc6487c8f56d67d926cc78f12394e68aa7c1a54c51f4e243806367f6cbcf14b19cb1e0df1dd5ca78a6afd301ebdb51bee2e66734e1fb9d1f764')
 
 build() {
-	cd "${srcdir}/ZeroTierOne-${pkgver}"
-	make
+    cd "${srcdir}/ZeroTierOne-${pkgver}"
+    make
 }
 
 package() {
