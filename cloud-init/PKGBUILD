@@ -5,8 +5,8 @@
 #
 
 pkgname=cloud-init
-pkgver=0.7.8
-pkgrel=3
+pkgver=0.7.6
+pkgrel=1
 pkgdesc="Provides configuration and customization for cloud instances"
 arch=(any)
 license=("GPL3")
@@ -34,7 +34,7 @@ makedepends=('python2' 'python2-setuptools')
 options=(!emptydirs)
 
 source=(https://launchpad.net/$pkgname/trunk/$pkgver/+download/$pkgname-$pkgver.tar.gz)
-sha512sums=('ff6c3837afe702359879f0ae1d7443247b0ed97d60ecf0cbe85fc364dc833e553962aae221f48becb104ad3f951a28cbd742a3b8521ef25dfb8fd19439759447')
+sha512sums=('aa2397328afda8e77ed6d642e7642f41a4b4b5bcd3d0e87056aa8c88b56624ec65c57cfc66b0d13ccc235f1840baf1d577316974902a0439cf2f2eb0f8eef36d')
 backup=(etc/cloud/cloud.cfg etc/cloud/cloud.cfg.d/05_logging.cfg)
 
 prepare(){
