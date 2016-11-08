@@ -6,7 +6,7 @@
 
 pkgname=cloud-init
 pkgver=0.7.8
-pkgrel=1
+pkgrel=2
 pkgdesc="Provides configuration and customization for cloud instances"
 arch=(any)
 license=("GPL3")
@@ -40,7 +40,7 @@ prepare(){
     # change python to python2
     find $pkgname-$pkgver -name \*.py -exec sed -i '1s/python$/&2/' {} +
     sed -i '1s/python$/&2/' $pkgname-$pkgver/tools/read*
-    sed -i 's:/etc/systemd:/usr/lib/systemd:g' $pkgname-$pkgver/setup.py
+    sed -e 's:/etc/systemd:/usr/lib/systemd:g' -e 's:\"/lib\":\"/usr/lib\":g' -i $pkgname-$pkgver/setup.py
 
     cd $pkgname-$pkgver
     perl -pi -e 's/network-online.target/network.target/g' systemd/*.service
