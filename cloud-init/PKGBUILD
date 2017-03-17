@@ -5,8 +5,8 @@
 #
 
 pkgname=cloud-init
-pkgver=0.7.6
-pkgrel=7
+pkgver=0.7.9
+pkgrel=1
 pkgdesc="Provides configuration and customization for cloud instances"
 arch=(any)
 license=("GPL3")
