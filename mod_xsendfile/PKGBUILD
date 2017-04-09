@@ -4,14 +4,14 @@
 
 pkgname=mod_xsendfile
 pkgver=0.12
-pkgrel=2
+pkgrel=3
 pkgdesc='Apache module for XSendFile header'
 arch=('i686' 'x86_64')
 url='https://github.com/nmaier/mod_xsendfile'
 license=('Apache')
 makedepends=('apache')
 source=("https://github.com/nmaier/${pkgname}/archive/${pkgver}.tar.gz")
-sha512sums=('eb7e409e73ecd85aac94c818573e78e21a84a6bace08ef016b33e6e081fb76d9')
+sha512sums=('1c5f8eb27680957fe7b482b3fde6245d4020d6cc756a23735e2716a47c864da4ff0a4265bb8bd9d3fed8db7085f691069ffe3c6c8727d6fa4affe3f18bb150dc')
 
 build() {
     cd "${srcdir}/${pkgname}-${pkgver}"
