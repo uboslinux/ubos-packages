@@ -23,7 +23,7 @@ install=$pkgname.install
 source=(http://downloads.sourceforge.net/project/$pkgname/$pkgname/$pkgver/$pkgname-$pkgver.tar.bz2
 	avahi-client.patch
 	python2.patch)
-sha512sums=('dd1f49307b5298a784e2b487c0da94459632bab8353cf505cd4b104f4c0b55bbb77caf73e8b4c60af64018b345df78337accac3b5ed6cb5620309b163a86d32b'
+sha512sums=('330e584f34b5f5e8714b3eca8e11adb93134cc0afa73e9bc25ddadcf3e9a96779a2979dfc08a64d343b148bc2d4e0e0f25b08d9c46d6b68057611d04ecfd06ea'
             '61ffecb2962ad5ada8d73658956ea25e13e04a40dd901bbb91fed14eaa39728b37c12c5f78c32fdf91b074618ee8aa9b46d9babf2692fdaa2da9f9b26c730585'
             '1c53f057ce19afcec15e3efa76aad310dc89bf14be7779c59066fd7389744198ae0008ea17c9ca23c1d5be93a8f5bbe1772c7da56fbce99a276260d59bb9f42a')
 
