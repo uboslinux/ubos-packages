@@ -49,10 +49,10 @@ prepare(){
 }
 
 package() {
-  cd ${srcdir}/${pkgname}-${pkgver}
-  python2 ./setup.py install --root=${pkgdir} --init-system systemd
+    cd ${srcdir}/${pkgname}-${pkgver}
+    python2 ./setup.py install --root=${pkgdir} --init-system systemd
 
-  # Use a cloud.cfg crafted for UBOS
-  cp "${startdir}/ubos.cloud.cfg" "${pkgdir}/etc/cloud/cloud.cfg"
+    # Use a cloud.cfg crafted for UBOS
+    cp "${startdir}/ubos.cloud.cfg" "${pkgdir}/etc/cloud/cloud.cfg"
 }
 
