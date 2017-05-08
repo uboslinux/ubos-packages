@@ -36,7 +36,7 @@ my $DEFAULT_CONFIG_FILE = '/etc/amazons3/aws-config-for-backup';
 my $TMP_DIR             = '/var/tmp';
 my %CONFIG_FIELDS       = (
     'aws_access_key_id'     => [ 'Amazon AWS access key id',     '[A-Z0-9]{20}' ],
-    'aws_secret_access_key' => [ 'Amazon AWS secret access key', '[A-Za-z0-9/]{40}' ],
+    'aws_secret_access_key' => [ 'Amazon AWS secret access key', '[A-Za-z0-9/+]{40}' ],
 );
 my $DEFAULT_REGION = 'us-east-1';
 my $PROFILE_NAME   = 'backup';
