@@ -1,12 +1,12 @@
 pkgname=$(basename $(pwd))
-pkgver=0.2
+pkgver=0.3
 pkgrel=1
 pkgdesc="EspressoBIN uBoot parameters for UBOS"
 url="http://ubos.net/"
 arch=('aarch64')
 license=('GPL')
 source=('uEnv.txt')
-sha512sums=('cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e')
+sha512sums=('12d1b33a84a3aec2b6ab1156486e8b7e469b6e0558f12c927d4ac19d3e79112c1eebc1c762d8a3556f89d39c6e5d85184be48e80d1f52f9451ae02018bda0e55')
 
 package() {
     mkdir -p ${pkgdir}/boot
