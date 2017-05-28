@@ -9,19 +9,29 @@ pkgver=2.76
 pkgrel=1
 pkgdesc="Lightweight, easy to configure DNS forwarder and DHCP server"
 url="http://www.thekelleys.org.uk/dnsmasq/doc.html"
-arch=('i686' 'x86_64')
+arch=('i686' 'x86_64' 'armv6l' 'armv7l' 'aarch64')
 license=('GPL')
-depends=('glibc' 'libdbus' 'gmp' 'nettle')
-install=$pkgname.install
+depends=('glibc' 'gmp' 'libidn' 'libdbus' 'libnetfilter_conntrack' 'nettle')
 backup=('etc/dnsmasq.conf')
 source=("http://www.thekelleys.org.uk/$pkgname/$pkgname-$pkgver.tar.xz"{,.asc}
+        '0001-Handle-binding-upstream-servers-to-an-interface.patch'
+        'dnsmasq-sysusers.conf'
         'dnsmasq.service')
 sha512sums=('8a930f3e7cdc0c291ce89bea8128a4b8438b9aa9e660a2ac037e0baa4c5c74f4482a8f83b0410066a759444b3c4e1cf62a9beb625e38509690227996de10e06a'
             'SKIP'
+            'af34c97b5da668090fd5e0e7077edf6523c36cf57bf79ab55c23610d435391bd94229ec12df4a8522259cf5d72e7eb050e1cd785c519e3c08c62d923ff097149'
+            '8e0194a6c5bd2bb6e008681808c0fbf5edbd88c2c039527587479a1850b8199444aaa70cb7252063d322f97111f89a3e8c0d4d6d1afacdf83a5ea6166233735b'
             '997845e48547918dfb9173764dddadf82f2e8f8b4b921bc54633c5089a6b7579b25c7772130dafc2ff742ed2e18d0719bce240155273e37b466019c90aaac731')
 validpgpkeys=('269322E7D9255916E0394DD628FC869A289B82B7')  # Simon Kelley
 
-build_copts="-DHAVE_DNSSEC -DHAVE_DBUS"
+_build_copts="-DHAVE_DNSSEC -DHAVE_DBUS -DHAVE_IDN -DHAVE_CONNTRACK"
+
+prepare() {
+  cd "$pkgname-$pkgver"
+
+  # Handle binding upstream servers to an interface
+  patch -Np1 < "$srcdir/0001-Handle-binding-upstream-servers-to-an-interface.patch"
+}
 
 build() {
   cd "$pkgname-$pkgver"
@@ -29,7 +39,8 @@ build() {
   make \
     CFLAGS="$CPPFLAGS $CFLAGS" \
     LDFLAGS="$LDFLAGS" \
-    COPTS="$build_copts"
+    COPTS="$_build_copts" \
+    all-i18n
 }
 
 package() {
@@ -37,8 +48,9 @@ package() {
 
   # need to pass COPTS here to avoid rebuilding the binary.
   make \
-    COPTS="$build_copts" \
-    BINDIR=/usr/bin PREFIX=/usr DESTDIR="$pkgdir" install
+    COPTS="$_build_copts" \
+    BINDIR=/usr/bin PREFIX=/usr DESTDIR="$pkgdir" \
+    install install-i18n
 
   install -Dm644 "dbus/dnsmasq.conf" "$pkgdir"/etc/dbus-1/system.d/dnsmasq.conf
 
@@ -51,6 +63,7 @@ package() {
   mkdir -m755 ${pkgdir}/etc/dnsmasq.ubos.d
 
   install -Dm644 "$srcdir/dnsmasq.service" "$pkgdir"/usr/lib/systemd/system/dnsmasq.service
+  install -Dm644 "$srcdir/dnsmasq-sysusers.conf" "$pkgdir"/usr/lib/sysusers.d/dnsmasq.conf
 
   # Currently not doing DNSSEC
   # DNSSEC setup
