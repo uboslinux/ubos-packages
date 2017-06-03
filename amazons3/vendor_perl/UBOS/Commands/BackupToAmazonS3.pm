@@ -35,8 +35,8 @@ use UBOS::Utils;
 my $DEFAULT_CONFIG_FILE = '/etc/amazons3/aws-config-for-backup';
 my $TMP_DIR             = '/var/tmp';
 my %CONFIG_FIELDS       = (
-    'aws_access_key_id'     => [ 'Amazon AWS access key id',     '[A-Z0-9]{20}' ],
-    'aws_secret_access_key' => [ 'Amazon AWS secret access key', '[A-Za-z0-9/+]{40}' ],
+    'aws_access_key_id'     => [ 'Amazon AWS access key id',     '[A-Z0-9]{20}',     0 ],
+    'aws_secret_access_key' => [ 'Amazon AWS secret access key', '[A-Za-z0-9/+]{40}'. 1 ],
 );
 my $DEFAULT_REGION = 'us-east-1';
 my $PROFILE_NAME   = 'backup';
@@ -171,7 +171,8 @@ CONTENT
     foreach my $key ( sort keys %CONFIG_FIELDS ) {
         my $q     = $CONFIG_FIELDS{$key}[0];
         my $regex = $CONFIG_FIELDS{$key}[1];
-        my $value = _ask( $q, $regex );
+        my $blank = $CONFIG_FIELDS{$key}[1];
+        my $value = _ask( $q, $regex, $blank );
 
         $content .= "$key=$value\n"
     }
@@ -215,23 +216,26 @@ sub _aws {
 # Ask the user a question
 # $q: the question text
 # $regex: regular expression that defines valid input
-# $dontTrim: if false, trim whitespace
+# $blank: if true, do not echo input to the terminal
 sub _ask {
-    my $q        = shift;
-    my $regex    = shift || '.?';
-    my $dontTrim = shift || 0;
+    my $q     = shift;
+    my $regex = shift || '.?';
+    my $blank = shift || 0;
 
     my $ret;
     while( 1 ) {
         print $q . ': ';
 
+        if( $blank ) {
+            system('stty','-echo');
+        }
         $ret = <STDIN>;
+        if( $blank ) {
+            system('stty','echo');
+            print "\n";
+        }
 
         if( defined( $ret )) { # apparently ^D becomes undef
-            unless( $dontTrim ) {
-                $ret =~ s!\s+$!!;
-                $ret =~ s!^\s+!!;
-            }
             if( $ret =~ $regex ) {
                 last;
             } else {
