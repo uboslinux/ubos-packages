@@ -1,5 +1,5 @@
 pkgname=$(basename $(pwd))
-pkgver=0.4
+pkgver=0.5
 pkgrel=1
 pkgdesc="EspressoBIN uBoot parameters for UBOS"
 url="http://ubos.net/"
@@ -8,5 +8,5 @@ license=('GPL')
 
 package() {
     mkdir -p ${pkgdir}/boot
-    install -m644 ${startdir}/uEnv.txt ${pkgdir}/boot/
+    install -m644 ${startdir}/uEnv-*.txt ${pkgdir}/boot/
 }
