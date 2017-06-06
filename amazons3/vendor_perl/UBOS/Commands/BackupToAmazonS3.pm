@@ -3,7 +3,7 @@
 # Command that backs up data on this device to Amazon S3.
 #
 # This file is part of amazons3
-# (C) 2012-2016 Indie Computing Corp.
+# (C) 2012-2017 Indie Computing Corp.
 #
 # amazons3 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ use UBOS::Utils;
 my $DEFAULT_CONFIG_FILE = '/etc/amazons3/aws-config-for-backup';
 my $TMP_DIR             = '/var/tmp';
 my %CONFIG_FIELDS       = (
-    'aws_access_key_id'     => [ 'Amazon AWS access key id',     '[A-Z0-9]{20}',     0 ],
-    'aws_secret_access_key' => [ 'Amazon AWS secret access key', '[A-Za-z0-9/+]{40}'. 1 ],
+    'aws_access_key_id'     => [ 'Amazon AWS access key id',     '[A-Z0-9]{20}',      0 ],
+    'aws_secret_access_key' => [ 'Amazon AWS secret access key', '[A-Za-z0-9/+]{40}', 1 ],
 );
 my $DEFAULT_REGION = 'us-east-1';
 my $PROFILE_NAME   = 'backup';
@@ -171,7 +171,7 @@ CONTENT
     foreach my $key ( sort keys %CONFIG_FIELDS ) {
         my $q     = $CONFIG_FIELDS{$key}[0];
         my $regex = $CONFIG_FIELDS{$key}[1];
-        my $blank = $CONFIG_FIELDS{$key}[1];
+        my $blank = $CONFIG_FIELDS{$key}[2];
         my $value = _ask( $q, $regex, $blank );
 
         $content .= "$key=$value\n"
