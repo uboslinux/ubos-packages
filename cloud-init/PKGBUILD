@@ -5,38 +5,36 @@
 #
 
 pkgname=cloud-init
-pkgver=0.7.9
-pkgrel=2
+pkgver=0.7.6
+pkgrel=8
 pkgdesc="Provides configuration and customization for cloud instances"
 arch=(any)
 license=("GPL3")
 url=https://launchpad.net/cloud-init
 
 # cloud-init python lib requirements (according to Requires file, with added setuptools):
-depends=( 'systemd'
-          'net-tools'
-          'python2-argparse'
-          'python2-boto'
-          'python2-cheetah'
-          'python2-configobj'
-          'python2-jinja'
-          'python2-jsonpatch'
-          'python2-jsonpointer'
-          'python2-oauth'
-          'python2-oauthlib'
-          'python2-prettytable'
-          'python2-requests'
-          'python2-setuptools'
-          'python2-yaml' )
-
+depends=(systemd
+         net-tools
+         python2-boto
+         python2-cheetah
+         python2-configobj
+         python2-jsonpatch
+         python2-jsonpointer
+         python2-oauth
+         python2-prettytable
+         python2-setuptools
+         python2-yaml
+         )
 # snoonan also has these dependencies:
+#         python2-grequests
 #         python2-oauth2
+#         python2-requests
 
 makedepends=('python2' 'python2-setuptools')
 options=(!emptydirs)
 
 source=(https://launchpad.net/$pkgname/trunk/$pkgver/+download/$pkgname-$pkgver.tar.gz)
-sha512sums=('ee52909f634f51dcf9e1229a8f49faa8c562bf05b69fac108fcc80cb3217f4364a33cf696df015e4dcd7887c68cf6108729850648b4daee07b3d3247ca3cc5b1')
+sha512sums=('aa2397328afda8e77ed6d642e7642f41a4b4b5bcd3d0e87056aa8c88b56624ec65c57cfc66b0d13ccc235f1840baf1d577316974902a0439cf2f2eb0f8eef36d')
 backup=(etc/cloud/cloud.cfg etc/cloud/cloud.cfg.d/05_logging.cfg)
 
 prepare(){
@@ -51,10 +49,10 @@ prepare(){
 }
 
 package() {
-    cd ${srcdir}/${pkgname}-${pkgver}
-    python2 ./setup.py install --root=${pkgdir} --init-system systemd
+  cd ${srcdir}/${pkgname}-${pkgver}
+  python2 ./setup.py install --root=${pkgdir} --init-system systemd
 
-    # Use a cloud.cfg crafted for UBOS
-    cp "${startdir}/ubos.cloud.cfg" "${pkgdir}/etc/cloud/cloud.cfg"
+  # Use a cloud.cfg crafted for UBOS
+  cp "${startdir}/ubos.cloud.cfg" "${pkgdir}/etc/cloud/cloud.cfg"
 }
 
