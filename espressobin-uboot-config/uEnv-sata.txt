@@ -5,7 +5,7 @@ fdt_high=0xffffffffffffffff
 image_name=/Image
 ramdisk_name=/initramfs-linux.uimg
 fdt_name=/dtbs/marvell/armada-3720-espressobin.dtb
-get_env=if ext4load scsi 0 $loadaddr /uEnv.txt; then env import -t $loadaddr $filesize; if test -n ${uenvcmd}; then run uenvcmd; fi; fi
+get_env=if ext4load scsi 0 $loadaddr /uEnv-sata.txt; then env import -t $loadaddr $filesize; if test -n ${uenvcmd}; then run uenvcmd; fi; fi
 get_images=ext4load scsi 0 $kernel_addr $image_name && ext4load scsi 0:1 $fdt_addr $fdt_name
 get_ramdisk=ext4load scsi 0 $ramdisk_addr $ramdisk_name
 bootargs=console=ttyMV0,115200 earlycon=ar3700_uart,0xd0012000 root=/dev/sdb2 rw rootwait
