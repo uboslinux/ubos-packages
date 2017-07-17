@@ -22,7 +22,8 @@
         "aws_secret_key" : {
             "name" : "AWS secret key",
             "type"     : "password",
-            "required" : true
+            "required" : true,
+            "private"  : true
         },
         "ses_mail_server" : {
             "name" : "Hostname of the SES mail server",
