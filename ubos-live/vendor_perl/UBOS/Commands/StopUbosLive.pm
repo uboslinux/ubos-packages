@@ -39,7 +39,7 @@ sub run {
     my @args = @_;
 
     if ( $< != 0 ) {
-        fatal( "This command must be run as root" ); 
+        fatal( "This command must be run as root" );
     }
 
     my $verbose       = 0;
@@ -68,11 +68,22 @@ sub run {
 # return: hash of synopsis to help text
 sub synopsisHelp {
     return {
-        <<SSS => <<HHH
-    [--verbose | --logConfig <file>]
+        'summary' => <<SSS,
+    Stop the UBOS Live service for this device.
 SSS
+        'cmds' => {
+            '' => <<HHH,
     Stop the UBOS Live service for this device.
 HHH
+         },
+        'args' => {
+            '--verbose' => <<HHH,
+    Display extra output. May be repeated for even more output.
+HHH
+            '--logConfig <file>' => <<HHH
+    Use an alternate log configuration file for this command.
+HHH
+        }
     };
 }
 

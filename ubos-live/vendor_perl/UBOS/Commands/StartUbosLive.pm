@@ -47,7 +47,7 @@ sub run {
     my @args = @_;
 
     if ( $< != 0 ) {
-        fatal( "This command must be run as root" ); 
+        fatal( "This command must be run as root" );
     }
 
     my $verbose         = 0;
@@ -124,7 +124,7 @@ sub _ensureRegistered {
             my $ret = UBOS::Utils::myexec( $cmd, undef, \$out, \$err );
             unless( $ret ) {
                 UBOS::Utils::saveFile( $OPENVPN_CLIENT_CRT, $out );
-                break;
+                last;
             }
         }
     }
@@ -172,12 +172,25 @@ CONTENT
 # return: hash of synopsis to help text
 sub synopsisHelp {
     return {
-        <<SSS => <<HHH
-    [--verbose | --logConfig <file>] [--token <token>]
-SSS
+        'summary' => <<SSS,
     Start the UBOS Live service for this device.
-    Specify <token> on initial setup.
+SSS
+        'cmds' => {
+            <<SSS => <<HHH,
+    [--token <token>]
+SSS
+    Start the UBOS Live service for this device. On the first
+    invocation, the UBOS Live token <token> must be provided.
 HHH
+         },
+        'args' => {
+            '--verbose' => <<HHH,
+    Display extra output. May be repeated for even more output.
+HHH
+            '--logConfig <file>' => <<HHH
+    Use an alternate log configuration file for this command.
+HHH
+        }
     };
 }
 
