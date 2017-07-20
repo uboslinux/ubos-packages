@@ -32,20 +32,10 @@ use UBOS::Host;
 use UBOS::Logging;
 use UBOS::Utils;
 
-# The awsConfigFile is the file passed into the aws command-line tools
-# for credentials. The ubosConfigFile is used to store additional information
-# (default bucket, encryption id). ubosConfigFile is a sibling with an extra
-# extension.
-
-my $DEFAULT_AWS_CONFIG_FILE = '/etc/amazons3/aws-config-for-backup';
-my $UBOS_CONFIG_FILE_EXT    = '.ubos';
-my $TMP_DIR                 = '/var/tmp';
-my %AWS_CONFIG_FIELDS       = (
-    'aws_access_key_id'     => [ 'Amazon AWS access key id',       '^[A-Z0-9]{20}$',            0 ],
-    'aws_secret_access_key' => [ 'Amazon AWS secret access key',   '^[A-Za-z0-9/+]{40}$',       1 ]
-);
-my $DEFAULT_REGION = 'us-east-1';
-my $PROFILE_NAME   = 'backup';
+my $DEFAULT_CONFIG_FILE = '/etc/amazons3/backup-config.json';
+my $TMP_DIR             = '/var/tmp';
+my $AWS_DEFAULT_REGION  = 'us-east-1';
+my $AWS_PROFILE_NAME    = 'backup';
 
 ##
 # Execute this command.
@@ -60,29 +50,28 @@ sub run {
 
     my $verbose       = 0;
     my $logConfigFile = undef;
-    my $awsConfigFile = undef;
+    my $configFile    = undef;
     my @siteIds       = ();
     my @hostnames     = ();
     my @appConfigIds  = ();
     my $region        = undef;
     my $bucket        = undef;
-    my $createBucket  = undef;
     my $name          = undef;
     my $noTls         = undef;
     my $noTorKey      = undef;
+    my $noStore       = undef;
     my $encryptId     = undef;
 
     my $parseOk = GetOptionsFromArray(
             \@args,
             'verbose+'      => \$verbose,
             'logConfig=s'   => \$logConfigFile,
-            'config=s',     => \$awsConfigFile,
+            'config=s',     => \$configFile,
             'siteid=s'      => \@siteIds,
             'hostname=s'    => \@hostnames,
             'appconfigid=s' => \@appConfigIds,
             'region=s'      => \$region,
             'bucket=s'      => \$bucket,
-            'createbucket'  => \$createBucket,
             'name=s'        => \$name,
             'notls'         => \$noTls,
             'notorkey'      => \$noTorKey,
@@ -99,26 +88,30 @@ sub run {
         fatal( 'Invalid invocation:', $cmd, @_, '(add --help for help)' );
     }
 
-    if( $awsConfigFile ) {
-        unless( -r $awsConfigFile ) {
-            fatal( 'Config file does not exist or cannot be read:', $awsConfigFile );
+    my $config       = {}; # by default we have nothing
+    my $configChange = 0;
+    if( $configFile ) {
+        if( -e $configFile ) {
+            $config = UBOS::Utils::readJsonFromFile( $configFile );
+            unless( $configFile ) {
+                fatal( 'Failed to read config file:', $configFile );
+            }
+        } else {
+            fatal( 'Specified config file does not exist:', $configFile );
         }
-    } else {
-        $awsConfigFile = $DEFAULT_AWS_CONFIG_FILE;
-    }
-
-    my $ubosConfigFile = $awsConfigFile . $UBOS_CONFIG_FILE_EXT;
-    my $ubosConfig     = _readUbosConfigIfExists( $ubosConfigFile );
-    my $orgUbosConfig  = {};
-    map { $orgUbosConfig->{$_} = $ubosConfig->{$_} } keys %$ubosConfig; # keep copy
+    } elsif( -e $DEFAULT_CONFIG_FILE ) {
+        $config = UBOS::Utils::readJsonFromFile( $DEFAULT_CONFIG_FILE );
+        unless( $configFile ) {
+            fatal( 'Failed to read config file:', $DEFAULT_CONFIG_FILE );
+        }
+        $configFile = $DEFAULT_CONFIG_FILE;
+    } # else: we don't have a configuration yet.
 
     # overwrite values if given
-    if( $bucket ) {
-        $ubosConfig->{'bucket'} = $bucket;
-    }
-    if( $encryptId ) {
-        $ubosConfig->{'encryptId'} = $encryptId;
-    }
+    $configChange |= _overrideValue( $config, 'aws-region',    $region );
+    $configChange |= _overrideValue( $config, 'aws-bucket',    $bucket );
+    $configChange |= _overrideValue( $config, 'aws-region',    $region );
+    $configChange |= _overrideValue( $config, 'gpg-encryptid', $encryptId );
 
     # Don't need to do any cleanup of siteIds or appConfigIds, BackupUtils::performBackup
     # does that for us
@@ -130,39 +123,82 @@ sub run {
         push @siteIds, $site->siteId;
     }
 
-    my $hostId = lc( UBOS::Host::gpgHostKeyFingerprint());
-
-    if( !exists( $ubosConfig->{'bucket'} ) || ! $ubosConfig->{'bucket'} ) {
-        fatal( 'Must specify the S3 bucket to back up to' );
+    # Ask for values we don't have yet and we need for testing that a
+    # bucket exists
+    unless( exists( $config->{'aws-access-key-id'} )) {
+        $config->{'aws-access-key-id'} = _ask( 'Amazon AWS access key id', '^[A-Z0-9]{20}$', 0 );
+        $configChange = 1;
     }
+    unless( exists( $config->{'aws-secret-access-key'} )) {
+        $config->{'aws-secret-access-key'} = _ask( 'Amazon AWS secret access key', '^[A-Za-z0-9/+]{40}$', 1 );
+        $configChange = 1;
+    }
+    unless( exists( $config->{'aws-bucket'} )) {
+        $config->{'aws-bucket'} = _ask( 'Amazon S3 bucket for backup', '^[-.a-z0-9]+$', 0 );
+        $configChange = 1;
+    }
+    unless( exists( $config->{'aws-region'} )) {
+        $config->{'aws-region'} = $AWS_DEFAULT_REGION;
+        $configChange = 1;
+    }
+
+    # Create a temporary AWS config file
+    my $awsConfigFile = File::Temp->new( DIR => $TMP_DIR, UNLINK => 1 );
+    chmod 0600, $awsConfigFile;
+
+    UBOS::Utils::saveFile(
+            $awsConfigFile,
+            sprintf(
+                    <<CONTENT,
+[%s]
+region=%s
+aws_access_key_id=%s
+aws_secret_access_key=%s
+CONTENT
+                    $AWS_PROFILE_NAME,
+                    $config->{'aws-region'},
+                    $config->{'aws-access-key-id'},
+                    $config->{'aws-secret-access-key'} ),
+            0600 );
+
+    # Check whether bucket exists, and if not, create it
+
+    my $awsCmd = 's3api head-bucket';
+    $awsCmd .= " --bucket '" . $config->{'aws-bucket'} . "'";
+    $awsCmd .= " --region '" . $config->{'aws-region'} . "'";
+
+    if( _aws( $awsConfigFile, $awsCmd ) != 0 ) {
+        $awsCmd  = 's3api create-bucket';
+        $awsCmd .= ' --acl private';
+        $awsCmd .= " --bucket '" . $config->{'aws-bucket'} . "'";
+        $awsCmd .= " --region '" . $config->{'aws-region'} . "'";
+        if( 'us-east-1' ne $config->{'aws-region'} ) {
+            $awsCmd .= " --create-bucket-configuration 'LocationConstraint=" . $config->{'aws-region'} . "'";
+            # strange API
+        }
+        if( _aws( $awsConfigFile, $awsCmd ) != 0 ) {
+            fatal( 'Bucket does not exist, but cannot create either:', $config->{'aws-bucket'} );
+        }
+    }
+
     unless( $name ) {
         my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime( time() );
         my $now = sprintf( "%04d%02d%02d%02d%02d%02d", $year+1900, $mon+1, $mday, $hour, $min, $sec );
 
         if( @siteIds == 1 ) {
             $name = sprintf( "site-%s-%s.ubos-backup", $siteIds[0], $now );
+
+        } elsif( @siteIds ) {
+            my $hostId = lc( UBOS::Host::gpgHostKeyFingerprint());
+            $name = sprintf( "site-multi-%s-%s.ubos-backup", $hostId, $now );
+
+        } elsif( @appConfigIds == 1 ) {
+            $name = sprintf( "appconfig-%s-%s.ubos-backup", $appConfigIds[0], $now );
+
         } else {
-            $name = sprintf( "multi-%s-%s.ubos-backup", $hostId, $now );
+            my $hostId = lc( UBOS::Host::gpgHostKeyFingerprint());
+            $name = sprintf( "appconfig-multi-%s-%s.ubos-backup", $hostId, $now );
         }
-    }
-
-    unless( -r $awsConfigFile ) {
-        _createAwsConfig( $awsConfigFile );
-    }
-    if( $createBucket ) {
-        unless( $region ) {
-            $region = $DEFAULT_REGION;
-        }
-        # first try to create a bucket before saving bucket info
-        my $cmd = 's3api create-bucket';
-        $cmd .= ' --acl private';
-        $cmd .= " --bucket '$bucket'";
-        $cmd .= " --region '$region'";
-        if( 'us-east-1' ne $region ) {
-            $cmd .= " --create-bucket-configuration 'LocationConstraint=$region'"; # strange API
-        }
-
-        _aws( $awsConfigFile, $cmd );
     }
 
     my $out = File::Temp->new( DIR => $TMP_DIR );
@@ -173,141 +209,69 @@ sub run {
     my $backup = UBOS::Backup::ZipFileBackup->new();
     my $ret = UBOS::BackupUtils::performBackup( $backup, $out->filename, \@siteIds, \@appConfigIds, $noTls, $noTorKey );
 
-    if( exists( $ubosConfig->{'encryptId'} ) && $ubosConfig->{'encryptId'} ) {
+    if( exists( $config->{'gpg-encryptid'} ) && $config->{'gpg-encryptid'} ) {
         my $gpgFile = $out->filename . '.gpg';
-        UBOS::Utils::myexec( "gpg --encrypt -r '$encryptId' " . $out->filename );
+        UBOS::Utils::myexec( "gpg --encrypt -r '" . $config->{'gpg-encryptid'} . "' " . $out->filename );
 
-        _aws( $awsConfigFile, "s3 cp '$gpgFile' 's3://" . $ubosConfig->{'bucket'} . "/$name.gpg'", $gpgFile );
-
-        info( 'Backed up to', "s3://" . $ubosConfig->{'bucket'} . "/$name.gpg" );
+        if( _aws( $awsConfigFile, "s3 cp '$gpgFile' 's3://" . $config->{'aws-bucket'} . "/$name.gpg'", $gpgFile )) {
+            fatal( "Failed to copy encrypted backup file to S3" );
+        }
+        info( 'Backed up to', "s3://" . $config->{'aws-bucket'} . "/$name.gpg" );
 
     } else {
-        _aws( $awsConfigFile, "s3 cp '" . $out->filename . "' 's3://" . $ubosConfig->{'bucket'} . "/$name'" );
-
-        info( 'Backed up to', "s3://" .  $ubosConfig->{'bucket'} . "/$name" );
+        if( _aws( $awsConfigFile, "s3 cp '" . $out->filename . "' 's3://" . $config->{'aws-bucket'} . "/$name'" )) {
+            fatal( "Failed to copy backup file to S3" );
+        }
+        info( 'Backed up to', "s3://" .  $config->{'aws-bucket'} . "/$name" );
     }
 
-    _saveUbosConfigIfChanged( $ubosConfigFile, $ubosConfig, $orgUbosConfig );
-
+    if( $configChange ) {
+        UBOS::Utils::writeJsonToFile(
+                defined( $configFile ) ? $configFile : $DEFAULT_CONFIG_FILE,
+                $config,
+                0600 );
+    }
     return $ret;
 }
 
 ##
-# Create the AWS config file
-sub _createAwsConfig {
-    my $f = shift;
+# Override a value in the config hash and report whether a change occurred.
+sub _overrideValue {
+    my $config    = shift;
+    my $configKey = shift;
+    my $value     = shift;
 
-    print "No Amazon credentials found in $f. To set this up, please provide the following information:\n";
-
-    my $content = <<CONTENT;
-[$PROFILE_NAME]
-region=$DEFAULT_REGION
-CONTENT
-    foreach my $key ( sort keys %AWS_CONFIG_FIELDS ) {
-        my $q     = $AWS_CONFIG_FIELDS{$key}[0];
-        my $regex = $AWS_CONFIG_FIELDS{$key}[1];
-        my $blank = $AWS_CONFIG_FIELDS{$key}[2];
-        my $value = _ask( $q, $regex, $blank );
-
-        $content .= "$key=$value\n"
+    unless( $value ) {
+        return 0;
     }
-
-    unless( UBOS::Utils::saveFile( $f, $content, 0600, 'root', 'root' )) {
-        fatal( 'Cannot write to config file', $f );
+    if( exists( $config->{$configKey} ) && $config->{$configKey} eq $value ) {
+        return 0; # nothing to do here
     }
-
-    1;
-}
-
-##
-# Save or update the UBOS config.
-sub _saveUbosConfigIfChanged {
-    my $f         = shift;
-    my $values    = shift;
-    my $orgValues = shift;
-
-    my $changed = 0;
-    if( scalar( %$values ) != scalar( %$orgValues )) {
-        $changed = 1;
-    } else {
-        foreach my $key ( keys %$values ) {
-            if( !exists( $orgValues->{$key} )) {
-                $changed = 1;
-                last;
-            }
-            if( $values->{$key} ne $orgValues->{$key} ) {
-                $changed = 1;
-                last;
-            }
-        }
-    }
-
-    if( $changed ) {
-        my $content = '';
-        foreach my $key ( sort keys %$values ) {
-            my $value = $values->{$key};
-
-            $content .= "$key=$value\n"
-        }
-
-        unless( UBOS::Utils::saveFile( $f, $content, 0600, 'root', 'root' )) {
-            fatal( 'Cannot write to config file', $f );
-        }
-    }
-
+    $config->{$configKey} = $value;
     return 1;
-}
-
-##
-# If it exists, read the UBOS config file.
-sub _readUbosConfigIfExists {
-    my $f = shift;
-
-    my $ret = {};
-    if( -r $f ) {
-        my $content = UBOS::Utils::slurpFile( $f );
-        my @lines   = split( /\n/, $content );
-
-        foreach my $line ( @lines ) {
-            $line =~ s!#.*$!!;
-            $line =~ s!^\s+!!;
-            $line =~ s!\s+$!!;
-            if( $line ) {
-                my( $key, $value ) = split( '=', $line, 2 );
-                $ret->{$key} = $value;
-            }
-        }
-    }
-
-    return $ret;
 }
 
 ##
 # Invoke an aws command
 # $configFile: the AWS config file to use
 # $cmd: the command
-# $deleteThis: name of a file to delete before bailing out
 sub _aws {
-    my $configFile   = shift;
-    my $cmd          = shift;
-    my $deleteThis   = shift;
+    my $configFile = shift;
+    my $awsCmd     = shift;
 
     my $out;
     my $err;
-    my $ret = 0;
-
-    # $ret = UBOS::Utils::myexec( "AWS_SHARED_CREDENTIALS_FILE='$configFile' aws --profile '$PROFILE_NAME' " . $cmd, undef, \$out, \$err );
-    print( "Should execute: AWS_SHARED_CREDENTIALS_FILE='$configFile' aws --profile '$PROFILE_NAME' " . $cmd . "\n" );
+    my $ret = UBOS::Utils::myexec(
+            "AWS_SHARED_CREDENTIALS_FILE='$configFile'"
+                    . " aws --profile '$PROFILE_NAME' "
+                    . $awsCmd,
+            undef,
+            \$out,
+            \$err );
 
     if( $ret ) {
-        if( $deleteThis && -e $deleteThis ) {
-            unlink( $deleteThis );
-        }
-
         if( $err =~ m!AccessDenied! ) {
-            fatal( 'S3 denied access. Check your AWS credentials, and your permissions to write to the bucket.' );
-        } else {
-            fatal( $err );
+            error( 'S3 denied access. Check your AWS credentials, and your permissions to write to the bucket.' );
         }
     }
     return $ret;
@@ -337,6 +301,8 @@ sub _ask {
         }
 
         if( defined( $ret )) { # apparently ^D becomes undef
+            $ret =~ s!^\s+!!;
+            $ret =~ s!\s+$!!;
             if( $ret =~ $regex ) {
                 last;
             } else {
@@ -425,7 +391,7 @@ HHH
             '--config <configfile>' => <<HHH
     Use an alternate configuration file. If this is given, do not
     specify --nostore. Default location of the configuration file is at
-    $DEFAULT_AWS_CONFIG_FILE.
+    $DEFAULT_CONFIG_FILE.
 HHH
         }
     };
