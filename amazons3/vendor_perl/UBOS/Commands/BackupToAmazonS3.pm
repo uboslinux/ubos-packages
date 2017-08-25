@@ -168,6 +168,7 @@ CONTENT
     $awsCmd .= " --region '" . $config->{'aws-region'} . "'";
 
     if( _aws( $awsConfigFile, $awsCmd ) != 0 ) {
+        info( 'Creating S3 bucket', $config->{'aws-bucket'} );
         $awsCmd  = 's3api create-bucket';
         $awsCmd .= ' --acl private';
         $awsCmd .= " --bucket '" . $config->{'aws-bucket'} . "'";
@@ -210,8 +211,12 @@ CONTENT
     my $ret = UBOS::BackupUtils::performBackup( $backup, $out->filename, \@siteIds, \@appConfigIds, $noTls, $noTorKey );
 
     if( exists( $config->{'gpg-encryptid'} ) && $config->{'gpg-encryptid'} ) {
+        info( 'Encrypting backup' );
+
         my $gpgFile = $out->filename . '.gpg';
         UBOS::Utils::myexec( "gpg --encrypt -r '" . $config->{'gpg-encryptid'} . "' " . $out->filename );
+
+        info( 'Uploading' );
 
         if( _aws( $awsConfigFile, "s3 cp '$gpgFile' 's3://" . $config->{'aws-bucket'} . "/$name.gpg'", $gpgFile )) {
             fatal( "Failed to copy encrypted backup file to S3" );
@@ -219,6 +224,8 @@ CONTENT
         info( 'Backed up to', "s3://" . $config->{'aws-bucket'} . "/$name.gpg" );
 
     } else {
+        info( 'Uploading' );
+
         if( _aws( $awsConfigFile, "s3 cp '" . $out->filename . "' 's3://" . $config->{'aws-bucket'} . "/$name'" )) {
             fatal( "Failed to copy backup file to S3" );
         }
