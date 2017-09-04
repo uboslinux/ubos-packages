@@ -2,7 +2,7 @@ developer=http://indiecomputing.com/
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=0.2
+pkgver=0.3
 pkgrel=1
 pkgdesc="Configures local SMTP to send e-mail for an originating domain via Amazon SES"
 arch=('any')
@@ -10,30 +10,26 @@ license=("GPL")
 options=('!strip')
 depends=('postfix')
 install=install
+_vendor_perl=$(perl -V::vendorarch: | sed -e "s![' ]!!g")
 
 package() {
 # Manifest
-    mkdir -p ${pkgdir}/var/lib/ubos/manifests
-    install -m0644 ${startdir}/ubos-manifest.json ${pkgdir}/var/lib/ubos/manifests/${pkgname}.json
+    install -D -m0644 ${startdir}/ubos-manifest.json ${pkgdir}/var/lib/ubos/manifests/${pkgname}.json
 
 # Icons
 #    mkdir -p ${pkgdir}/srv/http/_appicons/$pkgname
 #    install -m644 ${startdir}/appicons/{72x72,144x144}.png ${pkgdir}/srv/http/_appicons/$pkgname/
 
 # Config files go here
-    mkdir -p -m700 ${pkgdir}/etc/amazonses
     mkdir -p -m700 ${pkgdir}/etc/amazonses/{sender_dependent_relayhost_map.d,smtp_sasl_password_map.d}
     chown 73:73 ${pkgdir}/etc/amazonses
     chown 73:73 ${pkgdir}/etc/amazonses/{sender_dependent_relayhost_map.d,smtp_sasl_password_map.d}
     # 73: postfix
 
-    mkdir -p ${pkgdir}/etc/postfix
-    install -m644 ${startdir}/etc/postfix/ubos-aliases ${pkgdir}/etc/postfix/
+    install -D -m644 ${startdir}/etc/postfix/ubos-aliases -t ${pkgdir}/etc/postfix/
 
 # Code
-    mkdir -p ${pkgdir}/usr/share/${pkgname}/bin
-    install -m755 ${startdir}/bin/manage-site.pl ${pkgdir}/usr/share/${pkgname}/bin/
+    install -D -m755 ${startdir}/bin/manage-site.pl -t ${pkgdir}/usr/share/${pkgname}/bin/
 
-    mkdir -p ${pkgdir}/usr/lib/perl5/vendor_perl
-    install -m755 ${startdir}/vendor_perl/AmazonSes.pm ${pkgdir}/usr/lib/perl5/vendor_perl/
+    install -D -m755 ${startdir}/vendor_perl/AmazonSes.pm -t ${pkgdir}${_vendor_perl}/
 }
