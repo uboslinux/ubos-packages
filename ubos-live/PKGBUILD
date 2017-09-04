@@ -2,13 +2,14 @@ developer=http://indiecomputing.com/
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=0.3
+pkgver=0.4
 pkgrel=1
 pkgdesc="Functionality that allows UBOS to interact with UBOS Live"
 arch=('any')
 license=("GPL")
 options=('!strip')
 depends=('ubos-admin' 'openvpn')
+_vendor_perl=$(perl -V::vendorarch: | sed -e "s![' ]!!g")
 
 package() {
 # Config
@@ -18,6 +19,5 @@ package() {
     mkdir -p -m755 ${pkgdir}/etc/ubos-live
 
 # Code
-    mkdir -p ${pkgdir}/usr/lib/perl5/vendor_perl/UBOS/Commands
-    install -m755 ${startdir}/vendor_perl/UBOS/Commands/*.pm ${pkgdir}/usr/lib/perl5/vendor_perl/UBOS/Commands/
+    install -D -m755 ${startdir}/vendor_perl/UBOS/Commands/*.pm -t ${pkgdir}${_vendor_perl}/UBOS/Commands/
 }
