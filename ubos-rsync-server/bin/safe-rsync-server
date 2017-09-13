@@ -44,6 +44,8 @@ my $relPath     = $2;
 
 my $found = 0;
 my $packageName = shift @ARGV;
+my $rsyncSubdir = shift @ARGV;
+
 foreach my $arg ( @ARGV ) {
     if( $appConfigId eq $arg ) {
         $found = 1;
@@ -55,7 +57,7 @@ unless( $found ) {
     exit 7;
 }
 
-my $fullDest = "/var/lib/$packageName/$appConfigId/$relPath";
+my $fullDest = "/var/lib/$packageName/$appConfigId/$rsyncSubdir$relPath";
 my $cmd = "rsync$options . $fullDest";
 
 UBOS::Utils::myexec( $cmd );
