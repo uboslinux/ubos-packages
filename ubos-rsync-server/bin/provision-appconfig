@@ -100,7 +100,7 @@ CONTENT
 
     foreach my $key ( sort keys %keyToAppConfigIds ) {
         my @ids = @{$keyToAppConfigIds{$key}};
-        $content .= 'command="/usr/share/ubos-rsync/bin/safe-rsync.pl '
+        $content .= 'command="/usr/share/ubos-rsync/bin/safe-rsync-server '
                  . $packageName
                  . ' ' . $rsyncSubdir
                  . ' ' . join( ' ', @ids )
