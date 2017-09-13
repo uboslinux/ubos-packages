@@ -1,0 +1,19 @@
+developer=http://indiecomputing.com/
+url=${developer}
+maintainer=${developer}
+pkgname=$(basename $(pwd))
+pkgver=0.1
+pkgrel=1
+pkgdesc="Infrastructure to make it easy for apps to perform safe rsync"
+arch=('any')
+license=("GPL")
+options=('!strip')
+depends=('ubos-perl-utils' 'rsync')
+_vendor_perl=$(perl -V::vendorarch: | sed -e "s![' ]!!g")
+
+package() {
+# Code
+    mkdir -p ${pkgdir}/usr/share/${pkgname}/bin
+    install -m0755 ${startdir}/bin/provision.pl ${pkgdir}/usr/share/${pkgname}/bin/
+    install -m0755 ${startdir}/bin/safe-rsync.pl ${pkgdir}/usr/share/${pkgname}/bin/
+}
