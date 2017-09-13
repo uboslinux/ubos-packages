@@ -14,6 +14,5 @@ _vendor_perl=$(perl -V::vendorarch: | sed -e "s![' ]!!g")
 package() {
 # Code
     mkdir -p ${pkgdir}/usr/share/${pkgname}/bin
-    install -m0755 ${startdir}/bin/provision.pl ${pkgdir}/usr/share/${pkgname}/bin/
-    install -m0755 ${startdir}/bin/safe-rsync.pl ${pkgdir}/usr/share/${pkgname}/bin/
+    install -m0755 ${startdir}/bin/* ${pkgdir}/usr/share/${pkgname}/bin/
 }

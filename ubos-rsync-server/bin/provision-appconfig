@@ -26,6 +26,7 @@ use UBOS::Utils;
 my $packageName = $config->getResolve( 'package.name' );
 my $appConfigId = $config->getResolve( 'appconfig.appconfigid' );
 my $sshKey      = $config->getResolve( 'installable.customizationpoints.publicsshkey.value' );
+my $rsyncSubdir = '/rsyncsubdir';
 
 $sshKey =~ s!^\s+!!;
 $sshKey =~ s!\s+$!!;
@@ -101,6 +102,7 @@ CONTENT
         my @ids = @{$keyToAppConfigIds{$key}};
         $content .= 'command="/usr/share/ubos-rsync/bin/safe-rsync.pl '
                  . $packageName
+                 . ' ' . $rsyncSubdir
                  . ' ' . join( ' ', @ids )
                  . '"';
         $content .= " $key\n";
