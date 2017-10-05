@@ -5,7 +5,7 @@
 # Adapted for UBOS by: Indie Computing Corp.
 
 pkgname=dnsmasq
-pkgver=2.77
+pkgver=2.78
 pkgrel=1
 pkgdesc="Lightweight, easy to configure DNS forwarder and DHCP server"
 url="http://www.thekelleys.org.uk/dnsmasq/doc.html"
@@ -17,7 +17,7 @@ validpgpkeys=('D6EACBD6EE46B834248D111215CDDA6AE19135A2') # Simon Kelley <simon@
 source=("http://www.thekelleys.org.uk/$pkgname/$pkgname-$pkgver.tar.xz"{,.asc}
         'dnsmasq-sysusers.conf'
         'dnsmasq.service')
-sha512sums=('6ca98a71a8fdfd606e29c58b34dadfa63148c39f931570cca67a287e044d52c6ec2f8acbf5620ada3312e9db3a2fd63877188d829c070beaa730607e3309e768'
+sha512sums=('9b79b84e5a768d52f90f6335ccef2c404ecd7a13e78e49f4cd0755fffc6cf34d0dc96ad4c72cad1dab3c5743a8d0d789b3e9b6e625b03c5675bb898ca61a698b'
             'SKIP'
             '8e0194a6c5bd2bb6e008681808c0fbf5edbd88c2c039527587479a1850b8199444aaa70cb7252063d322f97111f89a3e8c0d4d6d1afacdf83a5ea6166233735b'
             '997845e48547918dfb9173764dddadf82f2e8f8b4b921bc54633c5089a6b7579b25c7772130dafc2ff742ed2e18d0719bce240155273e37b466019c90aaac731')
