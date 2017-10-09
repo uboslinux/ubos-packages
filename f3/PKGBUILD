@@ -1,0 +1,34 @@
+# Maintainer: Kyle <kyle@gmx.ca>
+# Contributor: mib1982 <Mi.Bentlage@gmail.com>
+# Contributor: z3ntu <luca.emanuel.weiss@gmail.com>
+# Adapted for UBOS by: Indie Computing Corp.
+
+pkgname=f3
+pkgver=6.0
+pkgrel=2
+pkgdesc="Utilities to detect and repair counterfeit flash storage, i.e. thumb drives and memory cards with less flash than advertised"
+arch=('i686' 'x86_64')
+url="http://oss.digirati.com.br/f3/"
+license=('GPL3')
+depends=('parted')
+options=('!buildflags'
+         '!makeflags')
+conflicts=()
+provides=()
+source=(https://github.com/AltraMayor/${pkgname}/archive/v${pkgver}.zip)
+sha512sums=('cf481be71c84ca879836300550c8b95093d61ef7e943ec149e6096ee8102ab8d55678e59fb90e3ef76eeb60add3cd0b6ae87499851cfa9e5d11130bd5740195e')
+
+build() {
+    cd ${srcdir}/${pkgname}-${pkgver}
+    make
+    make experimental
+}
+
+package() {
+    cd ${srcdir}/${pkgname}-${pkgver}
+    install -m 755 -d ${pkgdir}/usr/bin ${pkgdir}/usr/share/man/man1
+    install -m 755 f3brew f3fix f3probe f3read f3write f3write.h2w log-f3wr ${pkgdir}/usr/bin/
+    install -m 644 f3read.1 ${pkgdir}/usr/share/man/man1/
+    cd ${pkgdir}/usr/share/man/man1
+    ln -s f3read.1 f3write.1
+}
