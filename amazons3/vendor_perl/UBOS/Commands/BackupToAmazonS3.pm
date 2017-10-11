@@ -94,7 +94,7 @@ sub run {
         if( -e $configFile ) {
             $config = UBOS::Utils::readJsonFromFile( $configFile );
             unless( $configFile ) {
-                fatal( 'Failed to read config file:', $configFile );
+                fatal();
             }
         } else {
             fatal( 'Specified config file does not exist:', $configFile );
@@ -102,7 +102,7 @@ sub run {
     } elsif( -e $DEFAULT_CONFIG_FILE ) {
         $config = UBOS::Utils::readJsonFromFile( $DEFAULT_CONFIG_FILE );
         unless( $configFile ) {
-            fatal( 'Failed to read config file:', $DEFAULT_CONFIG_FILE );
+            fatal();
         }
         $configFile = $DEFAULT_CONFIG_FILE;
     } # else: we don't have a configuration yet.
