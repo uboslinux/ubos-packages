@@ -1,6 +1,7 @@
 [Unit]
 Description=A lightweight DHCP and caching DNS server
 After=network.target
+After=systemd-resolved.service
 Documentation=man:dnsmasq(8)
 
 [Service]
