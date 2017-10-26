@@ -93,16 +93,16 @@ sub run {
     if( $configFile ) {
         if( -e $configFile ) {
             $config = UBOS::Utils::readJsonFromFile( $configFile );
-            unless( $configFile ) {
-                fatal();
+            unless( $config ) {
+                fatal( 'Failed to parse config file:', $configFile );
             }
         } else {
             fatal( 'Specified config file does not exist:', $configFile );
         }
     } elsif( -e $DEFAULT_CONFIG_FILE ) {
         $config = UBOS::Utils::readJsonFromFile( $DEFAULT_CONFIG_FILE );
-        unless( $configFile ) {
-            fatal();
+        unless( $config ) {
+            fatal( 'Failed to parse config file:', $DEFAULT_CONFIG_FILE );
         }
         $configFile = $DEFAULT_CONFIG_FILE;
     } # else: we don't have a configuration yet.
@@ -178,27 +178,7 @@ CONTENT
             # strange API
         }
         if( _aws( $awsConfigFile, $awsCmd ) != 0 ) {
-            fatal( 'Bucket does not exist, but cannot create either:', $config->{'aws-bucket'} );
-        }
-    }
-
-    unless( $name ) {
-        my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime( time() );
-        my $now = sprintf( "%04d%02d%02d%02d%02d%02d", $year+1900, $mon+1, $mday, $hour, $min, $sec );
-
-        if( @siteIds == 1 ) {
-            $name = sprintf( "site-%s-%s.ubos-backup", $siteIds[0], $now );
-
-        } elsif( @siteIds ) {
-            my $hostId = lc( UBOS::Host::gpgHostKeyFingerprint());
-            $name = sprintf( "site-multi-%s-%s.ubos-backup", $hostId, $now );
-
-        } elsif( @appConfigIds == 1 ) {
-            $name = sprintf( "appconfig-%s-%s.ubos-backup", $appConfigIds[0], $now );
-
-        } else {
-            my $hostId = lc( UBOS::Host::gpgHostKeyFingerprint());
-            $name = sprintf( "appconfig-multi-%s-%s.ubos-backup", $hostId, $now );
+            fatal( 'S3 Bucket does not exist, and cannot create:', $config->{'aws-bucket'} );
         }
     }
 
@@ -209,6 +189,34 @@ CONTENT
 
     my $backup = UBOS::Backup::ZipFileBackup->new();
     my $ret = UBOS::BackupUtils::performBackup( $backup, $out->filename, \@siteIds, \@appConfigIds, $noTls, $noTorKey );
+    unless( $ret ) {
+        error( $@ );
+        return $ret;
+    }
+
+    unless( $name ) {
+        my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime( time() );
+        my $now = sprintf( "%04d%02d%02d%02d%02d%02d", $year+1900, $mon+1, $mday, $hour, $min, $sec );
+
+        my $actualSites      = $backup->sites();
+        my $actualAppConfigs = $backup->appConfigs();
+
+        if( keys %$actualSites == 1 ) {
+            $name = sprintf( "site-%s-%s.ubos-backup", ( keys %$actualSites )[0], $now );
+
+        } elsif( keys %$actualSites ) {
+            my $hostId = lc( UBOS::Host::gpgHostKeyFingerprint());
+            $name = sprintf( "site-multi-%s-%s.ubos-backup", $hostId, $now );
+
+        } elsif( keys %$actualAppConfigs == 1 ) {
+            $name = sprintf( "appconfig-%s-%s.ubos-backup", ( keys %$actualAppConfigs )[0], $now );
+
+        } else {
+            my $hostId = lc( UBOS::Host::gpgHostKeyFingerprint());
+            $name = sprintf( "appconfig-multi-%s-%s.ubos-backup", $hostId, $now );
+        }
+    }
+
 
     if( exists( $config->{'gpg-encryptid'} ) && $config->{'gpg-encryptid'} ) {
         info( 'Encrypting backup' );
@@ -269,8 +277,9 @@ sub _aws {
     my $out;
     my $err;
     my $ret = UBOS::Utils::myexec(
+"echo " .
             "AWS_SHARED_CREDENTIALS_FILE='$configFile'"
-                    . " aws --profile '$PROFILE_NAME' "
+                    . " aws --profile '$AWS_PROFILE_NAME' "
                     . $awsCmd,
             undef,
             \$out,
