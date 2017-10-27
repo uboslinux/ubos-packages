@@ -88,6 +88,7 @@ sub run {
         fatal( 'Invalid invocation:', $cmd, @_, '(add --help for help)' );
     }
 
+    my $firstTime    = 1;
     my $config       = {}; # by default we have nothing
     my $configChange = 0;
     if( $configFile ) {
@@ -96,6 +97,7 @@ sub run {
             unless( $config ) {
                 fatal( 'Failed to parse config file:', $configFile );
             }
+            $firstTime = 0;
         } else {
             fatal( 'Specified config file does not exist:', $configFile );
         }
@@ -104,6 +106,7 @@ sub run {
         unless( $config ) {
             fatal( 'Failed to parse config file:', $DEFAULT_CONFIG_FILE );
         }
+        $firstTime  = 0;
         $configFile = $DEFAULT_CONFIG_FILE;
     } # else: we don't have a configuration yet.
 
@@ -201,15 +204,15 @@ CONTENT
         my $actualSites      = $backup->sites();
         my $actualAppConfigs = $backup->appConfigs();
 
-        if( keys %$actualSites == 1 ) {
-            $name = sprintf( "site-%s-%s.ubos-backup", ( keys %$actualSites )[0], $now );
+        if( @$actualSites == 1 ) {
+            $name = sprintf( "site-%s-%s.ubos-backup", $actualSites->[0]->siteId(), $now );
 
-        } elsif( keys %$actualSites ) {
+        } elsif( @$actualSites ) {
             my $hostId = lc( UBOS::Host::gpgHostKeyFingerprint());
             $name = sprintf( "site-multi-%s-%s.ubos-backup", $hostId, $now );
 
-        } elsif( keys %$actualAppConfigs == 1 ) {
-            $name = sprintf( "appconfig-%s-%s.ubos-backup", ( keys %$actualAppConfigs )[0], $now );
+        } elsif( @$actualAppConfigs == 1 ) {
+            $name = sprintf( "appconfig-%s-%s.ubos-backup", $actualAppConfigs->[0]->appConfigId(), $now );
 
         } else {
             my $hostId = lc( UBOS::Host::gpgHostKeyFingerprint());
@@ -241,6 +244,10 @@ CONTENT
     }
 
     if( $configChange ) {
+        unless( $firstTime ) {
+            info( 'Configuration changed. Defaults were updated.' );
+        }
+
         UBOS::Utils::writeJsonToFile(
                 defined( $configFile ) ? $configFile : $DEFAULT_CONFIG_FILE,
                 $config,
