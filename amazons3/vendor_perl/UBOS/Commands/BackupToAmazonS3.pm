@@ -284,7 +284,6 @@ sub _aws {
     my $out;
     my $err;
     my $ret = UBOS::Utils::myexec(
-"echo " .
             "AWS_SHARED_CREDENTIALS_FILE='$configFile'"
                     . " aws --profile '$AWS_PROFILE_NAME' "
                     . $awsCmd,
