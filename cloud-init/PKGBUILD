@@ -6,7 +6,7 @@
 
 pkgname=cloud-init
 pkgver=0.7.6
-pkgrel=8
+pkgrel=9
 pkgdesc="Provides configuration and customization for cloud instances"
 arch=(any)
 license=("GPL3")
@@ -22,6 +22,7 @@ depends=(systemd
          python2-jsonpointer
          python2-oauth
          python2-prettytable
+         python2-requests
          python2-setuptools
          python2-yaml
          )
