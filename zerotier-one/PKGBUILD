@@ -13,6 +13,7 @@ source=(
     ${pkgname}-${pkgver}::https://github.com/zerotier/ZeroTierOne/archive/${pkgver}.tar.gz
     ${pkgname}.install
 )
+releasepage=('https://www.zerotier.com/download.shtml')
 makedepends=(
     npm
 )

@@ -35,6 +35,7 @@ makedepends=('python2' 'python2-setuptools')
 options=(!emptydirs)
 
 source=(https://launchpad.net/$pkgname/trunk/$pkgver/+download/$pkgname-$pkgver.tar.gz)
+releasepage=('https://launchpad.net/cloud-init')
 sha512sums=('aa2397328afda8e77ed6d642e7642f41a4b4b5bcd3d0e87056aa8c88b56624ec65c57cfc66b0d13ccc235f1840baf1d577316974902a0439cf2f2eb0f8eef36d')
 backup=(etc/cloud/cloud.cfg etc/cloud/cloud.cfg.d/05_logging.cfg)
 
