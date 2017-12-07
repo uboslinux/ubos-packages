@@ -17,6 +17,7 @@ validpgpkeys=('D6EACBD6EE46B834248D111215CDDA6AE19135A2') # Simon Kelley <simon@
 source=("http://www.thekelleys.org.uk/$pkgname/$pkgname-$pkgver.tar.xz"{,.asc}
         'dnsmasq-sysusers.conf'
         'dnsmasq.service')
+releasepage=('http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=summary')
 sha512sums=('9b79b84e5a768d52f90f6335ccef2c404ecd7a13e78e49f4cd0755fffc6cf34d0dc96ad4c72cad1dab3c5743a8d0d789b3e9b6e625b03c5675bb898ca61a698b'
             'SKIP'
             '8e0194a6c5bd2bb6e008681808c0fbf5edbd88c2c039527587479a1850b8199444aaa70cb7252063d322f97111f89a3e8c0d4d6d1afacdf83a5ea6166233735b'

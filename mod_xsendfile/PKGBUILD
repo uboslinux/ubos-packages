@@ -11,6 +11,7 @@ url='https://github.com/nmaier/mod_xsendfile'
 license=('Apache')
 makedepends=('apache')
 source=("https://github.com/nmaier/${pkgname}/archive/${pkgver}.tar.gz")
+releasepage=("https://github.com/nmaier/mod_xsendfile/releases")
 sha512sums=('1c5f8eb27680957fe7b482b3fde6245d4020d6cc756a23735e2716a47c864da4ff0a4265bb8bd9d3fed8db7085f691069ffe3c6c8727d6fa4affe3f18bb150dc')
 
 build() {

@@ -16,6 +16,7 @@ options=('!buildflags'
 conflicts=()
 provides=()
 source=(https://github.com/AltraMayor/${pkgname}/archive/v${pkgver}.zip)
+releasepage=("https://github.com/AltraMayor/f3/releases")
 sha512sums=('cf481be71c84ca879836300550c8b95093d61ef7e943ec149e6096ee8102ab8d55678e59fb90e3ef76eeb60add3cd0b6ae87499851cfa9e5d11130bd5740195e')
 
 build() {
