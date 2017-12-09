@@ -1,0 +1,78 @@
+#!/usr/bin/perl
+#
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+use UBOS::Logging;
+use UBOS::Utils;
+
+my $verbose       = 0;
+my $logConfigFile = undef;
+my $debug         = 0;
+
+my $bluePin  = 477;
+my $redPin   = 494;
+my $greenPin = 495;
+my $fanPin   = 493;
+
+my @ledPins = ( $bluePin, $redPin, $greenPin );
+my @allPins = ( @ledPins, $fanPin );
+
+my $parseOk = GetOptions(
+        'verbose+'    => \$verbose,
+        'logConfig=s' => \$logConfigFile,
+        'debug'       => \$debug );
+UBOS::Logging::initialize( 'espressobin-state', 'update', $verbose, $logConfigFile, $debug );
+
+if( !$parseOk ||@ARGV != 1 ) {
+    fatal( "Wrong invocation" );
+}
+
+my $delta = $ARGV[0];
+if( 'booted' eq $delta ) {
+    setPin( $redPin );
+    setPin( $fanPin );
+
+} elsif( 'shuttingdown' eq $delta ) {
+    setPin( $bluePin );
+
+} elsif( 'networked' eq $delta ) {
+    setPin( $greenPin );
+
+} elsif( 'networklost' eq $delta ) {
+    setPin( $redPin );
+
+} else {
+    fatal( 'Unknown option:', $delta );
+}
+
+
+sub setPin {
+    my $pinToSet = shift;
+
+    foreach my $pin ( @allPins ) {
+        unless( -e "/sys/class/gpio/gpio$pin" ) {
+            if( UBOS::Utils::myexec( 'cat > /sys/class/gpio/export', "$pin\n" )) {
+                error( 'Cannot write', $pin, 'to /sys/class/gpio/export', $@ );
+            }
+        }
+        if( UBOS::Utils::saveFile( "/sys/class/gpio/gpio$pin/direction", "out\n" ) == 0 ) {
+            error( 'Failed to change pin direction:', $pin );
+        }
+    }
+    if( $pinToSet != $fanPin ) {
+        foreach my $pin ( @ledPins ) {
+            if( UBOS::Utils::saveFile( "/sys/class/gpio/gpio$pin/value", "0\n" ) == 0 ) {
+                error( 'Failed to change pin value:', $pin );
+            }
+        }
+    }
+    if( UBOS::Utils::saveFile( "/sys/class/gpio/gpio$pinToSet/value", "1\n" ) == 0 ) {
+        error( 'Failed to change pin value:', $pinToSet );
+    }
+}
+
+1;
+

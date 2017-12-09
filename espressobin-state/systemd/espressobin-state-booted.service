@@ -1,0 +1,12 @@
+[Unit]
+Description=Toggles LED when the EspressoBIN is/is not fully booted
+Requires=multi-user.target
+After=multi-user.target
+
+[Service]
+ExecStart=/usr/share/espressobin-state/bin/update booted
+ExecStop=/usr/share/espressobin-state/bin/update shuttingdown
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

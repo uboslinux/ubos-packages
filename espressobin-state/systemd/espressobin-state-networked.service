@@ -1,0 +1,14 @@
+[Unit]
+Description=Toggles LED when the EspressoBIN is/is not connected to the network
+Requires=systemd-networkd-wait-online.service
+After=systemd-networkd-wait-online.service
+After=espressobin-state-booted.service
+
+[Service]
+ExecStart=/usr/share/espressobin-state/bin/update networked
+ExecStop=/usr/share/espressobin-state/bin/update networklost
+RemainAfterExit=yes
+
+[Install]
+WantedBy=network-online.target
+WantedBy=systemd-networkd-wait-online.service
