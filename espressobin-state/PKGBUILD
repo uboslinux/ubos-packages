@@ -1,0 +1,16 @@
+pkgname=$(basename $(pwd))
+pkgver=0.1
+pkgrel=1
+pkgdesc="EspressoBIN LED control"
+url="http://ubos.net/"
+arch=('aarch64')
+license=('GPL')
+options=('!strip')
+
+package() {
+    mkdir -p ${pkgdir}/usr/share/espressobin-state/bin
+    install -m755 ${startdir}/bin/* -t ${pkgdir}/usr/share/espressobin-state/bin/
+
+    mkdir -p ${pkgdir}/etc/systemd/system
+    install -m644 ${startdir}/systemd/* -t ${pkgdir}/etc/systemd/system/
+}
