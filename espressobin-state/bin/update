@@ -32,17 +32,11 @@ if( !$parseOk ||@ARGV != 1 ) {
 
 my $delta = $ARGV[0];
 if( 'booted' eq $delta ) {
-    setPin( $redPin );
+    setPin( $greenPin );
     setPin( $fanPin );
 
 } elsif( 'shuttingdown' eq $delta ) {
     setPin( $bluePin );
-
-} elsif( 'networked' eq $delta ) {
-    setPin( $greenPin );
-
-} elsif( 'networklost' eq $delta ) {
-    setPin( $redPin );
 
 } else {
     fatal( 'Unknown option:', $delta );
