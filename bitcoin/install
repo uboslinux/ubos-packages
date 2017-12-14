@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+
+post_install() {
+    perl <<'PERL'
+use strict;
+use warnings;
+
+use UBOS::Utils;
+
+my $credFile = '/etc/bitcoin/rpccredentials';
+my $confFile = '/etc/bitcoin/bitcoin.conf';
+
+unless( -e $credFile ) {
+    my $user = UBOS::Utils::randomIdentifier( 16 );
+    my $pass = UBOS::Utils::randomPassword( 64 );
+
+    UBOS::Utils::saveFile( $credFile, <<CONTENT, 0600 );
+rpcuser: $user
+rpcpass: $pass
+CONTENT
+
+    my $confContent = UBOS::Utils::slurpFile( $confFile );
+    my $newConfContent = $confContent;
+    $newConfContent =~ s!\$\{rpcuser}!$user!g;
+    $newConfContent =~ s!\$\{rpcpass}!$pass!g;
+
+    if( $confContent ne $newConfContent ) {
+        UBOS::Utils::saveFile( $confFile, $newConfContent, 0600 );
+    }
+}
+1;
+PERL
+}

@@ -1,0 +1,11 @@
+[Unit]
+Description=Bitcoin daemon
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/bitcoind.pid
+ExecStart=/usr/bin/bitcoind -conf=/etc/bitcoin/bitcoin.conf -daemon -datadir=/var/lib/bitcoind
+
+[Install]
+WantedBy=multi-user.target
