@@ -31,5 +31,5 @@ package() {
     install -m755  go-ethereum-${pkgver}/build/bin/* -t ${pkgdir}/usr/share/${pkgname}/bin/
     ln -s /usr/share/${pkgname}/bin/geth ${pkgdir}/usr/bin/geth
 
-    install -m644 ${startdir}/geth.service ${pkgdir}/usr/lib/systemd/system
+    install -m644 ${startdir}/geth.service ${pkgdir}/usr/lib/systemd/system/
 }
