@@ -1,12 +1,13 @@
 # From AUR:
 # Maintainer: Alexander Görtz <aur@nyloc.de>
-# Maintainer: Johannes Ernst <jernst@indiecomputing.com>, augmented for UBOS
+# Aaugmented for UBOS
 
+maintainer="http://indiecomputing.com/"
 pkgname=mod_xsendfile
 pkgver=0.12
-pkgrel=3
+pkgrel=4
 pkgdesc='Apache module for XSendFile header'
-arch=('i686' 'x86_64')
+arch=('x86_64')
 url='https://github.com/nmaier/mod_xsendfile'
 license=('Apache')
 makedepends=('apache')

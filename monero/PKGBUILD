@@ -1,21 +1,22 @@
 # From Arch AUR, with modification for UBOS
 # https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=monero
 
+maintainer="http://indiecomputing.com/"
 developer='https://getmonero.org/'
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
 pkgver=0.11.1.0
-pkgrel=2
+pkgrel=3
 pkgdesc="Monero: the secure, private, untraceable currency"
-license=('custom:Cryptonote')
-arch=('x86_64' 'i686' 'armv7h' 'aarch64')
+license=('custom:monero')
+arch=('x86_64' 'armv7h' 'aarch64')
 depends=('boost-libs' 'unbound' 'miniupnpc' 'libunwind' 'openssl')
 makedepends=('git' 'cmake' 'boost' 'gtest')
 provides=('monero' 'libmonero-wallet')
 backup=('etc/monero/monerod.conf')
 install=monero.install
-
+releasepage=("https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=monero")
 source=("https://github.com/monero-project/monero/archive/v${pkgver}.tar.gz"
         "monerod.service"
         "cmake-wallet.patch")
@@ -77,6 +78,9 @@ package_monero() {
     # TODO(anonimal): new, working, systemd service file was not merged into monero branch v0.11.1.0 - so we've git-add'd it ourselves
     #install -Dm644 "${srcdir}/${_monero}/utils/systemd/monerod.service" "${pkgdir}/usr/lib/systemd/system/monerod.service"
     install -Dm644 "${srcdir}/monerod.service" "${pkgdir}/usr/lib/systemd/system/monerod.service"
+
+    # License
+    install -Dm644 "${srcdir}/${_monero}/LICENSE" -t "${pkgdir}/usr/share/licenses/monero/"
 }
 
 package_libmonero-wallet() {

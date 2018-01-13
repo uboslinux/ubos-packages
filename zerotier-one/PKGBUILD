@@ -3,11 +3,11 @@ url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
 pkgver=1.2.4
-pkgrel=1
+pkgrel=2
 pkgdesc='ZeroTier is a software defined networking layer for Earth.'
 arch=('x86_64' 'armv6h' 'armv7h' 'aarch64')
 url=http://zerotier.com/
-license=('GPL')
+license=('GPL3')
 install=${pkgname}.install
 source=(
     ${pkgname}-${pkgver}::https://github.com/zerotier/ZeroTierOne/archive/${pkgver}.tar.gz
