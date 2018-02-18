@@ -3,7 +3,7 @@ url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
 pkgver=0.15.1
-pkgrel=2
+pkgrel=3
 arch=('x86_64')
 pkgdesc="Bitcoin is a peer-to-peer network based digital currency"
 makedepends=('autoconf' 'automake' 'boost' 'qt5-base' 'qt5-tools' 'qrencode' 'miniupnpc' 'protobuf' 'zeromq')
@@ -14,6 +14,13 @@ sha512sums=('08370229da9b21f386c2476d472fcc3a06790f9ba657dbfdf6730ceb7505aa33a96
 validpgpkeys=(71A3B16735405025D447E8F274810B012346C9A6)
 backup=('etc/bitcoin/bitcoin.conf')
 install=install
+releasepage=('https://github.com/bitcoin/bitcoin/releases')
+
+prepare() {
+    cd ${pkgbase}-${pkgver}
+    patch -p0 < ${startdir}/issue-11847.patch
+    # From https://github.com/bitcoin/bitcoin/pull/11847/files
+}
 
 build() {
     cd ${pkgbase}-${pkgver}
