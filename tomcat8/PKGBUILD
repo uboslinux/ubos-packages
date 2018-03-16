@@ -2,7 +2,7 @@
 
 pkgname=tomcat8
 pkgver=8.0.47
-pkgrel=1
+pkgrel=2
 pkgdesc='Open source implementation of the Java Servlet 3.1 and JavaServer Pages 2.3 technologies'
 arch=('any')
 url='http://tomcat.apache.org/'
@@ -31,7 +31,7 @@ sha256sums=('e411254c98ed5cbdc7888037a4b672f6c9c50aa60fce7c7e759f6704e2d86477'
             '0dc1fdb537d3488756755f3fb713a9638597d4c68596f6f94f2707e8363cf5e2')
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/tomcat8')
-pkgverforked='8.0.47-1'
+pkgverforked=('8.0.47-1')
 
 _gid_log=19
 _gid_tomcat=57
