@@ -1,0 +1,51 @@
+# From Arch, using UBOS configuration
+
+pkgname=tor
+pkgver=0.3.2.9
+pkgrel=2
+pkgdesc='Anonymizing overlay network.'
+arch=('x86_64')
+url='https://www.torproject.org/'
+license=('BSD')
+depends=('openssl' 'libevent' 'bash' 'libseccomp')
+optdepends=('torsocks: for torify')
+makedepends=('ca-certificates')
+backup=('etc/tor/torrc'
+        'etc/tor/torrc-dist')
+source=("https://www.torproject.org/dist/${pkgname}-${pkgver}.tar.gz"{,.asc}
+        'tor.service'
+        'tor.sysusers'
+        'tor.tmpfiles')
+sha512sums=('60b8d93eee8d0b04b49a8fa941ea3489e8cd9b3f3923d9da39865caa1f5bce6666c1db06594520aa3726151a54c9c0c30bb8d9b25fb38d7172ffb15a011d6c8c'
+            'SKIP'
+            '86a5c926cc395f1129258268cc1ec6e312ebf0160658a319e06fed4a79b46f955a3f6568944f8adf17202b292d113f51a97c989445f39047010513e679671b4f'
+            '45bdf0a3afa93b0e48bd4a3ae7702a571041d9ac761035a07505436be7fd6d89d5b4ed046fc5a5a75a3119c6fcb8a1e42b05e7638925ac8b63ff0780461851ee'
+            '262a38979f42a4a675149e058410db4165ed97f8544f2d95838983a1ec9c760332c5857ab182e60c5c44104cd3ac551959a26a80036826c18c1e93e9e387584c')
+validpgpkeys=('2133BC600AB133E1D826D173FE43009C4607B1FB') # Nick Mathewson
+
+releasepage=('https://git.archlinux.org/svntogit/community.git/tree/trunk?h=packages/tor')
+pkgverforked=('0.3.2.9-1')
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/ubos
+  make
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+
+  make DESTDIR="${pkgdir}" install
+
+  mkdir -p -m755 ${pkgdir}/etc/tor/sites.d
+  install -Dm0644 ${startdir}/{pre,post}fix -t ${pkgdir}/etc/tor/
+
+  install -Dm0644 "${srcdir}/tor.service" "${pkgdir}/usr/lib/systemd/system/tor.service"
+  install -Dm0644 "${srcdir}/tor.sysusers" "${pkgdir}/usr/lib/sysusers.d/tor.conf"
+  install -Dm0644 "${srcdir}/tor.tmpfiles" "${pkgdir}/usr/lib/tmpfiles.d/tor.conf"
+
+  install -Dm0755 "${startdir}/bin/recreate-torrc" "${pkgdir}/usr/share/tor/bin/recreate-torrc"
+
+  install -Dm0644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
