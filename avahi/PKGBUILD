@@ -27,7 +27,7 @@ source=("git+https://github.com/lathiat/avahi#commit=$_commit"
 sha512sums=('SKIP'
             '8cfc7c2cb0061e6348caa96b73bb6069efce5b4438962aa12448e46bc950a47c1f18059afbb1cacf7b2a1aa21f77025472532ad5e6eddb17834a8b1a34432226')
 
-releasepage=('https://git.archlinux.org/svntogit/packages.git/log/trunk?h=packages/avahi')
+releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/avahi')
 pkgverforked='0.7-4'
 
 pkgver() {
