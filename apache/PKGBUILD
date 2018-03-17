@@ -1,0 +1,139 @@
+# From Arch, adapted for UBOS
+
+pkgname=apache
+pkgver=2.4.29
+pkgrel=2
+pkgdesc='A high performance Unix-based HTTP server'
+arch=('x86_64')
+url='http://www.apache.org/dist/httpd'
+license=('APACHE')
+backup=(
+    etc/httpd/conf/defaults.conf
+    etc/httpd/conf/errors.conf
+    etc/httpd/conf/logging.conf
+    etc/httpd/conf/usersettings.conf
+    etc/httpd/conf/{mime.types,magic}
+    etc/httpd/defaultsites/fallback.conf
+    etc/logrotate.d/httpd
+)
+
+depends=('zlib' 'apr-util' 'pcre' 'libnghttp2' 'openssl')
+makedepends=('libxml2' 'lua')
+optdepends=(
+    'lua: for mod_lua module'
+    'libxml2: for mod_proxy_html, mod_xml2enc modules'
+    'lynx: apachectl status'
+)
+source=(
+    https://www.apache.org/dist/httpd/httpd-${pkgver}.tar.bz2{,.asc}
+    openssl-malloc-init.patch
+    apache.tmpfiles.conf
+    httpd.logrotate
+    httpd.service
+    ubos.layout
+)
+sha512sums=('840982fd3d21463bc5c1747f211dfacf3abdf634d149e49bb49fd2e5deda140de602dbdf31e1bbe5337a48f718ab2261c408e83a8dd39a9291ee7b6b7a85639a'
+            'SKIP'
+            '7bf4e6645dd6f9ec5a1a95d8a51b7d65661077338b606745b1a558ae0057547e1709c451138269b6d4c913847e51c57a939262f46fcadb82e1ccb24a35165dba'
+            '57fece1a3e4e3cbd6135203172ecf32570405f7205dc84adc076a50cdab20db868270d8e658314f5273616f81b356d7b88c31e0ee8a8ce6a3e77ab15ef6a8f36'
+            '1142c9120f9a73dda7a36d2f5d4853734d10072ac0f5adf8aae3f38c98587dc34792438f1f05796782d33c1227ef311e9346d617655c6d1c2590cc57ecba17b7'
+            '6b1a84df368492d8847332f4af9ce609e79990c0ce0e4682c06fbc168e577f889b5f643db73e87b765e329e72c9df04dafd146fef232d796474c177a0f5c8bcf'
+            'd0efb162d50648c389e47ef407604c9cce96dce82e43f8dcc1f8f2c793f361636786d330f03715b8d39963f70fe94e0dce3a419d3a3392ffca9da5c01bfb96d1')
+validpgpkeys=('A93D62ECC3C8EA12DB220EC934EA76E6791485A8') # Jim Jagielski
+
+releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/apache')
+pkgverforked=('2.4.29-1')
+
+prepare() {
+  cd httpd-${pkgver}
+
+  # set default user
+  sed -e 's#User daemon#User http#' \
+      -e 's#Group daemon#Group http#' \
+      -i docs/conf/httpd.conf.in
+
+  cat "${srcdir}/ubos.layout" >> config.layout
+
+  # https://github.com/openssl/openssl/issues/2865
+  patch -Np1 -i ../openssl-malloc-init.patch
+}
+
+build() {
+  cd httpd-${pkgver}
+
+  ./configure --sbindir=/usr/bin \
+      --enable-layout=UBOS \
+      --enable-mpms-shared=all \
+      --enable-modules=all \
+      --enable-mods-shared=all \
+      --enable-so \
+      --enable-suexec \
+      --with-suexec-caller=http \
+      --with-suexec-docroot=/ubos/http \
+      --with-suexec-logfile=/var/log/httpd/suexec.log \
+      --with-suexec-bin=/usr/bin/suexec \
+      --with-suexec-uidmin=99 --with-suexec-gidmin=99 \
+      --enable-ldap --enable-authnz-ldap --enable-authnz-fcgi \
+      --enable-cache --enable-disk-cache --enable-mem-cache --enable-file-cache \
+      --enable-ssl --with-ssl \
+      --enable-deflate --enable-cgi --enable-cgid \
+      --enable-proxy --enable-proxy-connect \
+      --enable-proxy-http --enable-proxy-ftp \
+      --enable-dbd --enable-imagemap --enable-ident --enable-cern-meta \
+      --enable-lua --enable-xml2enc --enable-http2 \
+      --with-apr=/usr/bin/apr-1-config \
+      --with-apr-util=/usr/bin/apu-1-config \
+      --with-pcre=/usr
+
+  make
+}
+
+package() {
+  cd httpd-${pkgver}
+
+  make DESTDIR="${pkgdir}" install
+
+  install -D -m644 "${srcdir}/httpd.logrotate" "${pkgdir}/etc/logrotate.d/httpd"
+  install -D -m644 "${srcdir}/apache.tmpfiles.conf" "${pkgdir}/usr/lib/tmpfiles.d/apache.conf"
+  install -D -m644 "${srcdir}/httpd.service" "${pkgdir}/usr/lib/systemd/system/httpd.service"	
+  install -D -m644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+
+  # symlinks for /etc/httpd
+  # do we really need this symlink?
+#  ln -fs /usr/lib/httpd/modules "${pkgdir}/etc/httpd/modules"
+
+  # set sane defaults
+#  sed -e 's#/usr/lib/httpd/modules/#modules/#' \
+#      -e 's|#\(LoadModule negotiation_module \)|\1|' \
+#      -e 's|#\(LoadModule include_module \)|\1|' \
+#      -e 's|#\(LoadModule userdir_module \)|\1|' \
+#      -e 's|#\(LoadModule slotmem_shm_module \)|\1|' \
+#      -e 's|#\(Include conf/extra/httpd-multilang-errordoc.conf\)|\1|' \
+#      -e 's|#\(Include conf/extra/httpd-autoindex.conf\)|\1|' \
+#      -e 's|#\(Include conf/extra/httpd-languages.conf\)|\1|' \
+#      -e 's|#\(Include conf/extra/httpd-userdir.conf\)|\1|' \
+#      -e 's|#\(Include conf/extra/httpd-default.conf\)|\1|' \
+#      -e 's|#\(Include conf/extra/httpd-mpm.conf\)|\1|' \
+#      -i "${pkgdir}/etc/httpd/conf/httpd.conf"
+
+  # cleanup
+  rm -r "${pkgdir}/usr/share/httpd/manual"
+  rm -r "${pkgdir}/etc/httpd/conf/original"
+  rm -r "${pkgdir}/srv/"
+  rm -r "${pkgdir}/run"
+
+  rm -r "${pkgdir}/etc/httpd/conf/httpd.conf"
+  rm -r "${pkgdir}/etc/httpd/conf/extra"
+
+# UBOS files instead
+    mkdir -p -m755 ${pkgdir}/etc/httpd/{appconfigs,defaultsites,mods-available,mods-enabled,revocations,sites,ssl}
+    for f in ${startdir}/etc/httpd/conf/*.conf; do
+        install -D -m644 ${f} -t ${pkgdir}/etc/httpd/conf/
+    done
+    for f in ${startdir}/etc/httpd/defaultsites/*; do
+        install -D -m644 ${f} -t ${pkgdir}/etc/httpd/defaultsites/
+    done
+    for f in ${startdir}/etc/httpd/mods-available/*.load; do
+        install -D -m644 ${f} -t $pkgdir/etc/httpd/mods-available/
+    done
+}

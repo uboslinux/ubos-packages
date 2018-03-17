@@ -1,0 +1,35 @@
+developer='http://geth.ethereum.org/'
+url=${developer}
+maintainer=http://indiecomputing.com/
+pkgname=$(basename $(pwd))
+pkgver=1.7.3
+pkgrel=1
+pkgdesc='Official golang implementation of the Ethereum protocol'
+arch=('x86_64')
+license=('GPL3')
+depends=('glibc')
+makedepends=('git' 'go-pie')
+source=("https://github.com/ethereum/go-ethereum/archive/v${pkgver}.zip")
+releasepage=('https://github.com/ethereum/go-ethereum/releases')
+sha512sums=('8076cabae3052b73ff3875242e9c8de7c953ffbdeb9c738afb2fc84828e5156f9be485a75c0fd52b17739263a2d0669bf13e826884b2b217dfecfeb645f6115a')
+backup=('etc/geth/config')
+
+build() {
+    cd go-ethereum-${pkgver}
+
+    make all
+}
+
+package() {
+    mkdir -p ${pkgdir}/etc/geth
+    mkdir -p ${pkgdir}/usr/bin
+    mkdir -p ${pkgdir}/usr/lib/systemd/system
+    mkdir -p ${pkgdir}/usr/share/${pkgname}/bin
+    mkdir -p ${pkgdir}/var/lib/${pkgname}/{data,ethash}
+
+    install -m644 ${startdir}/config -t ${pkgdir}/etc/geth/
+    install -m755  go-ethereum-${pkgver}/build/bin/* -t ${pkgdir}/usr/share/${pkgname}/bin/
+    ln -s /usr/share/${pkgname}/bin/geth ${pkgdir}/usr/bin/geth
+
+    install -m644 ${startdir}/geth.service ${pkgdir}/usr/lib/systemd/system/
+}

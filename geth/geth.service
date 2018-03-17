@@ -1,0 +1,10 @@
+[Unit]
+Description=Ethereum daemon
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/geth --config /etc/geth/config --verbosity 2
+
+[Install]
+WantedBy=multi-user.target

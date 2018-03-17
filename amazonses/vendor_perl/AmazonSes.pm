@@ -2,27 +2,7 @@
 #
 # Collects code to configure postfix for Amazon SES.
 #
-# This file supports a customizationpoint "domains" for specifying which
-# sending domains should be sent via Amazon SES; however, the manifest does
-# not have that any more. Either may be a good or a bad idea; there are
-# some security implications on shared hosting, and removing it seems
-# safer for the time being.
-#
-# This file is part of amazonses.
-# (C) 2012-2016 Indie Computing Corp.
-#
-# amazonses is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# amazonses is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with amazonses.  If not, see <http://www.gnu.org/licenses/>.
+# Copyright (C) 2014 and later, Indie Computing Corp. All rights reserved. License: see package.
 #
 
 use strict;

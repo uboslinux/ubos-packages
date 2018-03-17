@@ -1,0 +1,97 @@
+# From Arch AUR, with modification for UBOS
+# https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=monero
+
+maintainer="http://indiecomputing.com/"
+developer='https://getmonero.org/'
+url=${developer}
+maintainer=http://indiecomputing.com/
+pkgname=$(basename $(pwd))
+pkgver=0.11.1.0
+pkgrel=3
+pkgdesc="Monero: the secure, private, untraceable currency"
+license=('custom:monero')
+arch=('x86_64' 'armv7h' 'aarch64')
+depends=('boost-libs' 'unbound' 'miniupnpc' 'libunwind' 'openssl')
+makedepends=('git' 'cmake' 'boost' 'gtest')
+provides=('monero' 'libmonero-wallet')
+backup=('etc/monero/monerod.conf')
+install=monero.install
+releasepage=("https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=monero")
+source=("https://github.com/monero-project/monero/archive/v${pkgver}.tar.gz"
+        "monerod.service"
+        "cmake-wallet.patch")
+
+sha512sums=('bac3520730164afe2ca992c588bd0b51791d986cd8d5ebcaac5bd48185b963e2391c28ee89399d7dd678a5d1f8b41c3ae5724d194a5f62bbcd3e6ad505986573'
+            'c5d23d7b157b4cb0c2c3bf1b906bb0666cc3d8b92fdeb4b46bc1a61a81ddc8a6c19cd4115b737334b5c6e927ae544a4f0f8ff9c8774d4a5bb306c4b2367ee3ab'
+            'd9fbc3aff46947a5787d9377c1c2569ee7d78b68afe7b38f11a8dbd1e299930ab864f1351552bc72fa7eb8fb5c39182aea4dfab2f9844ae08cdd78285627edfa')
+
+# NOTE: this is crucial, otherwise stripping breaks the .a archive:
+# monero-core (GUI) fails to link against it (it can't find symbols
+# that are clearly in the library).
+options=(!strip)
+
+_monero="${pkgname}-${pkgver}"
+_build=build
+
+prepare() {
+    cd "${srcdir}/${_monero}"
+    patch -Np1 -i "${srcdir}/cmake-wallet.patch"
+}
+
+build() {
+    cd "${srcdir}/${_monero}"
+    CMAKE_FLAGS+=" -DCMAKE_BUILD_TYPE=Release "
+    CMAKE_FLAGS+=" -DCMAKE_INSTALL_PREFIX=/usr "
+    CMAKE_FLAGS+=" -DBUILD_TESTS=ON "
+    CMAKE_FLAGS+=" -DBUILD_GUI_DEPS=ON "
+    #CMAKE_FLAGS+=" -DCMAKE_LINKER=/usr/bin/ld.gold " # #974 ld segfault on ARM, re-implement if needed
+    mkdir -p $_build && cd $_build
+    cmake $CMAKE_FLAGS ../
+    make
+}
+
+check() {
+    cd "$srcdir/$_monero"
+    cd build
+
+    # Temporarily disable some a tests:
+    #  * coretests takes too long (~25000s)
+    #  * libwallet_api_tests fail (Issue #895)
+    #  * unit_tests were run separately above
+    CTEST_ARGS+="-E 'coretests|libwallet_api_tests|unit_tests'"
+    echo ">>> NOTE: some tests excluded: $CTEST_ARGS"
+
+    make ARGS="$CTEST_ARGS" test
+}
+
+package_monero() {
+
+    install -Dm755 "${srcdir}/${_monero}/build/bin/monero-blockchain-export" "${pkgdir}/usr/bin/monero-blockchain-export"
+    install -Dm755 "${srcdir}/${_monero}/build/bin/monero-blockchain-import" "${pkgdir}/usr/bin/monero-blockchain-import"
+    install -Dm755 "${srcdir}/${_monero}/build/bin/monero-wallet-cli" "${pkgdir}/usr/bin/monero-wallet-cli"
+    install -Dm755 "${srcdir}/${_monero}/build/bin/monero-wallet-rpc" "${pkgdir}/usr/bin/monero-wallet-rpc"
+    install -Dm755 "${srcdir}/${_monero}/build/bin/monerod" "${pkgdir}/usr/bin/monerod"
+
+    install -Dm644 "${srcdir}/${_monero}/LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+
+    install -Dm644 "${srcdir}/${_monero}/utils/conf/monerod.conf" "${pkgdir}/etc/monero/monerod.conf"
+    # TODO(anonimal): new, working, systemd service file was not merged into monero branch v0.11.1.0 - so we've git-add'd it ourselves
+    #install -Dm644 "${srcdir}/${_monero}/utils/systemd/monerod.service" "${pkgdir}/usr/lib/systemd/system/monerod.service"
+    install -Dm644 "${srcdir}/monerod.service" "${pkgdir}/usr/lib/systemd/system/monerod.service"
+
+    # License
+    install -Dm644 "${srcdir}/${_monero}/LICENSE" -t "${pkgdir}/usr/share/licenses/monero/"
+}
+
+package_libmonero-wallet() {
+
+    _stage_dir=stagedir
+
+    cd "${srcdir}/${_monero}/${_build}"
+
+    mkdir -p $_stage_dir
+    make DESTDIR=$_stage_dir install
+
+    cd $_stage_dir
+    find usr/{include,lib} -type f -exec install -D -m 755 {} ${pkgdir}/{} \;
+}

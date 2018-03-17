@@ -1,0 +1,69 @@
+diff -rupN src/miner.h src.patched/miner.h
+--- src/miner.h	2017-11-06 08:46:24.000000000 +0000
++++ src.patched/miner.h	2018-02-18 00:38:49.242311263 +0000
+@@ -71,7 +71,7 @@ struct modifiedentry_iter {
+ // except operating on CTxMemPoolModifiedEntry.
+ // TODO: refactor to avoid duplication of this logic.
+ struct CompareModifiedEntry {
+-    bool operator()(const CTxMemPoolModifiedEntry &a, const CTxMemPoolModifiedEntry &b)
++    bool operator()(const CTxMemPoolModifiedEntry &a, const CTxMemPoolModifiedEntry &b) const
+     {
+         double f1 = (double)a.nModFeesWithAncestors * b.nSizeWithAncestors;
+         double f2 = (double)b.nModFeesWithAncestors * a.nSizeWithAncestors;
+@@ -86,7 +86,7 @@ struct CompareModifiedEntry {
+ // This is sufficient to sort an ancestor package in an order that is valid
+ // to appear in a block.
+ struct CompareTxIterByAncestorCount {
+-    bool operator()(const CTxMemPool::txiter &a, const CTxMemPool::txiter &b)
++    bool operator()(const CTxMemPool::txiter &a, const CTxMemPool::txiter &b) const
+     {
+         if (a->GetCountWithAncestors() != b->GetCountWithAncestors())
+             return a->GetCountWithAncestors() < b->GetCountWithAncestors();
+diff -rupN src/txmempool.h src.patched/txmempool.h
+--- src/txmempool.h	2017-11-06 08:46:24.000000000 +0000
++++ src.patched/txmempool.h	2018-02-18 00:40:13.409017810 +0000
+@@ -207,7 +207,7 @@ struct mempoolentry_txid
+ class CompareTxMemPoolEntryByDescendantScore
+ {
+ public:
+-    bool operator()(const CTxMemPoolEntry& a, const CTxMemPoolEntry& b)
++    bool operator()(const CTxMemPoolEntry& a, const CTxMemPoolEntry& b) const
+     {
+         bool fUseADescendants = UseDescendantScore(a);
+         bool fUseBDescendants = UseDescendantScore(b);
+@@ -229,7 +229,7 @@ public:
+     }
+ 
+     // Calculate which score to use for an entry (avoiding division).
+-    bool UseDescendantScore(const CTxMemPoolEntry &a)
++    bool UseDescendantScore(const CTxMemPoolEntry &a) const
+     {
+         double f1 = (double)a.GetModifiedFee() * a.GetSizeWithDescendants();
+         double f2 = (double)a.GetModFeesWithDescendants() * a.GetTxSize();
+@@ -244,7 +244,7 @@ public:
+ class CompareTxMemPoolEntryByScore
+ {
+ public:
+-    bool operator()(const CTxMemPoolEntry& a, const CTxMemPoolEntry& b)
++    bool operator()(const CTxMemPoolEntry& a, const CTxMemPoolEntry& b) const
+     {
+         double f1 = (double)a.GetModifiedFee() * b.GetTxSize();
+         double f2 = (double)b.GetModifiedFee() * a.GetTxSize();
+@@ -258,7 +258,7 @@ public:
+ class CompareTxMemPoolEntryByEntryTime
+ {
+ public:
+-    bool operator()(const CTxMemPoolEntry& a, const CTxMemPoolEntry& b)
++    bool operator()(const CTxMemPoolEntry& a, const CTxMemPoolEntry& b) const
+     {
+         return a.GetTime() < b.GetTime();
+     }
+@@ -267,7 +267,7 @@ public:
+ class CompareTxMemPoolEntryByAncestorFee
+ {
+ public:
+-    bool operator()(const CTxMemPoolEntry& a, const CTxMemPoolEntry& b)
++    bool operator()(const CTxMemPoolEntry& a, const CTxMemPoolEntry& b) const
+     {
+         double aFees = a.GetModFeesWithAncestors();
+         double aSize = a.GetSizeWithAncestors();

@@ -4,12 +4,13 @@
 # Contributor: Tom Newsom <Jeepster@gmx.co.uk>
 # Adapted for UBOS by: Indie Computing Corp.
 
+maintainer="http://indiecomputing.com/"
 pkgname=dnsmasq
 pkgver=2.78
-pkgrel=2
+pkgrel=3
 pkgdesc="Lightweight, easy to configure DNS forwarder and DHCP server"
 url="http://www.thekelleys.org.uk/dnsmasq/doc.html"
-arch=('i686' 'x86_64' 'armv6h' 'armv7h' 'aarch64')
+arch=('x86_64' 'armv6h' 'armv7h' 'aarch64')
 license=('GPL')
 depends=('glibc' 'gmp' 'libidn' 'libdbus' 'libnetfilter_conntrack' 'nettle')
 backup=('etc/dnsmasq.conf')
@@ -64,4 +65,3 @@ package() {
 }
 
 # vim: ts=2 sw=2 et ft=sh
-

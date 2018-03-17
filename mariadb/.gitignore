@@ -1,0 +1,6 @@
+libmariadbclient-*.pkg*
+mariadb-*.pkg*
+mariadb-*.tar.gz
+mariadb-*.tar.gz.asc
+mariadb-clients-*.pkg*
+mytop-*.pkg*

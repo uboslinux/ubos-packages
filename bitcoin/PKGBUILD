@@ -1,0 +1,46 @@
+developer='http://www.bitcoin.org/'
+url=${developer}
+maintainer=http://indiecomputing.com/
+pkgname=$(basename $(pwd))
+pkgver=0.15.1
+pkgrel=3
+arch=('x86_64')
+pkgdesc="Bitcoin is a peer-to-peer network based digital currency"
+makedepends=('autoconf' 'automake' 'boost' 'qt5-base' 'qt5-tools' 'qrencode' 'miniupnpc' 'protobuf' 'zeromq')
+depends=('boost-libs' 'libevent' 'miniupnpc' 'zeromq')
+license=("custom:${pkgname}")
+source=("https://github.com/bitcoin/bitcoin/archive/v$pkgver.tar.gz")
+sha512sums=('08370229da9b21f386c2476d472fcc3a06790f9ba657dbfdf6730ceb7505aa33a964119418031f512c124dce02afc79452cef8cb3066ca1349048554c8ef1769')
+validpgpkeys=(71A3B16735405025D447E8F274810B012346C9A6)
+backup=('etc/bitcoin/bitcoin.conf')
+install=install
+releasepage=('https://github.com/bitcoin/bitcoin/releases')
+
+prepare() {
+    cd ${pkgbase}-${pkgver}
+    patch -p0 < ${startdir}/issue-11847.patch
+    # From https://github.com/bitcoin/bitcoin/pull/11847/files
+}
+
+build() {
+    cd ${pkgbase}-${pkgver}
+    ./autogen.sh
+    ./configure --prefix=/usr --with-gui=qt5 --with-incompatible-bdb
+    make
+}
+
+package() {
+    mkdir -p ${pkgdir}/etc
+    mkdir -p ${pkgdir}/usr/bin
+    mkdir -p ${pkgdir}/usr/lib/systemd/system
+    mkdir -p ${pkgdir}/usr/share/man/man1
+    mkdir -p ${pkgdir}/usr/share/licenses/${pkgname}
+    mkdir -p ${pkgdir}/var/lib/bitcoind
+
+    install -m755 ${pkgbase}-${pkgver}/src/{bitcoind,bitcoin-cli} -t ${pkgdir}/usr/bin/
+
+    install -Dm644 ${startdir}/bitcoin.conf -t ${pkgdir}/etc/$pkgname/
+    install -m644 ${pkgbase}-${pkgver}/doc/man/{bitcoind.1,bitcoin-cli.1} -t ${pkgdir}/usr/share/man/man1/
+    install -m644 ${pkgbase}-${pkgver}/COPYING -t ${pkgdir}/usr/share/licenses/${pkgname}/
+    install -m644 ${startdir}/bitcoind.service ${pkgdir}/usr/lib/systemd/system/
+}

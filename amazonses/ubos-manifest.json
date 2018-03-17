@@ -17,18 +17,21 @@
         "aws_access_key_id" : {
             "name" : "AWS access key",
             "type"     : "string",
-            "required" : true
+            "required" : true,
+            "regex"    : "^[A-Z0-9]{20}$"
         },
         "aws_secret_key" : {
             "name" : "AWS secret key",
             "type"     : "password",
             "required" : true,
-            "private"  : true
+            "private"  : true,
+            "regex"    : "^[A-Za-z0-9/\\+]{40,}$"
         },
         "ses_mail_server" : {
             "name" : "Hostname of the SES mail server",
             "type" : "string",
             "required" : false,
+            "regex"    : "^[-a-z0-9]+(\\.[-a-z0-9]+)*$",
             "default" : {
                 "value" : "email-smtp.us-east-1.amazonaws.com"
             }
