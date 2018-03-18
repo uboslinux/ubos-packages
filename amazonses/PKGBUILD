@@ -3,7 +3,7 @@ url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
 pkgver=0.5
-pkgrel=2
+pkgrel=3
 pkgdesc="Configures local SMTP to send e-mail for an originating domain via Amazon SES"
 arch=('any')
 license=("AGPL3")
@@ -22,7 +22,7 @@ package() {
 
 # Config files go here
     # 73: postfix
-    mkdir -m755 ${pkgdir}/etc/amazonses
+    mkdir -m755 -p ${pkgdir}/etc/amazonses
     chown 73:73 ${pkgdir}/etc/amazonses
 
     mkdir -m700 ${pkgdir}/etc/amazonses/{sender_dependent_relayhost_map.d,smtp_sasl_password_map.d}
