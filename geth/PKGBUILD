@@ -2,7 +2,7 @@ developer='http://geth.ethereum.org/'
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=1.7.3
+pkgver=1.8.2
 pkgrel=1
 pkgdesc='Official golang implementation of the Ethereum protocol'
 arch=('x86_64')
@@ -11,7 +11,7 @@ depends=('glibc')
 makedepends=('git' 'go-pie')
 source=("https://github.com/ethereum/go-ethereum/archive/v${pkgver}.zip")
 releasepage=('https://github.com/ethereum/go-ethereum/releases')
-sha512sums=('8076cabae3052b73ff3875242e9c8de7c953ffbdeb9c738afb2fc84828e5156f9be485a75c0fd52b17739263a2d0669bf13e826884b2b217dfecfeb645f6115a')
+sha512sums=('8a6e18cd608cad98bbd4f103fb4333d3a7db74be8157f4d4607b8791d4fbc1d382f3e03756bf2acdd0c88de2774f5bd50686954f62df74f6445cab93949cc983')
 backup=('etc/geth/config')
 
 build() {

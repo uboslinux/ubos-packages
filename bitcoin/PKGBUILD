@@ -2,21 +2,21 @@ developer='http://www.bitcoin.org/'
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=0.15.1
-pkgrel=3
+pkgver=0.16.0
+pkgrel=1
 arch=('x86_64')
 pkgdesc="Bitcoin is a peer-to-peer network based digital currency"
 makedepends=('autoconf' 'automake' 'boost' 'qt5-base' 'qt5-tools' 'qrencode' 'miniupnpc' 'protobuf' 'zeromq')
 depends=('boost-libs' 'libevent' 'miniupnpc' 'zeromq')
 license=("custom:${pkgname}")
 source=("https://github.com/bitcoin/bitcoin/archive/v$pkgver.tar.gz")
-sha512sums=('08370229da9b21f386c2476d472fcc3a06790f9ba657dbfdf6730ceb7505aa33a964119418031f512c124dce02afc79452cef8cb3066ca1349048554c8ef1769')
+sha512sums=('a72461029550bd1da5c933e888a313ccbfc855537eb91a555b412a938f88e578f840b5a8bb2c7ec0f9cc970ddfc177189e1d0ef3e81682e69aa8859077a99b8d')
 validpgpkeys=(71A3B16735405025D447E8F274810B012346C9A6)
 backup=('etc/bitcoin/bitcoin.conf')
 install=install
 releasepage=('https://github.com/bitcoin/bitcoin/releases')
 
-prepare() {
+xxxprepare() {
     cd ${pkgbase}-${pkgver}
     patch -p0 < ${startdir}/issue-11847.patch
     # From https://github.com/bitcoin/bitcoin/pull/11847/files
