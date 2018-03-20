@@ -5,7 +5,7 @@
 maintainer="http://indiecomputing.com/"
 pkgname=mod_xsendfile
 pkgver=0.12
-pkgrel=4
+pkgrel=5
 pkgdesc='Apache module for XSendFile header'
 arch=('x86_64')
 url='https://github.com/nmaier/mod_xsendfile'
@@ -23,5 +23,5 @@ build() {
 package() {
     cd "${srcdir}/${pkgname}-${pkgver}"
     install -Dm755 .libs/mod_xsendfile.so "${pkgdir}/usr/lib/httpd/modules/mod_xsendfile.so"
-    install -Dm644 "${startdir}/xsendfile.load" "${pkgdir}/etc/httpd/ubos/mods-available/xsendfile.load"
+    install -Dm644 "${startdir}/xsendfile.load" "${pkgdir}/etc/httpd/mods-available/xsendfile.load"
 }
