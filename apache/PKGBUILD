@@ -2,7 +2,7 @@
 
 pkgname=apache
 pkgver=2.4.29
-pkgrel=2
+pkgrel=3
 pkgdesc='A high performance Unix-based HTTP server'
 arch=('x86_64')
 url='http://www.apache.org/dist/httpd'
@@ -26,19 +26,9 @@ optdepends=(
 )
 source=(
     https://www.apache.org/dist/httpd/httpd-${pkgver}.tar.bz2{,.asc}
-    openssl-malloc-init.patch
-    apache.tmpfiles.conf
-    httpd.logrotate
-    httpd.service
-    ubos.layout
 )
 sha512sums=('840982fd3d21463bc5c1747f211dfacf3abdf634d149e49bb49fd2e5deda140de602dbdf31e1bbe5337a48f718ab2261c408e83a8dd39a9291ee7b6b7a85639a'
-            'SKIP'
-            '7bf4e6645dd6f9ec5a1a95d8a51b7d65661077338b606745b1a558ae0057547e1709c451138269b6d4c913847e51c57a939262f46fcadb82e1ccb24a35165dba'
-            '57fece1a3e4e3cbd6135203172ecf32570405f7205dc84adc076a50cdab20db868270d8e658314f5273616f81b356d7b88c31e0ee8a8ce6a3e77ab15ef6a8f36'
-            '1142c9120f9a73dda7a36d2f5d4853734d10072ac0f5adf8aae3f38c98587dc34792438f1f05796782d33c1227ef311e9346d617655c6d1c2590cc57ecba17b7'
-            'd26845063c18aca969f95c4bd71ea94f6f1ae0474619db08789138a09117dc1fe7e09f8d4910b179d0f62639970cd3dc5c104c530f46463e7d93515a648560cc'
-            'd0efb162d50648c389e47ef407604c9cce96dce82e43f8dcc1f8f2c793f361636786d330f03715b8d39963f70fe94e0dce3a419d3a3392ffca9da5c01bfb96d1')
+            'SKIP')
 
 validpgpkeys=('A93D62ECC3C8EA12DB220EC934EA76E6791485A8') # Jim Jagielski
 
@@ -53,10 +43,10 @@ prepare() {
       -e 's#Group daemon#Group http#' \
       -i docs/conf/httpd.conf.in
 
-  cat "${srcdir}/ubos.layout" >> config.layout
+  cat "${startdir}/ubos.layout" >> config.layout
 
   # https://github.com/openssl/openssl/issues/2865
-  patch -Np1 -i ../openssl-malloc-init.patch
+  patch -Np1 -i ${startdir}/openssl-malloc-init.patch
 }
 
 build() {
@@ -94,9 +84,9 @@ package() {
 
   make DESTDIR="${pkgdir}" install
 
-  install -D -m644 "${srcdir}/httpd.logrotate" "${pkgdir}/etc/logrotate.d/httpd"
-  install -D -m644 "${srcdir}/apache.tmpfiles.conf" "${pkgdir}/usr/lib/tmpfiles.d/apache.conf"
-  install -D -m644 "${srcdir}/httpd.service" "${pkgdir}/usr/lib/systemd/system/httpd.service"	
+  install -D -m644 "${startdir}/httpd.logrotate" "${pkgdir}/etc/logrotate.d/httpd"
+  install -D -m644 "${startdir}/apache.tmpfiles.conf" "${pkgdir}/usr/lib/tmpfiles.d/apache.conf"
+  install -D -m644 "${startdir}/httpd.service" "${pkgdir}/usr/lib/systemd/system/httpd.service"	
   install -D -m644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 
   # symlinks for /etc/httpd
