@@ -127,4 +127,6 @@ package() {
     for f in ${startdir}/etc/httpd/mods-available/*.load; do
         install -D -m644 ${f} -t $pkgdir/etc/httpd/mods-available/
     done
+
+    ln -s /usr/lib/httpd/modules ${pkgdir}/etc/httpd/modules
 }
