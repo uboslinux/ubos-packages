@@ -3,7 +3,7 @@
 pkgbase=mariadb
 pkgname=('libmariadbclient' 'mariadb-clients' 'mytop' 'mariadb')
 pkgver=10.1.31
-pkgrel=1
+pkgrel=2
 arch=('x86_64')
 license=('GPL')
 url='http://mariadb.org/'
@@ -46,7 +46,7 @@ prepare() {
 }
 
 build() {
-  mkdir build
+  [[ -d build ]] || mkdir build
   cd build
 
   cmake ../$pkgbase-$pkgver \
@@ -148,7 +148,7 @@ package_mariadb() {
   pkgdesc='Fast SQL database server, drop-in replacement for MySQL'
   backup=('etc/mysql/my.cnf'
           'etc/mysql/wsrep.cnf')
-  install=mariadb.install
+  # install=mariadb.install
   depends=("mariadb-clients=${pkgver}" 'inetutils' 'libsystemd' 'libxml2')
   optdepends=('galera: for MariaDB cluster with Galera WSREP'
               'perl-dbd-mysql: for mysqlhotcopy, mysql_convert_table_format and mysql_setpermission')
@@ -167,13 +167,13 @@ package_mariadb() {
   # TOOD: Change to upstream file layout with version 10.2.x?
   rm -r etc/
   # install -Dm0644 usr/share/mysql/my-medium.cnf etc/mysql/my.cnf
-  install -Dm0644 usr/share/mysql/wsrep.cnf etc/mysql/wsrep.cnf
+  # install -Dm0644 usr/share/mysql/wsrep.cnf etc/mysql/wsrep.cnf
 
   mv usr/lib/sysusers.d/{sysusers,mariadb}.conf
   mv usr/lib/tmpfiles.d/{tmpfiles,mariadb}.conf
 
-  ln -s mariadb.service usr/lib/systemd/system/mysqld.service
-  ln -s mariadb@.service usr/lib/systemd/system/mysqld@.service
+#  ln -s mariadb.service usr/lib/systemd/system/mysqld.service
+#  ln -s mariadb@.service usr/lib/systemd/system/mysqld@.service
 
   # move to proper licenses directories
   install -d usr/share/licenses/mariadb
@@ -207,4 +207,5 @@ package_mariadb() {
     mkdir -p -m755 ${pkgdir}/etc/mysql/conf.d
     install -D -m644 ${startdir}/etc/mysql/my.cnf -t ${pkgdir}/etc/mysql/
     install -D -m644 ${startdir}/etc/mysql/conf.d/50-replication.cnf -t ${pkgdir}/etc/mysql/conf.d/
+    install -D -m644 ${startdir}/mysqld.service ${pkgdir}/usr/lib/systemd/system/mysqld.service
 }
