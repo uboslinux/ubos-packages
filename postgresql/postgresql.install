@@ -11,7 +11,7 @@ post_install() {
   fi
   if [ ! -d '/ubos/lib/postgres/data' ]; then
     mkdir -p '/ubos/lib/postgres/data'
-    chown postgres:postgres '/var/lib/postgres/data'
+    chown postgres:postgres '/ubos/lib/postgres/data'
     chattr +C '/ubos/lib/postgres/data'
   fi
 }
