@@ -14,7 +14,6 @@
 Description=MariaDB database server configured for UBOS
 After=network.target
 After=syslog.target
-Conflicts=mysqld.service
 
 [Install]
 WantedBy=multi-user.target
