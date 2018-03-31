@@ -4,6 +4,8 @@ Description=ZeroTier One
 After=network.target
 
 [Service]
+ExecStartPre=/usr/share/ubos-admin/bin/ubos-service-prestart zerotier-one
+ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop zerotier-one
 # ExecStart=/var/lib/zerotier-one/zerotier-one
 ExecStart=/usr/bin/zerotier-one
 Restart=always

@@ -5,6 +5,8 @@ After=network.target
 [Service]
 User=tor
 Type=simple
+ExecStartPre=/usr/share/ubos-admin/bin/ubos-service-prestart tor
+ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop tor
 ExecStartPre=/usr/share/tor/bin/recreate-torrc
 ExecStart=/usr/bin/tor -f /etc/tor/torrc
 ExecReload=/usr/share/tor/bin/recreate-torrc

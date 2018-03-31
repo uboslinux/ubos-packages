@@ -4,6 +4,9 @@ After=network.target
 
 [Service]
 Type=forking
+ExecStartPre=/usr/share/ubos-admin/bin/ubos-service-prestart tomcat8
+ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop tomcat8
+
 PIDFile=/var/run/tomcat8.pid
 Environment=CATALINA_PID=/var/run/tomcat8.pid
 Environment=TOMCAT_JAVA_HOME=/usr/lib/jvm/default-runtime

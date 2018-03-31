@@ -1,8 +1,8 @@
 # From Arch, adapted for UBOS
 
 pkgname=apache
-pkgver=2.4.29
-pkgrel=5
+pkgver=2.4.33
+pkgrel=1
 pkgdesc='A high performance Unix-based HTTP server'
 arch=('x86_64')
 url='http://www.apache.org/dist/httpd'
@@ -27,10 +27,11 @@ optdepends=(
 source=(
     https://www.apache.org/dist/httpd/httpd-${pkgver}.tar.bz2{,.asc}
 )
-sha512sums=('840982fd3d21463bc5c1747f211dfacf3abdf634d149e49bb49fd2e5deda140de602dbdf31e1bbe5337a48f718ab2261c408e83a8dd39a9291ee7b6b7a85639a'
+sha512sums=('e74b2b3346d67be45a8bc8a7cbb8eabf5c403a5cfe5797a976f94a539529843fbcdf03b9ca0548816b2cf37f4ce0eb301f8d5af25b1270fdf8dd9f5bf0585269'
             'SKIP')
 
-validpgpkeys=('A93D62ECC3C8EA12DB220EC934EA76E6791485A8') # Jim Jagielski
+validpgpkeys=('A93D62ECC3C8EA12DB220EC934EA76E6791485A8' # Jim Jagielski
+              'B9E8213AEFB861AF35A41F2C995E35221AD84DFF') # Daniel Ruggeri 
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/apache')
 pkgverforked=('2.4.29-1')

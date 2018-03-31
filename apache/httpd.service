@@ -4,12 +4,15 @@ After=network.target remote-fs.target nss-lookup.target ubos-admin.service
 
 [Service]
 Type=simple
+
 ExecStartPre=/usr/share/ubos-admin/bin/ubos-service-prestart httpd
+ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop httpd
+
 ExecStartPre=/usr/bin/perl -MUBOS::Apache2 -e 'UBOS::Apache2::ensureConfigFiles();'
 ExecStart=/usr/bin/httpd -k start -DFOREGROUND
 ExecStop=/usr/bin/httpd -k graceful-stop
+ExecReload=/usr/bin/perl -MUBOS::Apache2 -e 'UBOS::Apache2::ensureConfigFiles();'
 ExecReload=/usr/bin/httpd -k graceful
-ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop http
 PrivateTmp=true
 LimitNOFILE=infinity
 TimeoutStartSec=180

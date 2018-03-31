@@ -6,8 +6,8 @@
 
 maintainer="http://indiecomputing.com/"
 pkgname=dnsmasq
-pkgver=2.78
-pkgrel=3
+pkgver=2.79
+pkgrel=1
 pkgdesc="Lightweight, easy to configure DNS forwarder and DHCP server"
 url="http://www.thekelleys.org.uk/dnsmasq/doc.html"
 arch=('x86_64' 'armv6h' 'armv7h' 'aarch64')
@@ -19,10 +19,10 @@ source=("http://www.thekelleys.org.uk/$pkgname/$pkgname-$pkgver.tar.xz"{,.asc}
         'dnsmasq-sysusers.conf'
         'dnsmasq.service')
 releasepage=('http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=summary')
-sha512sums=('9b79b84e5a768d52f90f6335ccef2c404ecd7a13e78e49f4cd0755fffc6cf34d0dc96ad4c72cad1dab3c5743a8d0d789b3e9b6e625b03c5675bb898ca61a698b'
+sha512sums=('2c06212696ab55e1584f6133872f5b196013509e4b1822d0457787b456e14341afdde887749e370a2e512124cb4138f012f4601b08690707be4acc7cf2f2876f'
             'SKIP'
             '8e0194a6c5bd2bb6e008681808c0fbf5edbd88c2c039527587479a1850b8199444aaa70cb7252063d322f97111f89a3e8c0d4d6d1afacdf83a5ea6166233735b'
-            '28e6b3edfc221b0cc8dc4c7918b9aa5edebdc8b116b41edca8948b78f4ba023e106ec7ed13c8028c96516f29128bdf78063aec3b96e5e5090aa9c3d20f7645f2')
+            'b5cb86331dc73f4a2c0ea755423557f7f2d71b2c04350057b720b6a5a5e93998a99d8b4cdde2c95ce283faa19a8f86534857719c580694681c597ecdb1ac67be')
 
 _build_copts="-DHAVE_DNSSEC -DHAVE_DBUS -DHAVE_IDN -DHAVE_CONNTRACK"
 

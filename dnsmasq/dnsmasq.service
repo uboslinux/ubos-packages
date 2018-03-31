@@ -7,6 +7,10 @@ Documentation=man:dnsmasq(8)
 [Service]
 Type=dbus
 BusName=uk.org.thekelleys.dnsmasq
+
+ExecStartPre=/usr/share/ubos-admin/bin/ubos-service-prestart dnsmasq
+ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop dnsmasq
+
 ExecStartPre=/usr/bin/dnsmasq --test
 ExecStart=/usr/bin/dnsmasq -k --enable-dbus --user=dnsmasq --pid-file
 ExecReload=/bin/kill -HUP $MAINPID

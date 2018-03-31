@@ -6,8 +6,8 @@ developer='https://getmonero.org/'
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=0.11.1.0
-pkgrel=3
+pkgver=0.12.0.0
+pkgrel=1
 pkgdesc="Monero: the secure, private, untraceable currency"
 license=('custom:monero')
 arch=('x86_64' 'armv7h' 'aarch64')
@@ -21,8 +21,8 @@ source=("https://github.com/monero-project/monero/archive/v${pkgver}.tar.gz"
         "monerod.service"
         "cmake-wallet.patch")
 
-sha512sums=('bac3520730164afe2ca992c588bd0b51791d986cd8d5ebcaac5bd48185b963e2391c28ee89399d7dd678a5d1f8b41c3ae5724d194a5f62bbcd3e6ad505986573'
-            'c5d23d7b157b4cb0c2c3bf1b906bb0666cc3d8b92fdeb4b46bc1a61a81ddc8a6c19cd4115b737334b5c6e927ae544a4f0f8ff9c8774d4a5bb306c4b2367ee3ab'
+sha512sums=('780465569cdd7cf7f38e5e6dc88f420f411e3768ee0e0421cfb2f1ccb48b2fa93261d8f806f51f7fde44f622395c9b90809fea7bb50ad3470a34b8df80bf882e'
+            'bbb023b41c8cdea1f2157de8e83b24f9aaedc63ae6348766afd027b3079190dd1eddfd1f218a87e68a71a99f203a2b65526903041f4c3e386b0154a22607aa78'
             'd9fbc3aff46947a5787d9377c1c2569ee7d78b68afe7b38f11a8dbd1e299930ab864f1351552bc72fa7eb8fb5c39182aea4dfab2f9844ae08cdd78285627edfa')
 
 # NOTE: this is crucial, otherwise stripping breaks the .a archive:

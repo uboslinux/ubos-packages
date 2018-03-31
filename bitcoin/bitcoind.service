@@ -5,6 +5,10 @@ After=network.target
 [Service]
 Type=forking
 PIDFile=/var/run/bitcoind.pid
+
+ExecStartPre=/usr/share/ubos-admin/bin/ubos-service-prestart bitcoind
+ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop bitcoind
+
 ExecStart=/usr/bin/bitcoind -conf=/etc/bitcoin/bitcoin.conf -daemon -datadir=/var/lib/bitcoind
 
 [Install]

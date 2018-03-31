@@ -1,8 +1,8 @@
 # From Arch, using UBOS configuration
 
 pkgname=tor
-pkgver=0.3.2.9
-pkgrel=2
+pkgver=0.3.2.10
+pkgrel=1
 pkgdesc='Anonymizing overlay network.'
 arch=('x86_64')
 url='https://www.torproject.org/'
@@ -16,9 +16,9 @@ source=("https://www.torproject.org/dist/${pkgname}-${pkgver}.tar.gz"{,.asc}
         'tor.service'
         'tor.sysusers'
         'tor.tmpfiles')
-sha512sums=('60b8d93eee8d0b04b49a8fa941ea3489e8cd9b3f3923d9da39865caa1f5bce6666c1db06594520aa3726151a54c9c0c30bb8d9b25fb38d7172ffb15a011d6c8c'
+sha512sums=('b916173b13fbca71a1b859d0cb1b090a063b27039ce88cedcf4b17ab282bfaa2edf0bb9f213fc20f82af856c880e0747a593e3d8fe1bc17319dc5cd8ac4490df'
             'SKIP'
-            '86a5c926cc395f1129258268cc1ec6e312ebf0160658a319e06fed4a79b46f955a3f6568944f8adf17202b292d113f51a97c989445f39047010513e679671b4f'
+            '430b660feaa00b9b2fb0a2a5b42ebfad1c56252031632fd297f1bf7de1857367fe293233715b7c941b9859895df0ce541f3b5426a393e4d75c1f89f311202233'
             '45bdf0a3afa93b0e48bd4a3ae7702a571041d9ac761035a07505436be7fd6d89d5b4ed046fc5a5a75a3119c6fcb8a1e42b05e7638925ac8b63ff0780461851ee'
             '262a38979f42a4a675149e058410db4165ed97f8544f2d95838983a1ec9c760332c5857ab182e60c5c44104cd3ac551959a26a80036826c18c1e93e9e387584c')
 validpgpkeys=('2133BC600AB133E1D826D173FE43009C4607B1FB') # Nick Mathewson

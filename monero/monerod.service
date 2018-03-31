@@ -3,6 +3,9 @@ Description=Monero Full Node
 After=network.target
 
 [Service]
+ExecStartPre=/usr/share/ubos-admin/bin/ubos-service-prestart monerod
+ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop monerod
+
 User=monero
 Group=monero
 WorkingDirectory=~

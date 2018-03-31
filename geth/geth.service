@@ -4,6 +4,8 @@ After=network.target
 
 [Service]
 Type=simple
+ExecStartPre=/usr/share/ubos-admin/bin/ubos-service-prestart geth
+ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop geth
 ExecStart=/usr/bin/geth --config /etc/geth/config --verbosity 2
 
 [Install]

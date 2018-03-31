@@ -7,10 +7,12 @@ Requires=avahi-daemon.socket
 [Service]
 Type=dbus
 BusName=org.freedesktop.Avahi
+
 ExecStartPre=/usr/share/ubos-admin/bin/ubos-service-prestart avahi-daemon
+ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop avahi-daemon
+
 ExecStart=/usr/bin/avahi-daemon -f /etc/avahi/ubos-avahi.conf -s
 ExecReload=/usr/bin/avahi-daemon -f /etc/avahi/ubos-avahi.conf -r
-ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop avahi-daemon
 NotifyAccess=main
 
 [Install]
