@@ -13,6 +13,7 @@ RuntimeDirectory=monero
 Type=forking
 PIDFile=/run/monero/monerod.pid
 ExecStart=/usr/bin/monerod --config-file /etc/monero/monerod.conf --detach --pidfile /run/monero/monerod.pid
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
