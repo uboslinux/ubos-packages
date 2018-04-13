@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# Provision an entry in /home/${package.name}/.ssh/authorized_keys
+# Provision an entry in ~${package.name}/.ssh/authorized_keys
 #
 # Expects the entire content of id_rsa.pub to be provided as publicsshkey
 #

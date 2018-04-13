@@ -57,9 +57,10 @@ unless( $found ) {
     exit 7;
 }
 
-my $fullDest = "/var/lib/$packageName/$appConfigId$rsyncSubdir/$relPath";
+my $fullDest = "/ubos/lib/$packageName/$appConfigId$rsyncSubdir/$relPath";
 my $cmd = "rsync$options . $fullDest";
 
 UBOS::Utils::myexec( $cmd );
 
 1;
+
