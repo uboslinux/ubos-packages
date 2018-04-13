@@ -2,7 +2,7 @@
 
 pkgname=apache
 pkgver=2.4.33
-pkgrel=1
+pkgrel=3
 pkgdesc='A high performance Unix-based HTTP server'
 arch=('x86_64')
 url='http://www.apache.org/dist/httpd'
@@ -16,13 +16,18 @@ backup=(
     etc/httpd/defaultsites/fallback.conf
     etc/logrotate.d/httpd
 )
-
+conflicts=('mod_proxy_uwsgi')
+replaces=('mod_proxy_uwsgi')
 depends=('zlib' 'apr-util' 'pcre' 'libnghttp2' 'openssl')
-makedepends=('libxml2' 'lua')
+makedepends=('libxml2' 'lua' 'curl' 'brotli' 'jansson')
 optdepends=(
-    'lua: for mod_lua module'
-    'libxml2: for mod_proxy_html, mod_xml2enc modules'
-    'lynx: apachectl status'
+     'lua: for mod_lua module'
+     'libxml2: for mod_proxy_html, mod_xml2enc modules'
+     'curl: for mod_md module'
+     'jansson: for mod_md module'
+     'brotli: for mod_brotli module'
+     'uwsgi: for mod_proxy_uwsgi module'
+     'lynx: apachectl status'
 )
 source=(
     https://www.apache.org/dist/httpd/httpd-${pkgver}.tar.bz2{,.asc}
@@ -34,7 +39,7 @@ validpgpkeys=('A93D62ECC3C8EA12DB220EC934EA76E6791485A8' # Jim Jagielski
               'B9E8213AEFB861AF35A41F2C995E35221AD84DFF') # Daniel Ruggeri 
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/apache')
-pkgverforked=('2.4.29-1')
+pkgverforked=('2.4.33-3')
 
 prepare() {
   cd httpd-${pkgver}
@@ -73,6 +78,7 @@ build() {
       --enable-proxy-http --enable-proxy-ftp \
       --enable-dbd --enable-imagemap --enable-ident --enable-cern-meta \
       --enable-lua --enable-xml2enc --enable-http2 \
+      --enable-proxy-http2 --enable-md --enable-brotli \
       --with-apr=/usr/bin/apr-1-config \
       --with-apr-util=/usr/bin/apu-1-config \
       --with-pcre=/usr
