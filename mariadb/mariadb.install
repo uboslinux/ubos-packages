@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+#
+# Copyright (C) 2018 and later, Indie Computing Corp. All rights reserved. License: see package.
+#
+
+post_upgrade() {
+    usermod --home /ubos/lib/mysql mysql
+}

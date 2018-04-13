@@ -3,7 +3,7 @@
 pkgbase=mariadb
 pkgname=('libmariadbclient' 'mariadb-clients' 'mytop' 'mariadb')
 pkgver=10.1.32
-pkgrel=1
+pkgrel=2
 arch=('x86_64')
 license=('GPL')
 url='http://mariadb.org/'
@@ -17,6 +17,7 @@ sha256sums=('0e2aae6a6a190d07c8e36e87dd43377057fa82651ca3c583462563f3e9369096'
             'SKIP'
             '229d556748119757f36be1e9956834be28db0f5a35cdacce53f6c640784fca77'
             '98736aefef21e575e450f8066685ba82771264409412e33491ab0a54e4407ba7')
+install=mariadb.install
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/mariadb')
 pkgverforked=('10.1.31-1')
