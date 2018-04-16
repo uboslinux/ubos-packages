@@ -2,8 +2,8 @@ developer=http://indiecomputing.com/
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=0.5
-pkgrel=3
+pkgver=0.6
+pkgrel=1
 pkgdesc="Configures local SMTP to send e-mail for an originating domain via Amazon SES"
 arch=('any')
 license=("AGPL3")
@@ -14,11 +14,10 @@ _vendor_perl=$(perl -V::vendorarch: | sed -e "s![' ]!!g")
 
 package() {
 # Manifest
-    install -D -m0644 ${startdir}/ubos-manifest.json ${pkgdir}/var/lib/ubos/manifests/${pkgname}.json
+    install -D -m0644 ${startdir}/ubos-manifest.json ${pkgdir}/ubos/lib/ubos/manifests/${pkgname}.json
 
 # Icons
-#    mkdir -p ${pkgdir}/srv/http/_appicons/$pkgname
-#    install -m644 ${startdir}/appicons/{72x72,144x144}.png ${pkgdir}/srv/http/_appicons/$pkgname/
+#    install -D -m0644 ${startdir}/appicons/{72x72,144x144}.png -t ${pkgdir}/ubos/http/_appicons/$pkgname/
 
 # Config files go here
     # 73: postfix
