@@ -3,7 +3,7 @@ url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
 pkgver=0.16.0
-pkgrel=1
+pkgrel=2
 arch=('x86_64')
 pkgdesc="Bitcoin is a peer-to-peer network based digital currency"
 makedepends=('autoconf' 'automake' 'boost' 'qt5-base' 'qt5-tools' 'qrencode' 'miniupnpc' 'protobuf' 'zeromq')
@@ -35,7 +35,7 @@ package() {
     mkdir -p ${pkgdir}/usr/lib/systemd/system
     mkdir -p ${pkgdir}/usr/share/man/man1
     mkdir -p ${pkgdir}/usr/share/licenses/${pkgname}
-    mkdir -p ${pkgdir}/var/lib/bitcoind
+    mkdir -p ${pkgdir}/ubos/lib/bitcoind
 
     install -m755 ${pkgbase}-${pkgver}/src/{bitcoind,bitcoin-cli} -t ${pkgdir}/usr/bin/
 
