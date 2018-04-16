@@ -3,7 +3,7 @@ url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
 pkgver=1.8.3
-pkgrel=1
+pkgrel=2
 pkgdesc='Official golang implementation of the Ethereum protocol'
 arch=('x86_64')
 license=('GPL3')
@@ -25,7 +25,7 @@ package() {
     mkdir -p ${pkgdir}/usr/bin
     mkdir -p ${pkgdir}/usr/lib/systemd/system
     mkdir -p ${pkgdir}/usr/share/${pkgname}/bin
-    mkdir -p ${pkgdir}/var/lib/${pkgname}/{data,ethash}
+    mkdir -p ${pkgdir}/ubos/lib/${pkgname}/{data,ethash}
 
     install -m644 ${startdir}/config -t ${pkgdir}/etc/geth/
     install -m755  go-ethereum-${pkgver}/build/bin/* -t ${pkgdir}/usr/share/${pkgname}/bin/

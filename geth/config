@@ -1,8 +1,8 @@
 [Eth]
-EthashDatasetDir = "/var/lib/geth/ethash"
+EthashDatasetDir = "/ubos/lib/geth/ethash"
 
 [Node]
-DataDir = "/var/lib/geth/data"
+DataDir = "/ubos/lib/geth/data"
 HTTPHost = "127.0.0.1"
 
 [Node.P2P]
