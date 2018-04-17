@@ -30,10 +30,10 @@ sha512sums=('SKIP'
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/avahi')
 pkgverforked='0.7+4+gd8d8c67-1'
 
-pkgver() {
-  cd $pkgname
-  git describe --tags | sed 's/^v//;s/-/+/g'
-}
+# pkgver() {
+#   cd $pkgname
+#   git describe --tags | sed 's/^v//;s/-/+/g'
+# }
 
 prepare() {
   cd $pkgname
