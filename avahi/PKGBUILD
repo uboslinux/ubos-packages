@@ -2,7 +2,7 @@
 
 pkgname=avahi
 pkgver=0.7
-pkgrel=5
+pkgrel=6
 pkgdesc='Service Discovery for Linux using mDNS/DNS-SD -- compatible with Bonjour'
 url='https://github.com/lathiat/avahi'
 license=(LGPL)
@@ -19,16 +19,16 @@ optdepends=('gtk3: avahi-discover, avahi-discover-standalone, bshell, bssh, bvnc
             'nss-mdns: NSS support for mDNS'
             'python-gobject: avahi-discover'
             'python-dbus: avahi-discover')
-backup=(etc/avahi/{hosts,avahi-daemon.conf}
+backup=(etc/avahi/{hosts,avahi-daemon.conf,avahi-{autoip,dnsconf}d.action}
         usr/lib/avahi/service-types.db)
-_commit=6242e5f0fe001b7de2ccaa9431db279b2ee76b83  # tags/v0.7
+_commit=d8d8c67d8279f35eef157f5f442a1dde4ac5c45e # master
 source=("git+https://github.com/lathiat/avahi#commit=$_commit"
         0001-avahi-python-Use-the-agnostic-DBM-interface.patch)
 sha512sums=('SKIP'
             '8cfc7c2cb0061e6348caa96b73bb6069efce5b4438962aa12448e46bc950a47c1f18059afbb1cacf7b2a1aa21f77025472532ad5e6eddb17834a8b1a34432226')
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/avahi')
-pkgverforked='0.7-4'
+pkgverforked='0.7+4+gd8d8c67-1'
 
 pkgver() {
   cd $pkgname
@@ -88,7 +88,7 @@ package() {
   echo 'u avahi - "Avahi mDNS/DNS-SD daemon"' |
     install -Dm644 /dev/stdin "$pkgdir/usr/lib/sysusers.d/$pkgname.conf"
 
-# Avahi
+# UBOS
   install -D -m644 ${startdir}/http.service      -t ${pkgdir}/etc/avahi/services/http.service
   install -D -m644 ${startdir}/https.service     -t ${pkgdir}/etc/avahi/services/https.service
   install -D -m644 ${startdir}/systemd/*.service -t ${pkgdir}/etc/systemd/system/
