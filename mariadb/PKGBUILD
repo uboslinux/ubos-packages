@@ -1,9 +1,11 @@
 # From Arch, adapted for UBOS
+# This also includes changes made by Arch Linux ARM, because it otherwise
+# does not compile
 
 pkgbase=mariadb
 pkgname=('libmariadbclient' 'mariadb-clients' 'mytop' 'mariadb')
 pkgver=10.1.32
-pkgrel=2
+pkgrel=3
 arch=('x86_64')
 license=('GPL')
 url='http://mariadb.org/'
@@ -12,16 +14,17 @@ makedepends=('boost' 'bzip2' 'cmake' 'jemalloc' 'libaio' 'libxml2' 'lz4' 'lzo'
 validpgpkeys=('199369E5404BD5FC7D2FE43BCBCB082A1BB943DB') # MariaDB Package Signing Key <package-signing-key@mariadb.org>
 source=("http://ftp.osuosl.org/pub/mariadb/mariadb-${pkgver}/source/mariadb-${pkgver}.tar.gz"{,.asc}
         '0001-openssl-1-1-0.patch'
-        '0002-mroonga-after-merge-CMakeLists.txt-fixes.patch')
+        '0002-mroonga-after-merge-CMakeLists.txt-fixes.patch'
+        'atomic.patch')
 sha256sums=('0e2aae6a6a190d07c8e36e87dd43377057fa82651ca3c583462563f3e9369096'
             'SKIP'
             '229d556748119757f36be1e9956834be28db0f5a35cdacce53f6c640784fca77'
-            '98736aefef21e575e450f8066685ba82771264409412e33491ab0a54e4407ba7')
+            '98736aefef21e575e450f8066685ba82771264409412e33491ab0a54e4407ba7'
+            '2ddfe7dc5eae905ed77d7438d6869f9bb26684945c2f82cc19f84926b1cb849f')
 install=mariadb.install
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/mariadb')
 pkgverforked=('10.1.31-1')
-
 
 #    'etc/mysql/conf.d/50-replication.cnf'
 
@@ -44,6 +47,11 @@ prepare() {
 
   # let's create the datadir from tmpfiles
   echo 'd @MYSQL_DATADIR@ 0700 @MYSQLD_USER@ @MYSQLD_USER@ -' >> support-files/tmpfiles.conf.in
+
+  # from ArchLinuxARM
+  if [[ $CARCH == arm || $CARCH == armv6h ]]; then
+    patch -p0 -i ../atomic.patch
+  fi
 }
 
 build() {
@@ -92,6 +100,7 @@ build() {
     -DWITHOUT_FEDERATED_STORAGE_ENGINE=1 \
     -DWITHOUT_PBXT_STORAGE_ENGINE=1 \
     -DCMAKE_EXE_LINKER_FLAGS='-ljemalloc' \
+    -DWITHOUT_MROONGA_STORAGE_ENGINE=1 \
     -DCMAKE_C_FLAGS="-fPIC $CFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -fomit-frame-pointer -fno-delete-null-pointer-checks" \
     -DCMAKE_CXX_FLAGS="-fPIC $CXXFLAGS -fno-strict-aliasing -DBIG_JOINS=1 -felide-constructors -fno-rtti -fno-delete-null-pointer-checks" \
     -DWITH_MYSQLD_LDFLAGS="-pie ${LDFLAGS},-z,now"
@@ -204,6 +213,8 @@ package_mariadb() {
   rm -r usr/{data,mysql-test,sql-bench}
   rm usr/share/man/man1/mysql-test-run.pl.1
 
+
+# UBOS added:
 
     mkdir -p -m755 ${pkgdir}/etc/mysql/conf.d
     install -D -m644 ${startdir}/etc/mysql/my.cnf -t ${pkgdir}/etc/mysql/
