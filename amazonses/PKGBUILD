@@ -2,7 +2,7 @@ developer=http://indiecomputing.com/
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=0.6
+pkgver=0.7
 pkgrel=1
 pkgdesc="Configures local SMTP to send e-mail for an originating domain via Amazon SES"
 arch=('any')
@@ -30,7 +30,7 @@ package() {
     install -D -m644 ${startdir}/etc/postfix/ubos-aliases -t ${pkgdir}/etc/postfix/
 
 # Code
-    install -D -m755 ${startdir}/bin/manage-site.pl -t ${pkgdir}/usr/share/${pkgname}/bin/
+    install -D -m755 ${startdir}/bin/manage-site.pl -t ${pkgdir}/ubos/share/${pkgname}/bin/
 
     install -D -m755 ${startdir}/vendor_perl/AmazonSes.pm -t ${pkgdir}${_vendor_perl}/
 }
