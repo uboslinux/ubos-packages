@@ -194,12 +194,12 @@ CONTENT
             $name = sprintf( "site-%s-%s.ubos-backup", $actualSites->[0]->siteId(), $now );
 
         } elsif( @$actualSites ) {
-            my $hostId = lc( UBOS::Host::gpgHostKeyFingerprint());
+            my $hostId = lc( UBOS::Host::hostId());
             $name = sprintf( "site-multi-%s-%s.ubos-backup", $hostId, $now );
         } elsif( @$actualAppConfigs == 1 ) {
             $name = sprintf( "appconfig-%s-%s.ubos-backup", $actualAppConfigs->[0]->appConfigId(), $now );
         } else {
-            my $hostId = lc( UBOS::Host::gpgHostKeyFingerprint());
+            my $hostId = lc( UBOS::Host::hostId());
             $name = sprintf( "appconfig-multi-%s-%s.ubos-backup", $hostId, $now );
         }
     }
