@@ -4,8 +4,8 @@
 
 pkgbase=mariadb
 pkgname=('libmariadbclient' 'mariadb-clients' 'mytop' 'mariadb')
-pkgver=10.1.32
-pkgrel=3
+pkgver=10.1.33
+pkgrel=1
 arch=('x86_64')
 license=('GPL')
 url='http://mariadb.org/'
@@ -16,15 +16,15 @@ source=("http://ftp.osuosl.org/pub/mariadb/mariadb-${pkgver}/source/mariadb-${pk
         '0001-openssl-1-1-0.patch'
         '0002-mroonga-after-merge-CMakeLists.txt-fixes.patch'
         'atomic.patch')
-sha256sums=('0e2aae6a6a190d07c8e36e87dd43377057fa82651ca3c583462563f3e9369096'
+sha512sums=('1d30e06d0c19e338bfbbe6815cf5eee8e1b839b525950f7f54c7cf8f89034658a284df4756f54719ab0f55875546d4713b03bab7dd094ec13291732b069f737e'
             'SKIP'
-            '229d556748119757f36be1e9956834be28db0f5a35cdacce53f6c640784fca77'
-            '98736aefef21e575e450f8066685ba82771264409412e33491ab0a54e4407ba7'
-            '2ddfe7dc5eae905ed77d7438d6869f9bb26684945c2f82cc19f84926b1cb849f')
+            '92b1a0bd47c8ab8fad5f51f9038ea9becba5ef2855bfa3fb0614b8a2d2666ec77122c3b4308bc90144fc2df023a4d7fa7e9bd520174f49bd99a8ae64bb5096f4'
+            '5768aeaf08b08288eb8813c0adf252ee5c91166f8f4855291cb7e91e2d7de73ae2ee8dfd4309d261e9e9367ed80a4c6d17b1ac70d307c5088164d647317a1aa9'
+            '02cfc50cced0fd1b9def228fdcbfe0f9dde54cbeb29a0df50592da45b212079abf1de761da229ee9630c664bd1884620a944eeb1b8010c68f64d7abcc331ded5')
 install=mariadb.install
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/mariadb')
-pkgverforked=('10.1.31-1')
+pkgverforked=('10.1.33-1')
 
 #    'etc/mysql/conf.d/50-replication.cnf'
 
