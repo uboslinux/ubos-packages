@@ -1,0 +1,24 @@
+developer="https://pagekite.org/"
+url="http://ubos.net/"
+maintainer="http://indiecomputing.com/"
+pkgname=$(basename $(pwd))
+pkgver=0.5.9.3
+pkgrel=1
+pkgdesc='Python implementation of the PageKite remote front-end protocols.'
+arch=('any')
+url=${developer}
+license=('AGPL2')
+depends=('python2' 'python2-setuptools' 'python2-socksipychain')
+source=("pagekite-${pkgver}.tar.gz::https://github.com/pagekite/PyPagekite/archive/v${pkgver}.tar.gz")
+sha512sums=('4a35849e5fa00423a64c5d781c5f2079fd07e06b36e318a609326f9baa8d14a12d2fe4d0671acf758431b91e4793c411e8e3f63e683a9561736277d033c0119d')
+
+package() {
+    cd "${srcdir}/PyPagekite-${pkgver}"
+
+    python2 setup.py install --root="${pkgdir}/" --optimize=1
+
+    install -D -m0644 etc/pagekite.d/* -t ${pkgdir}/etc/pagekite.d/
+    install -D -m0644 doc/*.1          -t ${pkgdir}/usr/shareman/man1/
+
+    install -D -m0644 etc/logrotate.d/pagekite.debian ${pkgdir}/etc/logrotate.d/pagekite
+}
