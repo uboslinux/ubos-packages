@@ -13,7 +13,7 @@ releasepage=('https://archlinuxarm.org/packages/armv7h/snapper')
 
 pkgname=snapper
 pkgver=0.5.4
-pkgrel=3
+pkgrel=4
 pkgdesc="A tool for managing BTRFS and LVM snapshots. It can create, diff and restore snapshots and provides timelined auto-snapping."
 arch=('x86_64')
 url="http://snapper.io"
