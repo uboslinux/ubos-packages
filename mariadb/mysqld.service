@@ -11,7 +11,7 @@
 # modified for UBOS
 
 [Unit]
-Description=MariaDB database server configured for UBOS
+Description=MariaDB database server
 After=network.target
 After=syslog.target
 
