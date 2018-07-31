@@ -4,8 +4,8 @@
 
 pkgbase=mariadb
 pkgname=('libmariadbclient' 'mariadb-clients' 'mytop' 'mariadb')
-pkgver=10.1.33
-pkgrel=2
+pkgver=10.1.34
+pkgrel=1
 arch=('x86_64')
 license=('GPL')
 url='http://mariadb.org/'
@@ -14,12 +14,10 @@ makedepends=('boost' 'bzip2' 'cmake' 'jemalloc' 'libaio' 'libxml2' 'lz4' 'lzo'
 validpgpkeys=('199369E5404BD5FC7D2FE43BCBCB082A1BB943DB') # MariaDB Package Signing Key <package-signing-key@mariadb.org>
 source=("http://ftp.osuosl.org/pub/mariadb/mariadb-${pkgver}/source/mariadb-${pkgver}.tar.gz"{,.asc}
         '0001-openssl-1-1-0.patch'
-        '0002-mroonga-after-merge-CMakeLists.txt-fixes.patch'
         'atomic.patch')
-sha512sums=('1d30e06d0c19e338bfbbe6815cf5eee8e1b839b525950f7f54c7cf8f89034658a284df4756f54719ab0f55875546d4713b03bab7dd094ec13291732b069f737e'
+sha512sums=('3c18359006b340dcf724d1fce36dcc19916c42492269a7545e0726172b8f7b84860e10725c74e4458dae34572395f1650bf17838e9058544e0a6cfcbffd54f6d'
             'SKIP'
             '92b1a0bd47c8ab8fad5f51f9038ea9becba5ef2855bfa3fb0614b8a2d2666ec77122c3b4308bc90144fc2df023a4d7fa7e9bd520174f49bd99a8ae64bb5096f4'
-            '5768aeaf08b08288eb8813c0adf252ee5c91166f8f4855291cb7e91e2d7de73ae2ee8dfd4309d261e9e9367ed80a4c6d17b1ac70d307c5088164d647317a1aa9'
             '02cfc50cced0fd1b9def228fdcbfe0f9dde54cbeb29a0df50592da45b212079abf1de761da229ee9630c664bd1884620a944eeb1b8010c68f64d7abcc331ded5')
 install=mariadb.install
 
@@ -40,10 +38,6 @@ prepare() {
 
   # openssl 1.1.0
   patch -Np1 < "${srcdir}"/0001-openssl-1-1-0.patch
-
-  # revert to fix the build
-  # mroonga after-merge CMakeLists.txt fixes
-  patch -Np1 -R < "${srcdir}"/0002-mroonga-after-merge-CMakeLists.txt-fixes.patch
 
   # let's create the datadir from tmpfiles
   echo 'd @MYSQL_DATADIR@ 0700 @MYSQLD_USER@ @MYSQLD_USER@ -' >> support-files/tmpfiles.conf.in
