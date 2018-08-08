@@ -1,0 +1,9 @@
+[Unit]
+Description=localhost tunneling via pagekite.net
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/pagekite --clean --logfile=stdio --runas=pagekite:pagekite --optdir /etc/pagekite.d
+
+[Install]
+WantedBy=multi-user.target
