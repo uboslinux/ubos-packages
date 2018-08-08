@@ -125,6 +125,19 @@ sub isActive {
 }
 
 ##
+# Determine whether the pagekite daemon is currently running
+# return: true or false
+sub isDaemonRunning {
+
+    my $out;
+    if( UBOS::Utils::myexec( 'systemctl status ' . $systemdService, undef, \$out, \$out ) == 0 ) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+##
 # Save a new Pagekite secret.
 # $kiteSecret: the secret
 sub saveKiteSecret {
@@ -224,7 +237,7 @@ sub activateDeactivateRestartSystemdService {
         $ret = UBOS::Utils::myexec( 'systemctl disable --now ' . $systemdService, undef, \$out, \$out );
         # might be disabled already; doesn't matter
 
-    } elsif( UBOS::Utils::myexec( 'systemctl status ' . $systemdService, undef, \$out, \$out ) == 0 ) {
+    } elsif( isDaemonRunning() ) {
         # running already -- determine whether we need to restart
         # we assume there are no duplicates, and they are sorted (see activate())
         my $doRestart;

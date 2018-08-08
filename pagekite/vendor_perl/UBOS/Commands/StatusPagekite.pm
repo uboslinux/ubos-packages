@@ -41,10 +41,37 @@ sub run {
 
     my $status = UBOS::Pagekite::Pagekite::status();
 
-    print 'Status:        ' . ( $status->{active} eq 'active' ?  'active' : 'inactive' ) . "\n";
-    print 'Enabled kites: ' . ( $status->{allKites} ? '<all sites>' : join( ' ', @{$status->{activeKites}} )) : "\n";
-    print 'Active kites:  ' . join( ' ', @{$status->{enabledKites}} ) . "\n";
+    if( exists( $status->{status} ) && $status->{status} eq 'active' ) {
+        print "Status:         active\n";
+    } else {
+        print "Status:         inactive\n";
+    }
+    if( exists( $status->{allKites} ) && $status->{allKites} ) {
+        print "Active kites:   <for all sites>\n";
+    } elsif( exists( $status->{activeKites} ) && @{$status->{activeKites}} ) {
+        print 'Active kites:   ' . join( ' ', @{$status->{activeKites}} ) . "\n";
+    } else {
+        print "Active kites:   <none>\n";
+    }
+    if( exists( $status->{enabledKites} ) && @{$status->{enabledKites}} ) {
+        print 'Enabled kites:  ' . join( ' ', @{$status->{enabledKites}} ) . "\n";
+    } else {
+        print "Enabled kites:  <none>\n";
+    }
+    if( $verbose ) {
+        my $sites = UBOS::Host::sites();
+        if( keys %$sites ) {
+            print 'Deployed sites: ' . join( ' ', sort map{ $_->hostname() } values %$sites ) . "\n";
+        } else {
+            print "Deployed sites: <none>\n";
+        }
 
+        if( UBOS::Pagekite::Pagekite::isDaemonRunning()) {
+            print "Daemon running: yes\n";
+        } else {
+            print "Daemon running: no\n";
+        }
+    }
     return 0;
 }
 
