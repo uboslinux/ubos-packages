@@ -4,7 +4,7 @@ pkgbase=postgresql
 pkgname=('postgresql-libs' 'postgresql-docs' 'postgresql')
 pkgver=10.4
 _majorver=${pkgver%.*}
-pkgrel=4
+pkgrel=6
 pkgdesc='Sophisticated object-relational DBMS'
 url='https://www.postgresql.org/'
 arch=('x86_64')
@@ -24,7 +24,7 @@ sha512sums=('b7c0d2fdc724e2eb1cda9fc1eb01b47352bbe6ba6357b3e898b7f5990fd78499c8c
             '56974ef34a8d94596068413154b1a7ed5a71f5a3942bd79427f05e6f6b7853036874dedd8d988bb94306023f2a675996d500b075eaf8a192ef5c24026eb28eb0')
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/postgresql')
-pkgverforked=('10.4-3')
+pkgverforked=('10.4-6')
 
 prepare() {
   cd postgresql-${pkgver}
