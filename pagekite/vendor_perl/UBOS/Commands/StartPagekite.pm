@@ -42,8 +42,6 @@ sub run {
     info( 'ubos-admin', $cmd, @_ );
 
     if(    !$parseOk
-        || ( $all && @args )
-        || ( !$all && !@args )
         || ( $verbose && $logConfigFile ))
     {
         fatal( 'Invalid invocation:', $cmd, @_, '(add --help for help)' );
@@ -61,14 +59,7 @@ sub run {
         fatal( 'Pagekite is active already.' );
     }
 
-    if( $kiteSecret ) {
-        UBOS::Pagekite::Pagekite::saveKiteSecret( $kiteSecret );
-
-    } elsif( ! UBOS::Pagekite::Pagekite::hasKiteSecret() ) {
-        fatal( 'On the first invocation, --kitesecret <secret> must be provided' );
-    }
-
-    my $ret = UBOS::Pagekite::Pagekite::activate( [ keys %namedKites ], $all );
+    my $ret = UBOS::Pagekite::Pagekite::activate( [ keys %namedKites ], $all, $kiteSecret );
     return $ret;
 }
 
@@ -86,24 +77,17 @@ SSS
 SSS
         'cmds' => {
             <<SSS => <<HHH,
-    [--kitesecret <secret>] <kite>...
+    [--kitesecret <secret>][--all] <kite>...
 SSS
     Start the Pagekite service for this device, activating the list of
     named kites. This will compare the list of kites with the deployed sites,
     and only activate those kites for which matching sites exist.
     On the first invocation, the kite secret <secret> found on your account at
     pagekite.net must be provided.
-HHH
-            <<SSS => <<HHH,
-    [--kitesecret <secret>] --all
-SSS
-    Start the Pagekite service for this device, activating one kite for each
-    of the sites deployed on the device. When you deploy additional sites or
-    undeploy sites, kites will be automatically added or removed.
-    This will only work if you have configured the needed kites on the
-    pagekite.net website.
-    On the first invocation, the kite secret <secret> found on your account at
-    pagekite.net must be provided.
+    If you specify --all, UBOS will automatically create additional kites
+    for all other sites currently on the device, and all that you might
+    create in the future. Without --all, UBOS will only create the
+    specified kites
 HHH
          },
         'args' => {

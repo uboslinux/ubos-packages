@@ -3,7 +3,7 @@ Description=localhost tunneling via pagekite.net
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/pagekite --clean --logfile=stdio --runas=pagekite:pagekite --optdir /etc/pagekite.d
+ExecStart=/usr/bin/pagekite --clean --logfile=stdio --runas=pagekite:pagekite --optdir /etc/pagekite.d --nocrashreport
 
 [Install]
 WantedBy=multi-user.target
