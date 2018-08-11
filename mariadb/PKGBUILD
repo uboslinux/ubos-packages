@@ -4,7 +4,7 @@
 
 pkgbase=mariadb
 pkgname=('libmariadbclient' 'mariadb-clients' 'mytop' 'mariadb')
-pkgver=10.1.34
+pkgver=10.1.35
 pkgrel=1
 arch=('x86_64')
 license=('GPL')
@@ -12,17 +12,19 @@ url='http://mariadb.org/'
 makedepends=('boost' 'bzip2' 'cmake' 'jemalloc' 'libaio' 'libxml2' 'lz4' 'lzo'
              'openssl' 'systemd' 'zlib')
 validpgpkeys=('199369E5404BD5FC7D2FE43BCBCB082A1BB943DB') # MariaDB Package Signing Key <package-signing-key@mariadb.org>
-source=("http://ftp.osuosl.org/pub/mariadb/mariadb-${pkgver}/source/mariadb-${pkgver}.tar.gz"{,.asc}
+source=("https://mirrors.n-ix.net/mariadb/mariadb-$pkgver/source/mariadb-$pkgver.tar.gz"{,.asc}
         '0001-openssl-1-1-0.patch'
         'atomic.patch')
-sha512sums=('3c18359006b340dcf724d1fce36dcc19916c42492269a7545e0726172b8f7b84860e10725c74e4458dae34572395f1650bf17838e9058544e0a6cfcbffd54f6d'
+sha512sums=('88e6049f3bbc3aa047e108f91a2c4f335758e80f25bfa2974b5f8c2e13f5758824d7835dece021b515c531e5641b9998e4de92256ad4b47b7f694da99bd471aa'
             'SKIP'
             '92b1a0bd47c8ab8fad5f51f9038ea9becba5ef2855bfa3fb0614b8a2d2666ec77122c3b4308bc90144fc2df023a4d7fa7e9bd520174f49bd99a8ae64bb5096f4'
             '02cfc50cced0fd1b9def228fdcbfe0f9dde54cbeb29a0df50592da45b212079abf1de761da229ee9630c664bd1884620a944eeb1b8010c68f64d7abcc331ded5')
 install=mariadb.install
 
-releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/mariadb')
-pkgverforked=('10.1.33-1')
+releasepage=(
+    'https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/mariadb'
+    'https://archlinuxarm.org/packages/aarch64/mariadb/files'
+)
 
 #    'etc/mysql/conf.d/50-replication.cnf'
 
@@ -176,6 +178,7 @@ package_mariadb() {
   mv usr/lib/sysusers.d/{sysusers,mariadb}.conf
   mv usr/lib/tmpfiles.d/{tmpfiles,mariadb}.conf
 
+# UBOS does it differently
 #  ln -s mariadb.service usr/lib/systemd/system/mysqld.service
 #  ln -s mariadb@.service usr/lib/systemd/system/mysqld@.service
 
