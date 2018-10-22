@@ -13,29 +13,50 @@ package UBOS::HostnameCallbacks::UpdatePagekite;
 use UBOS::Pagekite::Pagekite;
 
 ##
-# A site has been deployed to this host
-# $siteId: the id of the site
-# $hostname: the hostname of the site
-# @nics: the network interfaces on which the site can be reached
-sub deployed {
-    my $siteId   = shift;
-    my $hostname = shift;
-    my @nics     = @_;
+# A site is deploying to this host
+# $site: the Site
+sub siteDeploying {
+    my $site = shift;
 
-    return UBOS::Pagekite::Pagekite::deployedSitesUpdated();
+    # We do this here so that pagekite is active by the time we provision
+    # a letsencrypt certificate, which is before the site is fully deployed.
+    # At this time, the site is not in UBOS::Host::sites() yet.
+
+    my $siteId = $site->siteId();
+    my $sites  = UBOS::Host::sites();
+
+    unless( exists( $sites->{$siteId} )) {
+        $sites->{$siteId} = $site;
+    }
+
+    return UBOS::Pagekite::Pagekite::deployedSitesUpdated( $sites );
 }
 
 ##
-# A site has been undeployed from this host
-# $siteId: the id of the site
-# $hostname: the hostname of the site
-# @nics: the network interfaces on which the site can be reached
-sub undeployed {
-    my $siteId   = shift;
-    my $hostname = shift;
-    my @nics     = @_;
+# A site has been deployed to this host
+# $site: the Site
+sub siteDeployed {
+    my $site = shift;
 
-    return UBOS::Pagekite::Pagekite::deployedSitesUpdated();
+    # noop
+}
+
+##
+# A site is undeploying from this host
+# $site: the Site
+sub siteUndeploying {
+    my $site = shift;
+
+    # noop
+}
+##
+# A site has been undeployed from this host
+# $site: the Site
+sub siteUndeployed {
+    my $site = shift;
+
+    my $sites = UBOS::Host::sites();
+    return UBOS::Pagekite::Pagekite::deployedSitesUpdated( $sites );
 }
 
 1;
