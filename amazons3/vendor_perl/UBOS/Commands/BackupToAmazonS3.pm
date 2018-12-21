@@ -61,6 +61,7 @@ sub run {
             'name=s'        => \$name,
             'notls'         => \$noTls,
             'notorkey'      => \$noTorKey,
+            'nostore'       => \$noStore,
             'encryptid=s'   => \$encryptId );
 
     UBOS::Logging::initialize( 'ubos-admin', $cmd, $verbose, $logConfigFile );
@@ -227,7 +228,7 @@ CONTENT
         info( 'Backed up to', "s3://" .  $config->{'aws-bucket'} . "/$name" );
     }
 
-    if( $configChange ) {
+    if( $configChange && $noStore ) {
         unless( $firstTime ) {
             info( 'Configuration changed. Defaults were updated.' );
         }
@@ -395,9 +396,8 @@ HHH
     using GPG key id <id> in the current user's GPG keychain.
 HHH
             '--config <configfile>' => <<HHH
-    Use an alternate configuration file. If this is given, do not
-    specify --nostore. Default location of the configuration file is at
-    $DEFAULT_CONFIG_FILE.
+    Use an alternate configuration file. Default location of the
+    configuration file is at $DEFAULT_CONFIG_FILE.
 HHH
         }
     };
