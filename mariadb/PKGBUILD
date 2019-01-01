@@ -4,20 +4,20 @@
 
 pkgbase=mariadb
 pkgname=('libmariadbclient' 'mariadb-clients' 'mytop' 'mariadb')
-pkgver=10.1.35
+pkgver=10.1.37
 pkgrel=1
 arch=('x86_64')
 license=('GPL')
-url='http://mariadb.org/'
+url='https://mariadb.org/'
 makedepends=('boost' 'bzip2' 'cmake' 'jemalloc' 'libaio' 'libxml2' 'lz4' 'lzo'
              'openssl' 'systemd' 'zlib')
 validpgpkeys=('199369E5404BD5FC7D2FE43BCBCB082A1BB943DB') # MariaDB Package Signing Key <package-signing-key@mariadb.org>
 source=("https://mirrors.n-ix.net/mariadb/mariadb-$pkgver/source/mariadb-$pkgver.tar.gz"{,.asc}
         '0001-openssl-1-1-0.patch'
         'atomic.patch')
-sha512sums=('88e6049f3bbc3aa047e108f91a2c4f335758e80f25bfa2974b5f8c2e13f5758824d7835dece021b515c531e5641b9998e4de92256ad4b47b7f694da99bd471aa'
+sha512sums=('b7c35cd67ad265ce2e3a4db20a2ae2b78745db96dc70a211f027a39b6dbb3dc900991c2ee1021ee6a97d12489c3e2a70252e2adf348a458af38b99c3de5a4f25'
             'SKIP'
-            '92b1a0bd47c8ab8fad5f51f9038ea9becba5ef2855bfa3fb0614b8a2d2666ec77122c3b4308bc90144fc2df023a4d7fa7e9bd520174f49bd99a8ae64bb5096f4'
+            '3e61bf76d3e9f299c16e2e129e383af2e8f2a44a6002de21ea6406085cacb1ce742e339dfae9c1c304b4009b2300588194352233fb96af7bd8bb3e5892e5cea7'
             '02cfc50cced0fd1b9def228fdcbfe0f9dde54cbeb29a0df50592da45b212079abf1de761da229ee9630c664bd1884620a944eeb1b8010c68f64d7abcc331ded5')
 install=mariadb.install
 
