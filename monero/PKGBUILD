@@ -6,39 +6,38 @@ developer='https://getmonero.org/'
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=0.12.0.0
-pkgrel=2
+pkgver=0.13.0.4
+pkgrel=1
 pkgdesc="Monero: the secure, private, untraceable currency"
-license=('custom:monero')
-arch=('x86_64' 'armv7h' 'aarch64')
-depends=('boost-libs' 'unbound' 'miniupnpc' 'libunwind' 'openssl' 'readline' 'zeromq')
+license=('custom:Cryptonote')
+arch=('x86_64' 'i686' 'armv7h' 'aarch64')
+url="https://getmonero.org/"
+depends=('boost-libs' 'libunwind' 'openssl' 'readline' 'zeromq' 'pcsclite')
 makedepends=('git' 'cmake' 'boost' 'gtest' 'qt5-tools')
 provides=('monero' 'libmonero-wallet')
 backup=('etc/monero/monerod.conf')
 install=monero.install
 releasepage=("https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=monero")
 pkgverforked=('0.12.0.0-1')
-source=("https://github.com/monero-project/monero/archive/v${pkgver}.tar.gz"
-        "monerod.service"
-        "cmake-wallet.patch")
 
-sha512sums=('780465569cdd7cf7f38e5e6dc88f420f411e3768ee0e0421cfb2f1ccb48b2fa93261d8f806f51f7fde44f622395c9b90809fea7bb50ad3470a34b8df80bf882e'
-            '6fe74167f0319666494696ceccdfdfc2f6e95f5b05a3fa832400c9905d106f77c7c3809f3fd4c63961697f844f27ffdbf789d8c7ded29473964c2d8af7197fec'
-            'd9fbc3aff46947a5787d9377c1c2569ee7d78b68afe7b38f11a8dbd1e299930ab864f1351552bc72fa7eb8fb5c39182aea4dfab2f9844ae08cdd78285627edfa')
+source=("${pkgname}"::"git+https://github.com/monero-project/monero#tag=v${pkgver}"
+        "monerod.service")
 
-_monero="${pkgname}-${pkgver}"
+sha512sums=('SKIP'
+            '6fe74167f0319666494696ceccdfdfc2f6e95f5b05a3fa832400c9905d106f77c7c3809f3fd4c63961697f844f27ffdbf789d8c7ded29473964c2d8af7197fec')
+
+_monero="${pkgname}"
 _build=build
 
-# prepare() {
-#     cd "${srcdir}/${_monero}"
-#     patch -Np1 -i "${srcdir}/cmake-wallet.patch"
-# }
+prepare()
+{
+  git -C "${pkgname}" submodule update --init --recursive --force
+}
 
 build() {
     cd "${srcdir}/${_monero}"
     CMAKE_FLAGS+=" -DCMAKE_BUILD_TYPE=Release "
     CMAKE_FLAGS+=" -DCMAKE_INSTALL_PREFIX=/usr "
-    CMAKE_FLAGS+=" -DBUILD_TESTS=ON "
     CMAKE_FLAGS+=" -DBUILD_GUI_DEPS=ON "
     #CMAKE_FLAGS+=" -DCMAKE_LINKER=/usr/bin/ld.gold " # #974 ld segfault on ARM, re-implement if needed
     mkdir -p $_build && cd $_build
@@ -46,19 +45,21 @@ build() {
     make
 }
 
-check() {
-    cd "$srcdir/$_monero"
-    cd build
-
-    # Temporarily disable some a tests:
-    #  * coretests takes too long (~25000s)
-    #  * libwallet_api_tests fail (Issue #895)
-    #  * unit_tests were run separately above
-    CTEST_ARGS+="-E 'coretests|libwallet_api_tests|unit_tests'"
-    echo ">>> NOTE: some tests excluded: $CTEST_ARGS"
-
-    make ARGS="$CTEST_ARGS" test
-}
+# Disable running of tests. Tests should not be needed outside of the development environment.
+# Cherry-picking tests that aren't "too long" also defeats the purpose of running tests.
+#check() {
+#  cd "${srcdir}/${_monero}/${_build}"
+#
+#  # Temporarily disable some a tests:
+#  #  * coretests takes too long (~25000s)
+#  #  * libwallet_api_tests fail (Issue #895)
+#  #  * unit_tests were run separately above
+#  #  * hash-variant2-int-sqrt takes too long
+#  CTEST_ARGS+="-E 'core_tests|libwallet_api_tests|unit_tests|hash-variant2-int-sqrt'"
+#  echo ">>> NOTE: some tests excluded: $CTEST_ARGS"
+#
+#  make ARGS="$CTEST_ARGS" test
+#}
 
 package_monero() {
   backup=('etc/monerod.conf')
@@ -73,17 +74,19 @@ package_monero() {
   # install -Dm644 "${srcdir}/${_monero}/utils/systemd/monerod.service" "${pkgdir}/usr/lib/systemd/system/monerod.service"
   install -Dm644 ${startdir}/monerod.service "${pkgdir}/usr/lib/systemd/system/monerod.service"
 
-  install -Dm755 "${srcdir}/${_monero}/build/bin/monero-blockchain-blackball" "${pkgdir}/usr/bin/monero-blockchain-blackball"
+  install -Dm755 "${srcdir}/${_monero}/build/bin/monero-blockchain-ancestry" "${pkgdir}/usr/bin/monero-blockchain-ancestry"
+  install -Dm755 "${srcdir}/${_monero}/build/bin/monero-blockchain-depth" "${pkgdir}/usr/bin/monero-blockchain-depth"
   install -Dm755 "${srcdir}/${_monero}/build/bin/monero-blockchain-export" "${pkgdir}/usr/bin/monero-blockchain-export"
   install -Dm755 "${srcdir}/${_monero}/build/bin/monero-blockchain-import" "${pkgdir}/usr/bin/monero-blockchain-import"
+  install -Dm755 "${srcdir}/${_monero}/build/bin/monero-blockchain-mark-spent-outputs" "${pkgdir}/usr/bin/monero-blockchain-mark-spent-outputs"
   install -Dm755 "${srcdir}/${_monero}/build/bin/monero-blockchain-usage" "${pkgdir}/usr/bin/monero-blockchain-usage"
+
+  install -Dm755 "${srcdir}/${_monero}/build/bin/monerod" "${pkgdir}/usr/bin/monerod"
 
   install -Dm755 "${srcdir}/${_monero}/build/bin/monero-gen-trusted-multisig" "${pkgdir}/usr/bin/monero-gen-trusted-multisig"
 
   install -Dm755 "${srcdir}/${_monero}/build/bin/monero-wallet-cli" "${pkgdir}/usr/bin/monero-wallet-cli"
   install -Dm755 "${srcdir}/${_monero}/build/bin/monero-wallet-rpc" "${pkgdir}/usr/bin/monero-wallet-rpc"
-
-  install -Dm755 "${srcdir}/${_monero}/build/bin/monerod" "${pkgdir}/usr/bin/monerod"
 }
 
 package_libmonero-wallet() {
@@ -102,3 +105,4 @@ package_libmonero-wallet() {
   cd $_stage_dir
   find usr/{include,lib} -type f -exec install -D -m 755 {} ${pkgdir}/{} \;
 }
+

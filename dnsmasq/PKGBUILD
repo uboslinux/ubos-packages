@@ -1,4 +1,4 @@
-# $Id$
+# Maintainer: Christian Hesse <mail@eworm.de>
 # Maintainer: Dave Reisner <dreisner@archlinux.org>
 # Contributor: Paul Mattal <paul@archlinux.org>
 # Contributor: Tom Newsom <Jeepster@gmx.co.uk>
@@ -6,25 +6,25 @@
 
 maintainer="http://indiecomputing.com/"
 pkgname=dnsmasq
-pkgver=2.79
+pkgver=2.80
 pkgrel=1
 pkgdesc="Lightweight, easy to configure DNS forwarder and DHCP server"
 url="http://www.thekelleys.org.uk/dnsmasq/doc.html"
 arch=('x86_64' 'armv6h' 'armv7h' 'aarch64')
 license=('GPL')
-depends=('glibc' 'gmp' 'libidn' 'libdbus' 'libnetfilter_conntrack' 'nettle')
+depends=('glibc' 'gmp' 'libidn2' 'libdbus' 'libnetfilter_conntrack' 'nettle')
 backup=('etc/dnsmasq.conf')
 validpgpkeys=('D6EACBD6EE46B834248D111215CDDA6AE19135A2') # Simon Kelley <simon@thekelleys.org.uk>
 source=("http://www.thekelleys.org.uk/$pkgname/$pkgname-$pkgver.tar.xz"{,.asc}
         'dnsmasq-sysusers.conf'
         'dnsmasq.service')
-releasepage=('http://thekelleys.org.uk/gitweb/?p=dnsmasq.git;a=summary')
-sha512sums=('2c06212696ab55e1584f6133872f5b196013509e4b1822d0457787b456e14341afdde887749e370a2e512124cb4138f012f4601b08690707be4acc7cf2f2876f'
+releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk/PKGBUILD?h=packages/dnsmasq')
+sha512sums=('58e56beb553fc41311e5dc16d8b0eb3b6801e2bdfbcd0e7a6659703f08960b6ad10d48b0b14a4d727636faf35483e01597cff2ae49e7fe9fa9e214f437b1c068'
             'SKIP'
             '8e0194a6c5bd2bb6e008681808c0fbf5edbd88c2c039527587479a1850b8199444aaa70cb7252063d322f97111f89a3e8c0d4d6d1afacdf83a5ea6166233735b'
             'b5cb86331dc73f4a2c0ea755423557f7f2d71b2c04350057b720b6a5a5e93998a99d8b4cdde2c95ce283faa19a8f86534857719c580694681c597ecdb1ac67be')
 
-_build_copts="-DHAVE_DNSSEC -DHAVE_DBUS -DHAVE_IDN -DHAVE_CONNTRACK"
+_build_copts="-DHAVE_DNSSEC -DHAVE_DBUS -DHAVE_LIBIDN2 -DHAVE_CONNTRACK"
 
 build() {
   cd "$pkgname-$pkgver"
@@ -33,6 +33,8 @@ build() {
     CFLAGS="$CPPFLAGS $CFLAGS" \
     LDFLAGS="$LDFLAGS" \
     COPTS="$_build_copts" \
+    PREFIX=/usr \
+    BINDIR=/usr/bin \
     all-i18n
 }
 
@@ -42,7 +44,9 @@ package() {
   # need to pass COPTS here to avoid rebuilding the binary.
   make \
     COPTS="$_build_copts" \
-    BINDIR=/usr/bin PREFIX=/usr DESTDIR="$pkgdir" \
+    PREFIX=/usr \
+    BINDIR=/usr/bin \
+    DESTDIR="$pkgdir" \
     install install-i18n
 
   install -Dm644 "dbus/dnsmasq.conf" "$pkgdir"/etc/dbus-1/system.d/dnsmasq.conf

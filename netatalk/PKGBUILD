@@ -10,41 +10,42 @@
 
 maintainer="http://indiecomputing.com/"
 pkgname=netatalk
-pkgver=3.1.11
-pkgrel=3
+pkgver=3.1.12
+pkgrel=1
 pkgdesc='Open-source implementation of the Apple Filing Protocol'
 arch=('x86_64' 'armv6h' 'armv7h' 'aarch64')
 url='http://netatalk.sourceforge.net'
 license=('GPL')
-depends=('avahi>=0.6' 'libldap' 'libgcrypt>=1.2.3' 'libevent' 'python2' 'dbus-glib' 'python2-dbus')
+depends=('avahi>=0.6' 'libldap' 'libgcrypt>=1.2.3' 'libevent' 'python2' 'dbus-glib' 'python2-dbus' 'pam')
 replaces=('netatalk-git' 'netatalk2')
 backup=('etc/afp.conf'
-	'etc/extmap.conf')
+    'etc/extmap.conf')
 install=$pkgname.install
 source=(http://downloads.sourceforge.net/project/$pkgname/$pkgname/$pkgver/$pkgname-$pkgver.tar.bz2
-	avahi-client.patch
-	python2.patch)
-releasepage=('http://netatalk.sourceforge.net/')
+    avahi-client.patch
+    python2.patch)
+# releasepage=('http://netatalk.sourceforge.net/')
+releasepage=('https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=netatalk')
 sha512sums=('330e584f34b5f5e8714b3eca8e11adb93134cc0afa73e9bc25ddadcf3e9a96779a2979dfc08a64d343b148bc2d4e0e0f25b08d9c46d6b68057611d04ecfd06ea'
             '61ffecb2962ad5ada8d73658956ea25e13e04a40dd901bbb91fed14eaa39728b37c12c5f78c32fdf91b074618ee8aa9b46d9babf2692fdaa2da9f9b26c730585'
             '1c53f057ce19afcec15e3efa76aad310dc89bf14be7779c59066fd7389744198ae0008ea17c9ca23c1d5be93a8f5bbe1772c7da56fbce99a276260d59bb9f42a')
 
 prepare() {
-	cd "$srcdir/$pkgname-$pkgver"
-	patch -p0 < "$srcdir/python2.patch"
+    cd "$srcdir/$pkgname-$pkgver"
+    patch -p0 < "$srcdir/python2.patch"
 }
 
 build() {
-	cd "$srcdir/$pkgname-$pkgver"
-	autoreconf -fi
-	CFLAGS="-Wno-unused-result -O2" \
-		./configure --prefix=/usr --localstatedir=/var/state --sysconfdir=/etc \
-		--sbindir=/usr/bin --enable-silent-rules --with-init-style=systemd \
-		--with-cracklib --with-cnid-cdb-backend --enable-pgp-uam --with-libevent=no
-	make
+    cd "$srcdir/$pkgname-$pkgver"
+    autoreconf -fi
+    CFLAGS="-Wno-unused-result -O2" \
+        ./configure --prefix=/usr --localstatedir=/var/state --sysconfdir=/etc \
+        --sbindir=/usr/bin --enable-silent-rules --with-init-style=systemd \
+        --with-cracklib --with-cnid-cdb-backend --enable-pgp-uam --with-libevent=no
+    make
 }
 
 package() {
-	cd "$srcdir/$pkgname-$pkgver"
-	make DESTDIR="$pkgdir" install
+    cd "$srcdir/$pkgname-$pkgver"
+    make DESTDIR="$pkgdir" install
 }

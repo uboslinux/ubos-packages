@@ -1,3 +1,4 @@
+# from AUR
 # Maintainer: Kyle <kyle@gmx.ca>
 # Contributor: mib1982 <Mi.Bentlage@gmail.com>
 # Contributor: z3ntu <luca.emanuel.weiss@gmail.com>
@@ -5,7 +6,7 @@
 
 maintainer="http://indiecomputing.com/"
 pkgname=f3
-pkgver=7.0
+pkgver=7.1
 pkgrel=1
 pkgdesc="Utilities to detect and repair counterfeit flash storage, i.e. thumb drives and memory cards with less flash than advertised"
 arch=('x86_64')
@@ -17,8 +18,8 @@ options=('!buildflags'
 conflicts=()
 provides=()
 source=(https://github.com/AltraMayor/${pkgname}/archive/v${pkgver}.zip)
-releasepage=("https://github.com/AltraMayor/f3/releases")
-sha512sums=('44606dbc5c6d486a8e9e16b20ccc98c49e3fef08a8c480a85ee0b629eb307b078316da95833f18c8ba553c650bc5473957e72f30ce5d47815bc71a978183a810')
+releasepage=("https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=f3")
+sha512sums=('b13886869f2b6d9e5a988429e499bfd1941f34c78fa83cadf0fb7edeecff6ed4da5e680d19d54559c5c0da045d925f363a6cba9ce62c41418f040a34ddefacd2')
 
 build() {
     cd ${srcdir}/${pkgname}-${pkgver}

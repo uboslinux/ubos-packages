@@ -2,8 +2,8 @@ developer=http://zerotier.com/
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=1.2.4
-pkgrel=3
+pkgver=1.2.12
+pkgrel=1
 pkgdesc='ZeroTier is a software defined networking layer for Earth.'
 arch=('x86_64' 'armv6h' 'armv7h' 'aarch64')
 url=http://zerotier.com/
@@ -17,7 +17,7 @@ releasepage=('https://www.zerotier.com/download.shtml')
 makedepends=(
     npm
 )
-sha512sums=('82adb110208d24ae2745e3839810afcac87955de050ebfe0517a7dc2a875881dafd40c1b16a041742d8c4d0f6513abcc71d6ea3e06c2fb89b47be2630a500363'
+sha512sums=('a35029993d9266f3529a9922daa606b0d56a332514545f8cfab2092a4c9db4fc7217223f3bd7dbe59e536de325ee9b4f0226d673c0f0ec5859cf2937e8a4a2d4'
             '940c260d59728dc6487c8f56d67d926cc78f12394e68aa7c1a54c51f4e243806367f6cbcf14b19cb1e0df1dd5ca78a6afd301ebdb51bee2e66734e1fb9d1f764')
 build() {
     cd "${srcdir}/ZeroTierOne-${pkgver}"
@@ -33,5 +33,5 @@ package() {
     mkdir -p ${pkgdir}/usr/lib/systemd/system/
     install -m644 "${startdir}/zerotier-one.service" "${pkgdir}/usr/lib/systemd/system"
 
-    mkdir -p ${pkgdir}/var/lib/zerotier-one   
+    mkdir -p ${pkgdir}/var/lib/zerotier-one
 }
