@@ -26,7 +26,7 @@ source=(http://downloads.sourceforge.net/project/$pkgname/$pkgname/$pkgver/$pkgn
     python2.patch)
 # releasepage=('http://netatalk.sourceforge.net/')
 releasepage=('https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=netatalk')
-sha512sums=('330e584f34b5f5e8714b3eca8e11adb93134cc0afa73e9bc25ddadcf3e9a96779a2979dfc08a64d343b148bc2d4e0e0f25b08d9c46d6b68057611d04ecfd06ea'
+sha512sums=('0b22abaf0084d5684ccc049225abb34caa32893ea8fe7eb67901fde94726f054149ce78d2da49cf06fe30360eb18b2edccff20f9ac69d5ab5105f6d2f4178759'
             '61ffecb2962ad5ada8d73658956ea25e13e04a40dd901bbb91fed14eaa39728b37c12c5f78c32fdf91b074618ee8aa9b46d9babf2692fdaa2da9f9b26c730585'
             '1c53f057ce19afcec15e3efa76aad310dc89bf14be7779c59066fd7389744198ae0008ea17c9ca23c1d5be93a8f5bbe1772c7da56fbce99a276260d59bb9f42a')
 
