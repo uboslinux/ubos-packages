@@ -32,7 +32,6 @@ post_install() {
     postconf -e "inet_protocols = ipv4"
 
     postconf -e "alias_maps = hash:/etc/postfix/ubos-aliases"
-    postalias /etc/postfix/ubos-aliases
-
-    perl -MAmazonSes -e 'AmazonSes::regeneratePostfixFilesAndRestart()'
+    # postalias cannot be run here because the postfix user does not exist yet
+    # (invoked by systemd-sysusers.hook post-transaction)
 }

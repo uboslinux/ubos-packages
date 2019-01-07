@@ -11,6 +11,9 @@ use UBOS::Utils;
 
 if( 'deploy' eq $operation ) {
     AmazonSes::generatePostfixFileFragment( $config );
+
+    # Moved from package install
+    UBOS::Utils::myexec( "postalias /etc/postfix/ubos-aliases" );
 }
 if( 'undeploy' eq $operation ) {
     AmazonSes::removePostfixFileFragment( $config );

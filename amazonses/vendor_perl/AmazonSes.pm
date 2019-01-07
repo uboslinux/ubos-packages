@@ -27,8 +27,8 @@ sub regeneratePostfixFilesAndRestart {
     _regenerateFile( $saslFile, $saslDir );
 
     UBOS::Utils::myexec( "systemctl restart postfix" );
-
 }
+
 sub _regenerateFile {
     my $dest = shift;
     my $dir  = shift;
