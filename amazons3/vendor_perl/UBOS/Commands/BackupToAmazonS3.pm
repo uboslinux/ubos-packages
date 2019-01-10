@@ -16,6 +16,7 @@ use UBOS::BackupUtils;
 use UBOS::Backup::ZipFileBackup;
 use UBOS::Host;
 use UBOS::Logging;
+use UBOS::Terminal;
 use UBOS::Utils;
 
 my $DEFAULT_CONFIG_FILE = '/etc/amazons3/backup-config.json';
@@ -116,15 +117,15 @@ sub run {
     # Ask for values we don't have yet and we need for testing that a
     # bucket exists
     unless( exists( $config->{'aws-access-key-id'} )) {
-        $config->{'aws-access-key-id'} = _ask( 'Amazon AWS access key id', '^[A-Z0-9]{20}$', 0 );
+        $config->{'aws-access-key-id'} = askAnswer( 'Amazon AWS access key id', '^[A-Z0-9]{20}$', 0 );
         $configChange = 1;
     }
     unless( exists( $config->{'aws-secret-access-key'} )) {
-        $config->{'aws-secret-access-key'} = _ask( 'Amazon AWS secret access key', '^[A-Za-z0-9/+]{40}$', 1 );
+        $config->{'aws-secret-access-key'} = askAnswer( 'Amazon AWS secret access key', '^[A-Za-z0-9/+]{40}$', 1 );
         $configChange = 1;
     }
     unless( exists( $config->{'aws-bucket'} )) {
-        $config->{'aws-bucket'} = _ask( 'Amazon S3 bucket for backup', '^[-.a-z0-9]+$', 0 );
+        $config->{'aws-bucket'} = askAnswer( 'Amazon S3 bucket for backup', '^[-.a-z0-9]+$', 0 );
         $configChange = 1;
     }
     unless( exists( $config->{'aws-region'} )) {
@@ -279,42 +280,6 @@ sub _aws {
     if( $ret ) {
         if( $err =~ m!AccessDenied! ) {
             error( 'S3 denied access. Check your AWS credentials, and your permissions to write to the bucket.' );
-        }
-    }
-    return $ret;
-}
-
-##
-# Ask the user a question
-# $q: the question text
-# $regex: regular expression that defines valid input
-# $blank: if true, do not echo input to the terminal
-sub _ask {
-    my $q     = shift;
-    my $regex = shift || '.?';
-    my $blank = shift || 0;
-
-    my $ret;
-    while( 1 ) {
-        print $q . ': ';
-
-        if( $blank ) {
-            system('stty','-echo');
-        }
-        $ret = <STDIN>;
-        if( $blank ) {
-            system('stty','echo');
-            print "\n";
-        }
-
-        if( defined( $ret )) { # apparently ^D becomes undef
-            $ret =~ s!^\s+!!;
-            $ret =~ s!\s+$!!;
-            if( $ret =~ $regex ) {
-                last;
-            } else {
-                print "(input not valid: regex is $regex)\n";
-            }
         }
     }
     return $ret;
