@@ -12,11 +12,13 @@
 
 [Unit]
 Description=MariaDB database server
+Documentation=man:mysqld(8)
+Documentation=https://mariadb.com/kb/en/library/systemd/
 After=network.target
-After=syslog.target
 
 [Install]
 WantedBy=multi-user.target
+
 
 [Service]
 
@@ -54,6 +56,7 @@ ProtectHome=true
 # Execute pre and post scripts as root, otherwise it does it as User=
 PermissionsStartOnly=true
 
+@SYSTEMD_EXECSTARTPRE@
 ExecStartPre=/usr/share/ubos-admin/bin/ubos-service-prestart mysqld
 ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop mysqld
 
@@ -75,13 +78,11 @@ ExecStartPre=/usr/bin/mysql_install_db --user=mysql --defaults-file=/etc/mysql/m
 # Use the [service] section and Environment="MYSQLD_OPTS=...".
 # This isn't a replacement for my.cnf.
 # _WSREP_NEW_CLUSTER is for the exclusive use of the script galera_new_cluster
-
 ExecStart=/usr/sbin/mysqld --defaults-file=/etc/mysql/my.cnf --pid-file=/run/mysqld/mysqld.pid $MYSQLD_OPTS $_WSREP_NEW_CLUSTER $_WSREP_START_POSITION
 
 # Unset _WSREP_START_POSITION environment variable.
 ExecStartPost=/bin/sh -c "systemctl unset-environment _WSREP_START_POSITION"
 
-KillMode=process
 KillSignal=SIGTERM
 
 # Don't want to see an automated SIGKILL ever
@@ -99,7 +100,8 @@ UMask=007
 ##
 ##
 ## by creating a file in /etc/systemd/system/mariadb.service.d/MY_SPECIAL.conf
-## and adding/setting the following will override this file's settings.
+## and adding/setting the following under [Service] will override this file's
+## settings.
 
 # Useful options not previously available in [mysqld_safe]
 
@@ -132,9 +134,10 @@ LimitNOFILE=16364
 # Timezone. previously [mysqld_safe] timezone
 # Environment="TZ=UTC"
 
-# Library substitutions. previously [mysqld_safe] malloc-lib with explict paths
+# Library substitutions. previously [mysqld_safe] malloc-lib with explicit paths
 # (in LD_LIBRARY_PATH) and library name (in LD_PRELOAD).
 # Environment="LD_LIBRARY_PATH=/path1 /path2" "LD_PRELOAD=
+Environment="LD_PRELOAD=/usr/lib/libjemalloc.so"
 
 # Flush caches. previously [mysqld_safe] flush-caches=1
 # ExecStartPre=sync
@@ -145,7 +148,6 @@ LimitNOFILE=16364
 
 # crash-script equalivent
 # FailureAction=
-
 
 # Doubling the timeout for UBOS -- can take a long time on little devices with sd cards
 TimeoutStartSec=180

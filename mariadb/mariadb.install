@@ -5,4 +5,10 @@
 
 post_upgrade() {
     usermod --home /ubos/lib/mysql mysql
+
+    # show for feature release: 10.1 -> 10.2 -> 10.3 -> ...
+    if [ $(vercmp "${1%.*}" "${2%.*}") -ne 0 ]; then
+        echo ":: MariaDB was updated to a new feature release. Upgrading data"
+        mysql_upgrade --defaults-file=/etc/mysql/root-defaults-ubos.cnf
+    fi
 }
