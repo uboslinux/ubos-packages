@@ -61,7 +61,7 @@ sub parseLocation {
     $self->SUPER::new( $location, protocol() );
 
     if( $awsAccessKeyId ) {
-        delete $config->{s3}->{'secret-access-key'}; # ask the user again
+        $dataTransferConfig->removeValue( 's3', 'secret-access-key' ); # ask the user again
     }
 
     if( $awsRegion ) {
@@ -71,13 +71,13 @@ sub parseLocation {
         $dataTransferConfig->setValue( 's3', 'access-key-id', $awsAccessKeyId );
     }
 
-    unless( exists( $config->{s3}->{region} )) {
+    unless( $dataTransferConfig->getValue( 's3', 'region' )) {
         fatal( 'No default AWS region found. Specify with --aws-region <region>' );
     }
-    unless( exists( $config->{s3}->{'access-key-id'} )) {
+    unless( $dataTransferConfig->getValue( 's3', 'access-key-id' )) {
         fatal( 'No default AWS access key found. Specify with --aws-access-key-id <keyid>' );
     }
-    unless( exists( $config->{s3}->{'secret-access-key'} )) {
+    unless( $dataTransferConfig->getValue( 's3, 'secret-access-key' )) {
         my $secretAccessKey = askAnswer( 'AWS secret access key: ', '^[A-Za-z0-9/+]{40}$', undef, 1 );
         $dataTransferConfig->setValue( 's3', 'secret-access-key', $secretAccessKey );
     }
