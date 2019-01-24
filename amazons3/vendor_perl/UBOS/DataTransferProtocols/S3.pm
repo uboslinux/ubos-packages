@@ -25,16 +25,14 @@ my $AWS_PROFILE_NAME   = 'backup';
 # Factory method.
 # If successful, return instance. If not, return undef.
 # $location: the location to parse
+# $dataTransferConfig: data transfer configuration options
 # $argsP: array of remaining command-line arguments
-# $config: configuration options
-# $configChangedP: set to 1 if this method changed at least one configuration option
 # return: instance or undef
 sub parseLocation {
-    my $self           = shift;
-    my $location       = shift;
-    my $argsP          = shift;
-    my $config         = shift;
-    my $configChangedP = shift;
+    my $self               = shift;
+    my $location           = shift;
+    my $dataTransferConfig = shift;
+    my $argsP              = shift;
 
     my $uri = URI->new( $location );
     if( !$uri->scheme() || $uri->scheme() ne protocol() ) {
@@ -66,8 +64,12 @@ sub parseLocation {
         delete $config->{s3}->{'secret-access-key'}; # ask the user again
     }
 
-    $$configChangedP |= UBOS::AbstractDataTransferProtocol::overrideConfigValue( $config, 's3', 'region', $awsRegion );
-    $$configChangedP |= UBOS::AbstractDataTransferProtocol::overrideConfigValue( $config, 's3', 'access-key-id', $awsAccessKeyId );
+    if( $awsRegion ) {
+        $dataTransferConfig->setValue( 's3', 'region', $awsRegion );
+    }
+    if( $awsAccessKeyId ) {
+        $dataTransferConfig->setValue( 's3', 'access-key-id', $awsAccessKeyId );
+    }
 
     unless( exists( $config->{s3}->{region} )) {
         fatal( 'No default AWS region found. Specify with --aws-region <region>' );
@@ -77,8 +79,7 @@ sub parseLocation {
     }
     unless( exists( $config->{s3}->{'secret-access-key'} )) {
         my $secretAccessKey = askAnswer( 'AWS secret access key: ', '^[A-Za-z0-9/+]{40}$', undef, 1 );
-        $config->{s3}->{'secret-access-key'} = $secretAccessKey;
-        $$configChangedP = 1;
+        $dataTransferConfig->setValue( 's3', 'secret-access-key', $secretAccessKey );
     }
 
     return $self;
