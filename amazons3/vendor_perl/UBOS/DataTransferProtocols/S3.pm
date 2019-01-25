@@ -77,7 +77,7 @@ sub parseLocation {
     unless( $dataTransferConfig->getValue( 's3', 'access-key-id' )) {
         fatal( 'No default AWS access key found. Specify with --aws-access-key-id <keyid>' );
     }
-    unless( $dataTransferConfig->getValue( 's3, 'secret-access-key' )) {
+    unless( $dataTransferConfig->getValue( 's3', 'secret-access-key' )) {
         my $secretAccessKey = askAnswer( 'AWS secret access key: ', '^[A-Za-z0-9/+]{40}$', undef, 1 );
         $dataTransferConfig->setValue( 's3', 'secret-access-key', $secretAccessKey );
     }
@@ -109,13 +109,13 @@ sub isValidToFile {
 # Send a local file to location via this protocol.
 # $localFile: the local file
 # $toFile: the ultimate destination as a file URL
-# $config: configuration options
+# $dataTransferConfig: data transfer configuration options
 # return: success or fail
 sub send {
-    my $self      = shift;
-    my $localFile = shift;
-    my $toFile    = shift;
-    my $config    = shift;
+    my $self               = shift;
+    my $localFile          = shift;
+    my $toFile             = shift;
+    my $dataTransferConfig = shift;
 
     my $tmpDir = UBOS::Host::tmpdir();
 
@@ -130,9 +130,9 @@ aws_access_key_id=%s
 aws_secret_access_key=%s
 CONTENT
                     $AWS_PROFILE_NAME,
-                    $config->{s3}->{region},
-                    $config->{s3}->{'access-key-id'},
-                    $config->{s3}->{'secret-access-key'} );
+                    $dataTransferConfig->getValue( 's3', 'region' ),
+                    $dataTransferConfig->getValue( 's3', 'access-key-id' ),
+                    $dataTransferConfig->getValue( 's3', 'secret-access-key' ));
 
     UBOS::Utils::saveFile(
             $awsConfigFile,
