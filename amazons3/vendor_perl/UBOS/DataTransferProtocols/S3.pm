@@ -141,7 +141,7 @@ CONTENT
 
     info( 'Uploading to', $toFile );
     if( _aws( $awsConfigFile, "s3 cp '$localFile' '$toFile'" )) {
-        error( "Failed to copy file to S3" );
+        # parent emits error message
         return 0;
     }
     return 1;
@@ -185,9 +185,9 @@ sub _aws {
 
     if( $ret ) {
         if( $out =~ m!AccessDenied! ) {
-            error( 'S3 denied access. Check your AWS credentials, and your permissions to write to the bucket.' );
+            $@ = 'S3 denied access. Check your AWS credentials, and your permissions to write to the bucket.';
         } else {
-            error( $out );
+            $@ = $out;
         }
     }
     return $ret;
