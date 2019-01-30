@@ -1,8 +1,6 @@
-diff --git a/config/cloud.cfg.d/05_logging.cfg b/config/cloud.cfg.d/05_logging.cfg
-index 2e18073..e2ccd78 100644
---- a/config/cloud.cfg.d/05_logging.cfg
-+++ b/config/cloud.cfg.d/05_logging.cfg
-@@ -38,25 +38,18 @@ _log:
+--- 05_logging.cfg	2018-03-27 18:49:38.000000000 +0000
++++ 05_logging.cfg.new	2019-01-30 22:36:12.368710977 +0000
+@@ -38,32 +38,19 @@
     format=%(asctime)s - %(filename)s[%(levelname)s]: %(message)s
     
     [formatter_simpleFormatter]
@@ -14,7 +12,6 @@ index 2e18073..e2ccd78 100644
 -   formatter=arg0Formatter
 -   args=('/var/log/cloud-init.log',)
 +   format=%(levelname)s %(filename)s: %(message)s
-+
   - &log_syslog |
     [handler_cloudLogHandler]
     class=handlers.SysLogHandler
@@ -25,10 +22,18 @@ index 2e18073..e2ccd78 100644
 +   args=("/dev/log", handlers.SysLogHandler.LOG_DAEMON)
  
  log_cfgs:
- # These will be joined into a string that defines the configuration
-  - [ *log_base, *log_syslog ]
--# These will be joined into a string that defines the configuration
+ # Array entries in this list will be joined into a string
+ # that defines the configuration.
+ #
+-# If you want logs to go to syslog, uncomment the following line.
+-# - [ *log_base, *log_syslog ]
+-#
+-# The default behavior is to just log to a file.
+-# This mechanism that does not depend on a system service to operate.
 - - [ *log_base, *log_file ]
- # A file path can also be used
- # - /etc/log.conf
+-# A file path can also be used.
+-# - /etc/log.conf
++ - [ *log_base, *log_syslog ]
  
+ # This tells cloud-init to redirect its stdout and stderr to
+ # 'tee -a /var/log/cloud-init-output.log' so the user can see output
