@@ -61,25 +61,25 @@ sub parseLocation {
     $self->SUPER::new( $location, protocol() );
 
     if( $awsAccessKeyId ) {
-        $dataTransferConfig->removeValue( 's3', 'secret-access-key' ); # ask the user again
+        $dataTransferConfig->removeValue( 's3', $uri->authority(), 'secret-access-key' ); # ask the user again
     }
 
     if( $awsRegion ) {
-        $dataTransferConfig->setValue( 's3', 'region', $awsRegion );
+        $dataTransferConfig->setValue( 's3', $uri->authority(), 'region', $awsRegion );
     }
     if( $awsAccessKeyId ) {
-        $dataTransferConfig->setValue( 's3', 'access-key-id', $awsAccessKeyId );
+        $dataTransferConfig->setValue( 's3', $uri->authority(), 'access-key-id', $awsAccessKeyId );
     }
 
-    unless( $dataTransferConfig->getValue( 's3', 'region' )) {
+    unless( $dataTransferConfig->getValue( 's3', $uri->authority(), 'region' )) {
         fatal( 'No default AWS region found. Specify with --aws-region <region>' );
     }
-    unless( $dataTransferConfig->getValue( 's3', 'access-key-id' )) {
+    unless( $dataTransferConfig->getValue( 's3', $uri->authority(), 'access-key-id' )) {
         fatal( 'No default AWS access key found. Specify with --aws-access-key-id <keyid>' );
     }
-    unless( $dataTransferConfig->getValue( 's3', 'secret-access-key' )) {
+    unless( $dataTransferConfig->getValue( 's3', $uri->authority(), 'secret-access-key' )) {
         my $secretAccessKey = askAnswer( 'AWS secret access key: ', '^[A-Za-z0-9/+]{40}$', undef, 1 );
-        $dataTransferConfig->setValue( 's3', 'secret-access-key', $secretAccessKey );
+        $dataTransferConfig->setValue( 's3', $uri->authority(), 'secret-access-key', $secretAccessKey );
     }
 
     return $self;
@@ -117,6 +117,8 @@ sub send {
     my $toFile             = shift;
     my $dataTransferConfig = shift;
 
+    my $uri = URI->new( $toFile );
+
     my $tmpDir = UBOS::Host::tmpdir();
 
     # Create a temporary AWS config file
@@ -130,9 +132,9 @@ aws_access_key_id=%s
 aws_secret_access_key=%s
 CONTENT
                     $AWS_PROFILE_NAME,
-                    $dataTransferConfig->getValue( 's3', 'region' ),
-                    $dataTransferConfig->getValue( 's3', 'access-key-id' ),
-                    $dataTransferConfig->getValue( 's3', 'secret-access-key' ));
+                    $dataTransferConfig->getValue( 's3', $uri->authority(), 'region' ),
+                    $dataTransferConfig->getValue( 's3', $uri->authority(), 'access-key-id' ),
+                    $dataTransferConfig->getValue( 's3', $uri->authority(), 'secret-access-key' ));
 
     UBOS::Utils::saveFile(
             $awsConfigFile,
