@@ -87,7 +87,7 @@ SSS
     If you specify --all, UBOS will automatically create additional kites
     for all other sites currently on the device, and all that you might
     create in the future. Without --all, UBOS will only create the
-    specified kites
+    specified kites.
 HHH
          },
         'args' => {
