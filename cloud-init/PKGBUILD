@@ -25,7 +25,8 @@ source=("https://launchpad.net/$pkgname/trunk/$pkgver/+download/$pkgname-$pkgver
         ubos.cloud.cfg)
 sha512sums=('25ccfbd41d46f1375e14094754a92930d589bca3d7f0f016c55d3475751aba4b8c8474fc6aadd48521c68606d9f02f96aa8cd46644f71ba9af958612c4dae55c'
             '6c435fbe1e0a7093b79f8bb3789b05a39afd1e43b7ff96f13e68c9ad16311cc58270b947bae574cfdc3d2e27c7258789880a101c9bdf2c3c141bcbedc47a8a4b'
-            '29ddf1c6e44c81e9e0004a3dc32a85d3a44206ce305a46a38ca40d652435466fd2ec5bd53f69a2ecf8b496b1b6317f19aa7a972384b0678f73e941a094bc61d7')
+            '62adc925b0cd0c2ad719d1612b6fa35b1bb58b4f7633c52842ce0147783947dddd7db758bf55687ca7e1b3ae2ed592a10a8e541929d83817bd96bd65955139fc')
+
 
 releasepage=('https://launchpad.net/cloud-init')
 pkgverforked=('18.2-1')
