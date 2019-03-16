@@ -5,4 +5,10 @@
 
 post_upgrade() {
     usermod --home /ubos/lib/mysql mysql
+
+    # If running, restart
+    systemctl is-active mariadb.service > /dev/null && systemctl restart mariadb.service
+
+    # Upgrade
+    mysql_upgrade --defaults-file=/etc/mysql/root-defaults.cnf
 }
