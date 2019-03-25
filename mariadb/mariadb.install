@@ -6,9 +6,45 @@
 post_upgrade() {
     usermod --home /ubos/lib/mysql mysql
 
-    # If running, restart
-    systemctl is-active mariadb.service > /dev/null && systemctl restart mariadb.service
+    # Upgrading from 10.1 to 10.3 appears to be a messy affair:
+    # The documentation implies that you should stop the old daemon,
+    # start the new daemon, then run mysq_upgrade.
+    # However, the new daemon does not start because a system table
+    # does not have the expected number of columns (i.e. mysql_upgrade
+    # did not run first).
+    # So we do this:
+    # If the daemon currently does not run, then:
+    #  * we do nothing
+    #  * if the user had manually stopped the daemon, they will be responsible
+    #    for manually running mysqld_safe per
+    #    https://wiki.archlinux.org/index.php/MariaDB#Unable_to_run_mysql_upgrade_because_MySQL_cannot_start
+    #    and then running mysql_upgrade against it
+    #    and then starting the daemon
+    #  * if the daemon had not ever been started, starting it for the first
+    #    time should be fine
+    # If the daemon does run, and we are upgrading from before 10.1, then:
+    #  * run the (new) mysql_upgrade against the (old, still-runnning) daemon.
+    #    This will produce error messages in the log, because now the old daemon
+    #    is confused about the number of columns in some system table. We ignore
+    #    that, however, because it does not appear to be harmful, as long as we
+    #    immediately proceed:
+    #  * retart the daemon, which runs the new version of the daemon, and
+    #    everything is fine
 
-    # Upgrade
-    mysql_upgrade --defaults-file=/etc/mysql/root-defaults.cnf
+    if [[ $2 =~ ^10\.[12]\. ]]; then
+        # Amazingly enough, apparently no quotes
+        echo Triggering upgrade logic
+
+        if systemctl is-active mysqld.service > /dev/null; then
+            mysql_upgrade --defaults-file=/etc/mysql/root-defaults.cnf || true
+            systemctl restart mysqld.service
+
+        elif systemctl is-active mariadb.service mysqld.service > /dev/null; then
+            # While we are only running mysqld.service, who knows what the user is up to
+            mysql_upgrade --defaults-file=/etc/mysql/root-defaults.cnf || true
+            systemctl restart mariadb.service
+        fi
+    else
+        echo Not Triggering upgrade logic
+    fi
 }
