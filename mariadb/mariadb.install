@@ -33,7 +33,7 @@ post_upgrade() {
 
     if [[ $2 =~ ^10\.[12]\. ]]; then
         # Amazingly enough, apparently no quotes
-        echo Triggering upgrade logic
+        echo Triggering Mariadb upgrade logic from $2
 
         if systemctl is-active mysqld.service > /dev/null; then
             mysql_upgrade --defaults-file=/etc/mysql/root-defaults.cnf || true
@@ -45,6 +45,6 @@ post_upgrade() {
             systemctl restart mariadb.service
         fi
     else
-        echo Not Triggering upgrade logic
+        echo Not triggering Mariadb upgrade logic from $2
     fi
 }
