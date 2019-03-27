@@ -36,12 +36,12 @@ post_upgrade() {
         echo Triggering Mariadb upgrade logic from $2
 
         if systemctl is-active mysqld.service > /dev/null; then
-            mysql_upgrade --defaults-file=/etc/mysql/root-defaults.cnf || true
+            mysql_upgrade --defaults-file=/etc/mysql/root-defaults-ubos.cnf --skip-version-check || true
             systemctl restart mysqld.service
 
         elif systemctl is-active mariadb.service mysqld.service > /dev/null; then
             # While we are only running mysqld.service, who knows what the user is up to
-            mysql_upgrade --defaults-file=/etc/mysql/root-defaults.cnf || true
+            mysql_upgrade --defaults-file=/etc/mysql/root-defaults-ubos.cnf --skip-version-check || true
             systemctl restart mariadb.service
         fi
     else
