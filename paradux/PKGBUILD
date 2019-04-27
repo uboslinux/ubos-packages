@@ -1,0 +1,22 @@
+developer="https://github.com/paradux/"
+maintainer="http://indiecomputing.com/"
+pkgname=$(basename $(pwd))
+pkgver=0.1
+pkgrel=1
+pkgdesc='Recovering from maximum personal data disaster'
+arch=('any')
+url=${developer}
+license=('AGPL')
+depends=('python' 'cryptsetup')
+source=("paradux-${pkgver}.tar.gz::https://github.com/paradux/paradux/archive/v${pkgver}.tar.gz")
+releasepage=('https://github.com/paradux/paradux/releases')
+sha512sums=('be70d8be509b00580d40f4b69c57edc898922daeed3c6b93f4d99b355f82773f23e23fe8f75c5ea8fbfc0aca0e311a8eb856cf6a23166416f6217db53b80b2bc')
+
+package() {
+# Pagekite code
+    cd "${srcdir}/paradux-${pkgver}"
+    python setup.py install --root="${pkgdir}/" --optimize=1
+
+# Executasble
+    install -m0755 -D bin/paradux -t ${pkgdir}/usr/bin/
+}
