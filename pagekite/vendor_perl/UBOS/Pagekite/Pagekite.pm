@@ -2,16 +2,6 @@
 #
 # The Pagekite service as integrated into UBOS.
 #
-# There are two modes:
-# 1) a list of site names has been given; we run pagekite for those if
-#    and only if a given site exists. So we may run pagekite for any
-#    number of sites from 0 to the length of the list given.
-# 2) we run pagekite for all sites that are not Tor sites.
-# As there may or may not be any sites on the device for which we run
-# kites, we may or may not run the pagekite.service systemd service.
-#
-# The status file keeps track.
-#
 # Copyright (C) 2014 and later, Indie Computing Corp. All rights reserved. License: see package.
 #
 
@@ -43,6 +33,12 @@ sub activate {
     my $kiteSecret  = shift;
 
     trace( 'Pagekite::activate: all:', $allKites, 'named:', @$namedKitesP );
+
+    if( ! -e $secretFile ) {
+        if( ! $kiteSecret ) {
+            $kiteSecret = askAnswer( 'Kite secret: ', '^.+$', undef, 1 );
+        }
+    }
 
     if( $kiteSecret ) {
         UBOS::Utils::saveFile( $secretFile, <<CONTENT, 0600 );
