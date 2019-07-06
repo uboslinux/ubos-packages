@@ -2,7 +2,7 @@ developer=http://indiecomputing.com/
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=0.22
+pkgver=0.23
 pkgrel=1
 pkgdesc="Functionality that allows UBOS to interact with Amazon S3"
 arch=('any')
@@ -12,9 +12,6 @@ depends=('ubos-admin' 'aws-cli')
 _vendor_perl=$(perl -V::vendorarch: | sed -e "s![' ]!!g")
 
 package() {
-# Config files go here
-    mkdir -p -m700 ${pkgdir}/etc/${pkgname}
-
 # Code
     install -D -m755 ${startdir}/vendor_perl/UBOS/DataTransferProtocols/*.pm -t ${pkgdir}${_vendor_perl}/UBOS/DataTransferProtocols/
 }
