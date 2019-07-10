@@ -1,0 +1,46 @@
+developer="https://github.com/letsencrypt/pebble"
+maintainer="http://indiecomputing.com/"
+pkgname=$(basename $(pwd))
+pkgver=2.1.0
+pkgrel=1
+pkgdesc='A small RFC 8555 ACME test server not suited for a production'
+arch=('x86_64')
+url=${developer}
+license=('MPL2')
+depends=()
+makedepends=('go')
+source=("${pkgname}-${pkgver}::git+https://github.com/letsencrypt/pebble.git#tag=v${pkgver}")
+# source=("${pkgname}-${pkgver}.tar.gz::https://github.com/letsencrypt/pebble/archive/v${pkgver}.tar.gz")
+sha512sums=('SKIP')
+
+_srcgo=go/src/github.com/letsencrypt/pebble
+
+releasepage=('https://github.com/letsencrypt/pebble/releases')
+
+prepare(){
+    cd "${srcdir}/${pkgname}-${pkgver}"
+
+    install -m755 -d "${srcdir}/${_srcgo}"
+    ln -sf "${srcdir}/${pkgname}-${pkgver}" "${srcdir}/${_srcgo}/${pkgname}"
+
+    cd "${srcdir}/${_srcgo}/${pkgname}"
+    export GOPATH="${srcdir}/go"
+    export GO111MODULE=on
+    go get -v ./...
+
+    # Default config file is in /etc
+    sed -i -e 's!test/config/pebble-config.json!/etc/pebble/config.json!' cmd/pebble/main.go
+}
+
+build() {
+    cd "${srcdir}/${pkgname}-${pkgver}"
+    export GOPATH="${srcdir}/go"
+
+    go install ./...
+}
+
+package() {
+    install -d -m0755 ${pkgdir}/etc/pebble
+    install -D -m0755 ${srcdir}/go/bin/pebble -t ${pkgdir}/usr/bin/
+    install -D -m0644 ${srcdir}/${pkgname}-${pkgver}/test/config/pebble-config.json -t ${pkgdir}/usr/share/doc/pebble/
+}
