@@ -1,0 +1,12 @@
+diff -r -u pebble-2.1.0/ca/ca.go pebble-2.1.0-patch/ca/ca.go
+--- pebble-2.1.0/ca/ca.go	2019-07-10 18:46:59.670212232 +0000
++++ pebble-2.1.0-patch/ca/ca.go	2019-07-12 17:44:28.213383504 +0000
+@@ -194,7 +194,7 @@
+ 		},
+ 		SerialNumber: serial,
+ 		NotBefore:    time.Now(),
+-		NotAfter:     time.Now().AddDate(5, 0, 0),
++		NotAfter:     time.Now().Add(time.Minute * 5),
+ 
+ 		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment,
+ 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth, x509.ExtKeyUsageClientAuth},

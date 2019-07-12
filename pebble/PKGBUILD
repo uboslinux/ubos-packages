@@ -3,7 +3,7 @@ maintainer="http://indiecomputing.com/"
 pkgname=$(basename $(pwd))
 pkgver=2.1.0
 pkgrel=1
-pkgdesc='A small RFC 8555 ACME test server not suited for a production'
+pkgdesc='A small RFC 8555 ACME test server not suited for a production -- patched to issue 5min certs (for testing)'
 arch=('x86_64')
 url=${developer}
 license=('MPL2')
@@ -30,6 +30,10 @@ prepare(){
 
     # Default config file is in /etc
     sed -i -e 's!test/config/pebble-config.json!/etc/pebble/config.json!' cmd/pebble/main.go
+
+    # Apply 5min patch
+    cd ${srcdir}
+    patch -p0 < ${startdir}/5min-expiration.patch
 }
 
 build() {
