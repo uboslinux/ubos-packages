@@ -12,6 +12,7 @@ package UBOS::Pagekite::Pagekite;
 
 use UBOS::Logging;
 use UBOS::Host;
+use UBOS::Terminal;
 use UBOS::Utils;
 
 my $systemdService = 'pagekite.service';
@@ -34,20 +35,6 @@ sub activate {
 
     trace( 'Pagekite::activate: all:', $allKites, 'named:', @$namedKitesP );
 
-    if( ! -e $secretFile ) {
-        if( ! $kiteSecret ) {
-            $kiteSecret = askAnswer( 'Kite secret: ', '^.+$', undef, 1 );
-        }
-    }
-
-    if( $kiteSecret ) {
-        UBOS::Utils::saveFile( $secretFile, <<CONTENT, 0600 );
-kitesecret = $kiteSecret
-CONTENT
-    }
-    unless( -e $secretFile ) {
-        fatal( 'No kite secret provided. On the first invocation, specify --kitesecret <secret>.' );
-    }
     my $status = status();
 
     my @enabledKites = ();
@@ -66,6 +53,21 @@ CONTENT
     }
     unless( @enabledKites ) {
         fatal( 'No kite names provided. Specify at least one kite name.' );
+    }
+
+    if( ! -e $secretFile ) {
+        if( ! $kiteSecret ) {
+            $kiteSecret = askAnswer( 'Kite secret: ', '^.+$', undef, 1 );
+        }
+    }
+
+    if( $kiteSecret ) {
+        UBOS::Utils::saveFile( $secretFile, <<CONTENT, 0600 );
+kitesecret = $kiteSecret
+CONTENT
+    }
+    unless( -e $secretFile ) {
+        fatal( 'No kite secret provided. On the first invocation, specify --kitesecret <secret>.' );
     }
 
     my @activeKites = determineActiveKiteNames( \@enabledKites, $allKites, UBOS::Host::sites() );
@@ -208,6 +210,10 @@ sub determineActiveKiteNames {
     if( keys %$sites ) {
         if( $allKites || UBOS::Host::findSiteByHostname( '*' )) {
             @ret = sort map { $_->hostname() } values %$sites;
+            if( @ret == 1 && $ret[0] eq '*' ) {
+                # pagekite does not like service_on to hostname *
+                $ret[0] = $namedKitesP->[0];
+            }
         } else {
             @ret = grep { UBOS::Host::findSiteByHostname( $_ ) } @$namedKitesP;
         }
