@@ -1,8 +1,8 @@
 # From Arch, adapted for UBOS
 
 pkgname=apache
-pkgver=2.4.37
-pkgrel=3
+pkgver=2.4.41
+pkgrel=1
 pkgdesc='A high performance Unix-based HTTP server'
 arch=('x86_64')
 url='http://www.apache.org/dist/httpd'
@@ -38,7 +38,7 @@ source=(
     httpd.service
     ubos.layout
 )
-sha512sums=('e802915801bbe885a65dada04b0116d145b293fabfff734dddb61a79ca1c6d65326f51155d1b864b093c3ec00d0bdfdf1401ab55677bae1ea3da1d199d7bcad4'
+sha512sums=('350cc7dcd2c439e0590338fa6da3f44df44f9bb885c381e91f91b14c2f48597f6f0bbac0ea118a8a67eaa70ae7edbb769beace368643ed73f6daee44c307b335'
             'SKIP'
             '7bf4e6645dd6f9ec5a1a95d8a51b7d65661077338b606745b1a558ae0057547e1709c451138269b6d4c913847e51c57a939262f46fcadb82e1ccb24a35165dba'
             '57fece1a3e4e3cbd6135203172ecf32570405f7205dc84adc076a50cdab20db868270d8e658314f5273616f81b356d7b88c31e0ee8a8ce6a3e77ab15ef6a8f36'
