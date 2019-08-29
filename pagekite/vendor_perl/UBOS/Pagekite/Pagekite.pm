@@ -179,7 +179,7 @@ CONTENT
             $content .= <<CONTENT;
 service_on = http:$name : localhost:80 : \@kitesecret
 CONTENT
-            if( $site && $site->hasTls()) {
+            if( $site && $site->isTls()) {
                 $content .= <<CONTENT;
 service_on = https:$name : localhost:443 : \@kitesecret
 CONTENT
