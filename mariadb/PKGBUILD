@@ -5,8 +5,8 @@
 pkgbase=mariadb
 pkgname=('mariadb-libs' 'mariadb-clients' 'mariadb' 'mytop')
 pkgdesc='Fast SQL database server, derived from MySQL'
-pkgver=10.3.13
-pkgrel=5
+pkgver=10.4.8
+pkgrel=1
 arch=('x86_64')
 license=('GPL')
 url='https://mariadb.org/'
@@ -16,26 +16,20 @@ validpgpkeys=('199369E5404BD5FC7D2FE43BCBCB082A1BB943DB') # MariaDB Package Sign
 source=("https://mirrors.n-ix.net/mariadb/mariadb-$pkgver/source/mariadb-$pkgver.tar.gz"{,.asc}
         '0001-arch-specific.patch'
         '0002-systemd-sysusers-tmpfiles.patch'
-        '0004-do-not-break-main-configuration-with-instantiated-one.patch'
         '0005-fix-galera_recovery-with-fs.protected_regular-enabled.patch'
-        '0007-MDEV-18605-Loss-of-column-aliases-by-using-view-and-.patch'
-        '0008-MDEV-18577-Indexes-problem-on-import-dump-SQL.patch'
-        'atomic.patch')
-sha256sums=('b2aa857ef5b84f85a7ea60a1eac7b34c0ca5151c71a0d44ce2d7fb028d71459a'
+        '0007-systemd-service-add-instance-name-in-description.patch')
+sha256sums=('10cc2c3bdb76733c9c6fd1e3c6c860d8b4282c85926da7d472d2a0e00fffca9b'
             'SKIP'
-            '5b74e328e75369dfb68491a06dd53bd736e34f87281103ae0dd2f50401dc70d3'
-            '1cd009b473d5965c7cbe6d48fff272030a2ccdd9c7e67b4f837d03252786a09a'
-            'd12806e4f90cc0fc081205dd4c0a5e0e7c455844f04276811b61b57fd24f5545'
-            '66e0acac7436fd8925710ef5cc66ba1a8f63a385ce374f01ae83096cc33d97a0'
-            '98f0bd85e1729133d236831e934a3dd0c9bc6deebbff6aebe8a4bda17e457ac4'
-            '9862b64ea29d3d94434e6b8f422df97e7528b331b793d7a50f22f176d4886325'
-            '7769fd8eb2bb3a6644a2200d01918ff887be25638d79dbec25897fe0d87badc4')
+            'ce72ea1563ad773e00e8b1c299babea176abae1102827c2f743921e9de615041'
+            '3e83467af80fbd53400a201a34fc858b88509ea8e88b10709947eb66545f9457'
+            'c8c801f80924ccb97b499552fe1c532b3ebf8f86cdfc0d23715d4adb1a8810f0'
+            'd4575c349fdc6268135cd3483e70e04b149ec8004583bac7f79f190a084cbfc8')
 
 releasepage=(
     'https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/mariadb'
     'https://archlinuxarm.org/packages/aarch64/mariadb/files'
 )
-pkgverforked=('10.3.13-4')
+pkgverforked=('10.4.7-1')
 
 prepare() {
   cd $pkgbase-$pkgver/
@@ -52,38 +46,31 @@ prepare() {
   # https://github.com/MariaDB/server/pull/530
   patch -Np1 < ../0002-systemd-sysusers-tmpfiles.patch
 
-  # do not break main configuration with instantiated one
-  # https://github.com/MariaDB/server/pull/1095
-  patch -Np1 < ../0004-do-not-break-main-configuration-with-instantiated-one.patch
-
   # fix galera_recovery with fs.protected_regular enabled
   # https://github.com/MariaDB/server/pull/1137
   patch -Np1 < ../0005-fix-galera_recovery-with-fs.protected_regular-enabled.patch
 
-  # MDEV-18605: Loss of column aliases by using view and group
-  # https://jira.mariadb.org/browse/MDEV-18605
-  patch -Np1 < ../0007-MDEV-18605-Loss-of-column-aliases-by-using-view-and-.patch
-
-  # MDEV-18577: Indexes problem on import dump SQL
-  # https://jira.mariadb.org/browse/MDEV-18577
-  patch -Np1 < ../0008-MDEV-18577-Indexes-problem-on-import-dump-SQL.patch
+  # systemd service: add instance name in description
+  # https://github.com/MariaDB/server/pull/1216
+  patch -Np1 < ../0007-systemd-service-add-instance-name-in-description.patch
 
   # from ArchLinuxARM
   if [[ $CARCH == arm || $CARCH == armv6h ]]; then
-    patch -p0 -i ../atomic.patch
+    patch -p1 -i ../0001-libatomic.patch
   fi
 }
 
 build() {
   local _cmake_options=(
     # build options
+    -DCOMPILATION_COMMENT="UBOS"
     -DCMAKE_BUILD_TYPE=RelWithDebInfo
     -Wno-dev
 
     # file paths
     # /etc
-    -DINSTALL_SYSCONFDIR=/etc/mysql
-    -DINSTALL_SYSCONF2DIR=/etc/mysql/my.cnf.d
+    -DINSTALL_SYSCONFDIR=/etc
+    -DINSTALL_SYSCONF2DIR=/etc/my.cnf.d
     # /run
     -DINSTALL_UNIX_ADDRDIR=/run/mysqld/mysqld.sock
     # /usr
@@ -206,7 +193,7 @@ package_mariadb() {
   cd "$pkgdir"
 
   # no SysV init, please!
-  rm -r etc/mysql/{init.d,logrotate.d}
+  # rm -r etc/mysql/{init.d,logrotate.d}
   rm usr/bin/rcmysql
   rm usr/share/mysql/{binary-configure,mysql{,d_multi}.server}
 
