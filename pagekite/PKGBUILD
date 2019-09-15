@@ -2,7 +2,7 @@ developer="https://pagekite.org/"
 maintainer="http://indiecomputing.com/"
 pkgname=$(basename $(pwd))
 pkgver=0.5.9.3
-pkgrel=8
+pkgrel=9
 pkgdesc='localhost tunneling via pagekite.net, integrated into ubos-admin'
 arch=('any')
 url=${developer}
@@ -12,7 +12,7 @@ source=("pagekite-${pkgver}.tar.gz::https://github.com/pagekite/PyPagekite/archi
 releasepage=('https://github.com/pagekite/PyPagekite/releases')
 sha512sums=('4a35849e5fa00423a64c5d781c5f2079fd07e06b36e318a609326f9baa8d14a12d2fe4d0671acf758431b91e4793c411e8e3f63e683a9561736277d033c0119d')
 
-_vendor_perl=$(perl -V::vendorarch: | sed -e "s![' ]!!g")
+_vendor_perl=/usr/share/perl5/vendor_perl
 
 package() {
 # Pagekite code
