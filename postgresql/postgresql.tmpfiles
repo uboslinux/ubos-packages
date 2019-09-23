@@ -1,0 +1,2 @@
+d /ubos/lib/postgres/data 700 postgres postgres
+h /ubos/lib/postgres/data -   -        -        - +C

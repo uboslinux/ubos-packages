@@ -2,31 +2,36 @@
 
 pkgbase=postgresql
 pkgname=('postgresql-libs' 'postgresql-docs' 'postgresql')
-pkgver=11.1
+pkgver=11.5
 _majorver=${pkgver%.*}
-pkgrel=2
+pkgrel=3
 pkgdesc='Sophisticated object-relational DBMS'
 url='https://www.postgresql.org/'
 arch=('x86_64')
 license=('custom:PostgreSQL')
-makedepends=('krb5' 'libxml2' 'python' 'python2' 'perl' 'tcl>=8.6.0' 'openssl>=1.0.0' 'pam' 'zlib' 'icu' 'systemd' 'libldap')
+makedepends=('krb5' 'libxml2' 'python' 'python2' 'perl' 'tcl>=8.6.0' 'openssl>=1.0.0'
+             'pam' 'zlib' 'icu' 'systemd' 'libldap' 'llvm' 'clang')
 source=(https://ftp.postgresql.org/pub/source/v${pkgver}/postgresql-${pkgver}.tar.bz2
         postgresql-run-socket.patch
         postgresql-perl-rpath.patch
         postgresql.pam
         postgresql.logrotate
         postgresql.service
-        postgresql-check-db-dir)
-sha512sums=('35d00984e9f5f063a5b96e97aa1b40381ab76d07b2336bda5981fd80bef1324f56eefca5069ae78770ecd6ece5df85264e599fdb3478ecb71d4fdd0d7b6becca'
+        postgresql-check-db-dir
+        postgresql.sysusers
+        postgresql.tmpfiles)
+sha512sums=('537148079dc6c33cfb9bf9722171e524707b42ef01369deb968d0d6e8fa9b7f16f6ce67139d9dc45fb7385defbf56aa2c0affe5ee9d76e996f31e47486192141'
             '031efe12d18ce386989062327cdbbe611c5ef1f94e4e1bead502304cb3e2d410af533d3c7f1109d24f9da9708214fe32f9a10ba373a3ca8d507bdb521fbb75f7'
             'b6cfda3182e8a0a5c7f023721faaa3fd50354a45c777fa0a504ea372f1420ff4bb72cc563ea5279a29b5924def5fcb5c109b34455c595c2b2828260dd5625684'
             '1e6183ab0eb812b3ef687ac2c26ce78f7cb30540f606d20023669ac00ba04075487fb72e4dc89cc05dab0269ff6aca98fc1167cc75669c225b88b592482fbf67'
             '9ab4da01337ffbab8faec0e220aaa2a642dbfeccf7232ef2645bdc2177a953f17ee3cc14a4d8f8ebd064e1dae8b3dba6029adbffb8afaabea383963213941ba8'
-            '5ad9c8e9a7dd7fd587b1509fab727797b8a2600200fb81bad3be1c029213ac6967eeab693e6d0b8d340b9979c2ac31762068adc8dad5378945c41a5fd2790cc8'
-            '73af1cd31638791f81aa2623d51188364107a57b55e4deba6691cd99e96ae5ea0dd94b25a0e95d9e21ac64f36f71919a05cd31233c754bde025215a5a02e055c')
+            '572a9342a047a74c493a29c7364593168ba65b2d06167cd536c7584361ee6e199815b6485ef544dbc4a7d3591575b0b5dca02dbf5eb657620266e10b03afe6f6'
+            '73af1cd31638791f81aa2623d51188364107a57b55e4deba6691cd99e96ae5ea0dd94b25a0e95d9e21ac64f36f71919a05cd31233c754bde025215a5a02e055c'
+            '8c6fa964dfb46a1eed6a19f0496a00ebb7495056248a4b8179df66efc6e931baf0c4c4f94fb44b3b83516d943faca78fbb10460457c615bdcca0eb9f2391a3c7'
+            '62173445abe39aed32bbf1799d930af2f5a3dac025cab96cf0b5b38ca9c53c568fe776cd3fd81f8bedc7a5047ba4f1f3d026eb5af4974c38410891ca5059c334')
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/postgresql')
-pkgverforked=('11.1-2')
+pkgverforked=('11.5-3')
 
 prepare() {
   cd postgresql-${pkgver}
@@ -53,6 +58,7 @@ build() {
     --with-icu
     --with-systemd
     --with-ldap
+    --with-llvm
     --enable-nls
     --enable-thread-safety
     --disable-rpath
@@ -144,6 +150,7 @@ package_postgresql() {
               'python: for PL/Python 3 support'
               'perl: for PL/Perl support'
               'tcl: for PL/Tcl support'
+              'llvm: for JIT compilation support'
               'postgresql-old-upgrade: upgrade from previous major version using pg_upgrade')
   options=('staticlibs')
   install=postgresql.install
@@ -157,8 +164,8 @@ package_postgresql() {
 
   # install plpython3
   mv src/Makefile.global src/Makefile.global.save
-    cp src/Makefile.global.python3 src/Makefile.global
-    touch -r src/Makefile.global.save src/Makefile.global
+  cp src/Makefile.global.python3 src/Makefile.global
+  touch -r src/Makefile.global.save src/Makefile.global
   make -C src/pl/plpython3 DESTDIR="${pkgdir}" install
   make -C contrib/hstore_plpython3 DESTDIR="${pkgdir}" install
   make -C contrib/ltree_plpython3 DESTDIR="${pkgdir}" install
@@ -172,19 +179,23 @@ package_postgresql() {
     rm "${pkgdir}"/usr/share/man/man1/${util}.1
   done
 
+  install -Dm 644 COPYRIGHT -t "${pkgdir}/usr/share/licenses/${pkgname}"
+
+  cd "${srcdir}"
+  install -Dm 755 postgresql-check-db-dir -t "${pkgdir}/usr/bin"
+
+  install -Dm 644 ${pkgname}.pam "${pkgdir}/etc/pam.d/${pkgname}"
+  install -Dm 644 ${pkgname}.logrotate "${pkgdir}/etc/logrotate.d/${pkgname}"
+
+  install -Dm 644 ${pkgname}.service -t "${pkgdir}/usr/lib/systemd/system"
+  install -Dm 644 ${pkgname}.sysusers "${pkgdir}/usr/lib/sysusers.d/${pkgname}.conf"
+  install -Dm 644 ${pkgname}.tmpfiles "${pkgdir}/usr/lib/tmpfiles.d/${pkgname}.conf"
+
   # clean up unneeded installed items
   rm -rf "${pkgdir}/usr/include/postgresql/internal"
   rm -rf "${pkgdir}/usr/include/libpq"
   find "${pkgdir}/usr/include" -maxdepth 1 -type f -execdir rm {} +
   rmdir "${pkgdir}/usr/share/doc/postgresql/html"
-
-  install -Dm 644 "${srcdir}/postgresql.service" -t "${pkgdir}/usr/lib/systemd/system"
-  install -Dm 755 "${srcdir}/postgresql-check-db-dir" -t "${pkgdir}/usr/bin"
-
-  install -Dm 644 "${srcdir}/postgresql.pam" "${pkgdir}/etc/pam.d/postgresql"
-  install -Dm 644 "${srcdir}/postgresql.logrotate" "${pkgdir}/etc/logrotate.d/postgresql"
-
-  install -Dm 644 COPYRIGHT -t "${pkgdir}/usr/share/licenses/${pkgname}"
 }
 
 # vim: ts=2 sw=2 et:
