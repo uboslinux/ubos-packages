@@ -1,5 +1,5 @@
 From 1b17400c33fa153847c9dea750b25fbe06c70501 Mon Sep 17 00:00:00 2001
-From: Kevin Mihelich 
+From: Kevin Mihelich <kevin@archlinuxarm.org>
 Date: Fri, 2 Aug 2019 12:00:41 -0600
 Subject: [PATCH] libatomic
 
@@ -72,3 +72,4 @@ index 96da9737dbc..f80385882bb 100644
  endif()
 -- 
 2.22.0
+

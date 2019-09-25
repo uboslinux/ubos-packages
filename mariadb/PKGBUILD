@@ -17,13 +17,15 @@ source=("https://mirrors.n-ix.net/mariadb/mariadb-$pkgver/source/mariadb-$pkgver
         '0001-arch-specific.patch'
         '0002-systemd-sysusers-tmpfiles.patch'
         '0005-fix-galera_recovery-with-fs.protected_regular-enabled.patch'
-        '0007-systemd-service-add-instance-name-in-description.patch')
+        '0007-systemd-service-add-instance-name-in-description.patch'
+        '0001-libatomic.patch')
 sha256sums=('10cc2c3bdb76733c9c6fd1e3c6c860d8b4282c85926da7d472d2a0e00fffca9b'
             'SKIP'
             'ce72ea1563ad773e00e8b1c299babea176abae1102827c2f743921e9de615041'
             '3e83467af80fbd53400a201a34fc858b88509ea8e88b10709947eb66545f9457'
             'c8c801f80924ccb97b499552fe1c532b3ebf8f86cdfc0d23715d4adb1a8810f0'
-            'd4575c349fdc6268135cd3483e70e04b149ec8004583bac7f79f190a084cbfc8')
+            'd4575c349fdc6268135cd3483e70e04b149ec8004583bac7f79f190a084cbfc8'
+            '1c7360453b6e964c6546cbbb10fff697f6227554eba716b2a1df74f7c2613d95')
 
 releasepage=(
     'https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/mariadb'
