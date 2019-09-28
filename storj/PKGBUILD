@@ -1,0 +1,33 @@
+developer=https://storj.io/
+url=https://github.com/storj/storj
+maintainer=http://indiecomputing.com/
+pkgname=$(basename $(pwd))
+pkgver=0.0.0
+# They have not assigned release numbers yet
+pkgrel=1
+pkgdesc="Storj V3 Network"
+arch=('any')
+license=("AGPL3")
+makedepends=(
+    'go'
+)
+source=(
+    'git+https://github.com/storj/storj.git'
+)
+sha512sums=(
+    'SKIP'
+)
+
+build() {
+    cd ${srcdir}/storj
+    export GOPATH=$(pwd)/gopath
+
+    mkdir -p ${GOPATH}
+    go install ./cmd/captplanet
+}
+package() {
+    cd ${srcdir}/storj
+    export GOPATH=$(pwd)/gopath
+
+    install -m0755 -D ${GOPATH}/bin/captplanet -t ${pkgdir}/usr/bin/
+}
