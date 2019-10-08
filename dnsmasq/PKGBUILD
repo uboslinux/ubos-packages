@@ -7,7 +7,7 @@
 maintainer="http://indiecomputing.com/"
 pkgname=dnsmasq
 pkgver=2.80
-pkgrel=1
+pkgrel=4
 pkgdesc="Lightweight, easy to configure DNS forwarder and DHCP server"
 url="http://www.thekelleys.org.uk/dnsmasq/doc.html"
 arch=('x86_64' 'armv6h' 'armv7h' 'aarch64')
@@ -16,15 +16,27 @@ depends=('glibc' 'gmp' 'libidn2' 'libdbus' 'libnetfilter_conntrack' 'nettle')
 backup=('etc/dnsmasq.conf')
 validpgpkeys=('D6EACBD6EE46B834248D111215CDDA6AE19135A2') # Simon Kelley <simon@thekelleys.org.uk>
 source=("http://www.thekelleys.org.uk/$pkgname/$pkgname-$pkgver.tar.xz"{,.asc}
+        'nettle-3.5.patch'
         'dnsmasq-sysusers.conf'
         'dnsmasq.service')
-releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk/PKGBUILD?h=packages/dnsmasq')
 sha512sums=('58e56beb553fc41311e5dc16d8b0eb3b6801e2bdfbcd0e7a6659703f08960b6ad10d48b0b14a4d727636faf35483e01597cff2ae49e7fe9fa9e214f437b1c068'
             'SKIP'
+            '4e12df6219ef97926e8b7be82a381616a435e4bf7dc9a1e420144bf1942a33641d4638211d689c0fb25fc047220bf14b2ec6914a85aee3ec9c1d84200f627b05'
             '8e0194a6c5bd2bb6e008681808c0fbf5edbd88c2c039527587479a1850b8199444aaa70cb7252063d322f97111f89a3e8c0d4d6d1afacdf83a5ea6166233735b'
             'b5cb86331dc73f4a2c0ea755423557f7f2d71b2c04350057b720b6a5a5e93998a99d8b4cdde2c95ce283faa19a8f86534857719c580694681c597ecdb1ac67be')
 
 _build_copts="-DHAVE_DNSSEC -DHAVE_DBUS -DHAVE_LIBIDN2 -DHAVE_CONNTRACK"
+
+releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk/PKGBUILD?h=packages/dnsmasq')
+pkgverforked=('2.80-4')
+
+
+prepare() {
+  cd "$pkgname-$pkgver"
+
+  # fix build with nettle 3.5 (patch from PLD Linux)
+  patch -Np1 -i ../nettle-3.5.patch
+}
 
 build() {
   cd "$pkgname-$pkgver"
