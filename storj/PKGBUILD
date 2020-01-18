@@ -2,8 +2,7 @@ developer=https://storj.io/
 url=https://github.com/storj/storj
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=0.0.0
-# They have not assigned release numbers yet
+pkgver=0.29.3
 pkgrel=1
 pkgdesc="Storj V3 Network"
 arch=('any')
@@ -11,23 +10,30 @@ license=("AGPL3")
 makedepends=(
     'go'
 )
+case "$(uname -m)" in
+"x86_64")
+     _platform=amd64
+    sha512sums=(
+        '384df0a83c876a8bb3fbe5cd68d69f71467ef064a3b96fea2eb4c965928e9aefb8b91d3679603248ebe3886e148f7efcfa8a138aaf95324de7304b3b1455c3e2'
+    )
+    ;;
+"armv6h" | "armv7h" )
+    _platform=arm
+    ;;
+"aarch64")
+    _platform=amd64
+    ;;
+*)
+    echo "ERROR: Unsupported platform" >&2; exit 1
+    ;;
+esac
+
 source=(
-    'git+https://github.com/storj/storj.git'
+    "uplink_darwin_${_platform}_${pkgver}.zip::https://github.com/storj/storj/releases/download/v${pkgver}/uplink_linux_${_platform}.zip"
 )
-sha512sums=(
-    'SKIP'
-)
+releasepage=('https://github.com/storj/storj/releases/latest')
 
-build() {
-    cd ${srcdir}/storj
-    export GOPATH=$(pwd)/gopath
 
-    mkdir -p ${GOPATH}
-    go install ./cmd/captplanet
-}
 package() {
-    cd ${srcdir}/storj
-    export GOPATH=$(pwd)/gopath
-
-    install -m0755 -D ${GOPATH}/bin/captplanet -t ${pkgdir}/usr/bin/
+    install -m0755 -D ${srcdir}/uplink_linux_${_platform} -t ${pkgdir}/usr/bin/
 }
