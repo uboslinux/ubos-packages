@@ -3,7 +3,7 @@ url=https://github.com/storj/storj
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
 pkgver=0.29.3
-pkgrel=2
+pkgrel=3
 pkgdesc="Storj V3 Network"
 arch=('any')
 license=("AGPL3")
@@ -19,9 +19,10 @@ case "$(uname -m)" in
     ;;
 "armv6l" | "armv7h" )
     _platform=arm
-    sha512sums=(
-        '384df0a83c876a8bb3fbe5cd68d69f71467ef064a3b96fea2eb4c965928e9aefb8b91d3679603248ebe3886e148f7efcfa8a138aaf95324de7304b3b1455c3e2'
-    )
+    sha512sums=('c08a60dd993a0b1a09ce7169c634ef9be06f81361b2c0ba6f61c7c745a6cf345e1a5aa73053bb0a837644cbe31196d0066378d114f6bda5a62ec3607e67559ec'
+                '63c7a3b4332e92d7d192446aa5770a29057d2a2c9e82c2e1815f17fb7b7f23dd8a493e517e7715e0b009f8e6e0445ed5f01cc746e86073b764cd5553c18566a3'
+                'ce84adbd74934b1d19c3fcb29143fef4e2c9ae4c0cfacf68bee67b43eb050868bf053d8c7e6e587270dd278acdff99648b0f4cca250fc9e951285e390cc806af'
+                '95b40a16536896fcae2029bde47067a020437a3dd3a519352dc83359034edaede1ad4d11dc25e7c5b5062c3fa3ca5034aa79d8d12c379dced1c71bd44b4328f5')
     ;;
 "aarch64")
     _platform=arm64
@@ -35,11 +36,14 @@ case "$(uname -m)" in
 esac
 
 source=(
+    "gateway_linux_${_platform}_${pkgver}.zip::https://github.com/storj/storj/releases/download/v${pkgver}/gateway_linux_${_platform}.zip"
+    "identity_linux_${_platform}_${pkgver}.zip::https://github.com/storj/storj/releases/download/v${pkgver}/identity_linux_${_platform}.zip"
+    "linksharing_linux_${_platform}_${pkgver}.zip::https://github.com/storj/storj/releases/download/v${pkgver}/linksharing_linux_${_platform}.zip"
     "uplink_linux_${_platform}_${pkgver}.zip::https://github.com/storj/storj/releases/download/v${pkgver}/uplink_linux_${_platform}.zip"
 )
 releasepage=('https://github.com/storj/storj/releases/latest')
 
 
 package() {
-    install -m0755 -D ${srcdir}/uplink_linux_${_platform} -t ${pkgdir}/usr/bin/
+    install -m0755 -D ${srcdir}/{gateway,identity,linksharing,uplink}_linux_${_platform} -t ${pkgdir}/usr/bin/
 }
