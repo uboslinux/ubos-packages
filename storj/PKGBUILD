@@ -3,7 +3,7 @@ url=https://github.com/storj/storj
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
 pkgver=0.29.3
-pkgrel=1
+pkgrel=2
 pkgdesc="Storj V3 Network"
 arch=('any')
 license=("AGPL3")
@@ -17,7 +17,7 @@ case "$(uname -m)" in
         '384df0a83c876a8bb3fbe5cd68d69f71467ef064a3b96fea2eb4c965928e9aefb8b91d3679603248ebe3886e148f7efcfa8a138aaf95324de7304b3b1455c3e2'
     )
     ;;
-"armv6h" | "armv7h" )
+"armv6l" | "armv7h" )
     _platform=arm
     ;;
 "aarch64")
@@ -29,7 +29,7 @@ case "$(uname -m)" in
 esac
 
 source=(
-    "uplink_darwin_${_platform}_${pkgver}.zip::https://github.com/storj/storj/releases/download/v${pkgver}/uplink_linux_${_platform}.zip"
+    "uplink_linux_${_platform}_${pkgver}.zip::https://github.com/storj/storj/releases/download/v${pkgver}/uplink_linux_${_platform}.zip"
 )
 releasepage=('https://github.com/storj/storj/releases/latest')
 
