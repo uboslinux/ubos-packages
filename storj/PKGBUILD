@@ -19,9 +19,15 @@ case "$(uname -m)" in
     ;;
 "armv6l" | "armv7h" )
     _platform=arm
+    sha512sums=(
+        '384df0a83c876a8bb3fbe5cd68d69f71467ef064a3b96fea2eb4c965928e9aefb8b91d3679603248ebe3886e148f7efcfa8a138aaf95324de7304b3b1455c3e2'
+    )
     ;;
 "aarch64")
-    _platform=amd64
+    _platform=arm64
+    sha512sums=(
+        'f6168eb8dea54567b6470dd3f787da2b552c51329e6a8a2ef6524650912c113ddec532061d29521c2b5f5ba9ad8496127703014d6fad36ec9d364d1b5461d156'
+    )
     ;;
 *)
     echo "ERROR: Unsupported platform" >&2; exit 1
