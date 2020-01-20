@@ -48,4 +48,7 @@ releasepage=('https://github.com/storj/storj/releases/latest')
 
 package() {
     install -m0755 -D ${srcdir}/{gateway,identity,linksharing,uplink}_linux_${_platform} -t ${pkgdir}/usr/bin/
+    for f in gateway identity linksharing uplink; do
+        ln -s ${f}_linux_${_platform} ${pkgdir}/usr/bin/storj-$f
+    done
 }
