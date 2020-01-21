@@ -17,7 +17,7 @@ _vendor_perl=/usr/share/perl5/vendor_perl
 package() {
 # Pagekite code
     cd "${srcdir}/PyPagekite-${pkgver}"
-    python2 setup.py install --root="${pkgdir}/" --optimize=1
+    python setup.py install --root="${pkgdir}/" --optimize=1
 
 # Config
     mkdir -m0755 -p ${pkgdir}/etc/pagekite.d
