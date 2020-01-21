@@ -1,13 +1,13 @@
 # From Arch, adapted for UBOS
 
 pkgname=tomcat8
-pkgver=8.0.53
+pkgver=8.5.50
 pkgrel=1
 pkgdesc='Open source implementation of the Java Servlet 3.1 and JavaServer Pages 2.3 technologies'
 arch=('any')
 url='http://tomcat.apache.org/'
 license=('APACHE')
-depends=('java-runtime>=7' 'java-jsvc' 'java-commons-daemon' 'eclipse-ecj')
+depends=('java-runtime>=7' 'java-jsvc' 'eclipse-ecj')
 optdepends=('tomcat-native: to allow optimal performance in production environments')
 backup=(etc/${pkgname}/catalina.policy
         etc/${pkgname}/catalina.properties
@@ -18,20 +18,19 @@ backup=(etc/${pkgname}/catalina.policy
         etc/${pkgname}/web.xml)
 # install=${pkgname}.install
 source=(https://archive.apache.org/dist/tomcat/tomcat-8/v${pkgver}/bin/apache-tomcat-${pkgver}.tar.gz{,.asc}
-        systemd_${pkgname}.service
-        systemd_sysusers.d_${pkgname}.conf
-        systemd_tmpfiles.d_${pkgname}.conf)
-validpgpkeys=('DCFD35E0BF8CA7344752DE8B6FB21E8933C60243'  # Mark E D Thomas
-              '713DA88BE50911535FE716F5208B0AB1D63011C7') # Violeta Georgieva Georgieva
+        tomcat8.service
+        tomcat8.sysusers
+        tomcat8.tmpfiles)
+validpgpkeys=('A9C5DF4D22E99998D9875A5110C01C5A2F6059E7')
 
-sha512sums=('cd8a4e48a629a2f2bb4ce6b101ebcce41da52b506064396ec1b2915c0b0d8d82123091242f2929a649bcd8b65ecf6cd1ab9c7d90ac0e261821097ab6fbe22df9'
+sha512sums=('ffca86027d298ba107c7d01c779318c05b61ba48767cc5967ee6ce5a88271bb6ec8eed60708d45453f30eeedddcaedd1a369d6df1b49eea2cd14fa40832cfb90'
             'SKIP'
             'bcaa3fe1eb585e3dc96f9a8c4213f8f1c8ad6bc25158af5c1eb95db137ca8e02423512e9a1e389892e4f388315bc8894b5035b6078cedbd00a3508316a035115'
             '7b505c79e495c35f787f300cd786e9f474ba2df61f8a50e21d2480de6a4c27a409b627447d1e4cb2fb543f81c107cbb30adbbc31a29754d0fe8e6908ea61cd7a'
             '4acf00c0040f48bb17d03bd3445b63e04583922ad1da7cf7d0d005000fb6cf07911544e03a5f28c4ba5313410e7447ba2f94de2275af161703f1634df9965108')
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/tomcat8')
-pkgverforked=('8.0.53-1')
+pkgverforked=('8.5.41-1')
 
 _gid_log=19
 _gid_tomcat=57
@@ -42,7 +41,7 @@ package() {
 
   # Tomcat general files
   install -dm755 "${pkgdir}"/usr/share/{,java/}${pkgname}
-  cp -r bin "${pkgdir}"/usr/share/${pkgname}
+  cp -r --no-preserve=ownership bin "${pkgdir}"/usr/share/${pkgname}
   # commons-daemon and tomcat-natives are packaged on their own
   rm "${pkgdir}"/usr/share/${pkgname}/bin/{*.bat,commons-daemon*,tomcat-native.tar.gz}
   ln -s /usr/share/java/commons-daemon.jar "${pkgdir}"/usr/share/${pkgname}/bin/commons-daemon.jar
@@ -76,11 +75,11 @@ package() {
   ln -s /var/tmp/${pkgname}/temp "${pkgdir}"/usr/share/${pkgname}/temp
   ln -s /var/tmp/${pkgname}/work "${pkgdir}"/usr/share/${pkgname}/work
 
-  install -Dm644 "${srcdir}"/systemd_${pkgname}.service \
+  install -Dm644 "${srcdir}"/${pkgname}.service \
                  "${pkgdir}"/usr/lib/systemd/system/${pkgname}.service
-  install -Dm644 "${srcdir}"/systemd_sysusers.d_${pkgname}.conf \
+  install -Dm644 "${srcdir}"/${pkgname}.sysusers \
                  "${pkgdir}"/usr/lib/sysusers.d/${pkgname}.conf
-  install -Dm644 "${srcdir}"/systemd_tmpfiles.d_${pkgname}.conf \
+  install -Dm644 "${srcdir}"/${pkgname}.tmpfiles \
                  "${pkgdir}"/usr/lib/tmpfiles.d/${pkgname}.conf
 
     mkdir -p -m775 ${pkgdir}/etc/tomcat8
