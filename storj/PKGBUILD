@@ -2,35 +2,27 @@ developer=https://storj.io/
 url=https://github.com/storj/storj
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=0.29.3
-pkgrel=3
+pkgver=0.30.5
+pkgrel=1
 pkgdesc="Storj V3 Network"
-arch=('any')
+arch=('x86_64' 'armv6l' 'armv7l' 'aarch64')
 license=("AGPL3")
 makedepends=(
     'go'
 )
+sha512sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP') # skip for now; needs platform-specific checksums
 case "$(uname -m)" in
 "x86_64")
      _platform=amd64
-    sha512sums=('4aa6af983baeb3387c2d7b9a686e6c143d5d0148f2d625045f12064f484a263af8d57b88f3bb52ab49590472993d5a65e852a56577835fd7bb3e6919bd6a43bb'
-                '2c0ed6faf35d85f410701435926afe8259a41e420abdbafe2241f9627ca121b517e0a56802394d5e8a00a3588d3fcfc84b3cfa33d5330bd4386ab089e4f54e17'
-                'e13b840a1c805a81c5cb633828a91f9b4d9dbfcd2b2cb1afe26f3c813226a32d165c07bc60ea9c99ad6fe6561e37d195fbf8cf5b5d21fcd48cf4f2cc52381148'
-                '384df0a83c876a8bb3fbe5cd68d69f71467ef064a3b96fea2eb4c965928e9aefb8b91d3679603248ebe3886e148f7efcfa8a138aaf95324de7304b3b1455c3e2')
     ;;
 "armv6l" | "armv7l" )
     _platform=arm
-    sha512sums=('c08a60dd993a0b1a09ce7169c634ef9be06f81361b2c0ba6f61c7c745a6cf345e1a5aa73053bb0a837644cbe31196d0066378d114f6bda5a62ec3607e67559ec'
-                '63c7a3b4332e92d7d192446aa5770a29057d2a2c9e82c2e1815f17fb7b7f23dd8a493e517e7715e0b009f8e6e0445ed5f01cc746e86073b764cd5553c18566a3'
-                'ce84adbd74934b1d19c3fcb29143fef4e2c9ae4c0cfacf68bee67b43eb050868bf053d8c7e6e587270dd278acdff99648b0f4cca250fc9e951285e390cc806af'
-                '95b40a16536896fcae2029bde47067a020437a3dd3a519352dc83359034edaede1ad4d11dc25e7c5b5062c3fa3ca5034aa79d8d12c379dced1c71bd44b4328f5')
     ;;
 "aarch64")
     _platform=arm64
-    sha512sums=('9caed8eaf43313c8020054a8219c14ce38f57670ca186e9a9654759717634b7fe2811ce1d1b454640dd825c9bc029162f28f64c5536ae94f671a1b2fb3becc36'
-                '3d5b8ef2469bcd269506d6a9bfe9af9bf7bc7184ee577c09f7a9cecdab0748bd14160fe9e81054a78e019c23c6d6d2e2516f548c0f513f33e5964596c29afb2c'
-                '9015bdf6b2cc1a88487c5a8d75e49901a30645ef787cd02f02153fa8bc36cd28a4864a5056b37a36094d457a764b67e8c7a52feec319c6570b55c37e0607d19b'
-                'f6168eb8dea54567b6470dd3f787da2b552c51329e6a8a2ef6524650912c113ddec532061d29521c2b5f5ba9ad8496127703014d6fad36ec9d364d1b5461d156')
     ;;
 *)
     echo "ERROR: Unsupported platform" >&2; exit 1
@@ -47,8 +39,16 @@ releasepage=('https://github.com/storj/storj/releases/latest')
 
 
 package() {
+    # code
     install -m0755 -D ${srcdir}/{gateway,identity,linksharing,uplink}_linux_${_platform} -t ${pkgdir}/usr/bin/
     for f in gateway identity linksharing uplink; do
         ln -s ${f}_linux_${_platform} ${pkgdir}/usr/bin/storj-$f
     done
+
+    # systemd
+    install -m0644 -D ${startdir}/systemd/*.service -t ${pkgdir}/usr/lib/systemd/system/
+
+    # config
+    mkdir -m0755 -p ${pkgdir}/etc/storj/gateway
 }
+

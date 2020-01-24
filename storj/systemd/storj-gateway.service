@@ -1,0 +1,8 @@
+[Unit]
+Description=Storj S3 gateway
+
+[Service]
+ExecStartPre=/usr/share/ubos-admin/bin/ubos-service-prestart storj-gateway
+ExecStopPost=/usr/share/ubos-admin/bin/ubos-service-poststop storj-gateway
+
+ExecStart=/usr/bin/storj-gateway --config-dir /etc/storj/gateway
