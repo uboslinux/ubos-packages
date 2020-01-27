@@ -9,12 +9,27 @@ post_install() {
   chattr +C '/ubos/lib/postgres/data'
 }
 
+pre_upgrade() {
+  systemctl status postgresql.service > /dev/null && systemctl stop postgresql.service
+}
+
 post_upgrade() {
+  newVersion=$1
+  oldVersion=$2
+
+  # We don't need to upgrade the data; will restore from ubos backup
+  [[ -d /ubos/lib/postgres/data ]] && rm -rf /ubos/lib/postgres/data
+
   post_install $1
+
+  sudo -u postgres initdb -D /ubos/lib/postgres/data
 
   # FS#23858, fix postgres user shell issue
   postgres_shell=$(getent passwd postgres | cut -d: -f7)
   if [ "$postgres_shell" = "/sbin/nologin" ]; then
     chsh -s /bin/bash postgres
   fi
+
+  systemctl daemon-reload
+  systemctl status postgresql.service > /dev/null || systemctl start postgresql.service
 }
