@@ -50,7 +50,7 @@ validpgpkeys=('A93D62ECC3C8EA12DB220EC934EA76E6791485A8' # Jim Jagielski
               'B9E8213AEFB861AF35A41F2C995E35221AD84DFF') # Daniel Ruggeri
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/apache')
-pkgverforked=('2.4.37-1')
+pkgverforked=('2.4.41')
 
 prepare() {
   cd httpd-${pkgver}
