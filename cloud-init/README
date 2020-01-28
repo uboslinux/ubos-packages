@@ -1,3 +1,0 @@
-0.7.8 in Arch is currently broken. cloud-init upstream is now packaged differently
-and some dependent packages haven't been declared nor do they exist in the
-Arch repos. Do not upgrade this unless you are sure it will work.

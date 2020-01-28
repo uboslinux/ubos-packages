@@ -1,52 +1,48 @@
-#
-# Upstream maintainer:  kpcyrd <git@rxv.cc>
+# Maintainer: Christian Rebischke <chris.rebischke at archlinux.org>
+# Contributor:  kpcyrd <git@rxv.cc>
 # Contributor: Jonathan Steel <jsteel at archlinux.org>
 # Contributor: Daniel Wallace <danielwallace at gtmanfred dot com>
+# Contributor: flaccid aka Chris Fordham <chris@fordham.id.au>
+# Contributor: Sparadox <etienne.lafarge at gmail.com>
 # Patches from: Indie Computing Corp.
-#
 
 maintainer="http://indiecomputing.com/"
 pkgname=cloud-init
-pkgver=18.2
-pkgrel=4
+pkgver=19.3
+pkgrel=1
 pkgdesc="The standard for customising cloud instances"
 arch=('any')
 url="https://cloud-init.io"
 license=("GPL3")
-depends=('systemd' 'sudo' 'python2-yaml' 'python2-cheetah' 'python2-prettytable'
-         'python2-oauth' 'python2-boto' 'python2-configobj'
-         'python2-jsonschema' 'python2-jsonpatch' 'python2-jsonpointer' 'net-tools'
-         'python2-requests' 'python2-oauthlib'
-         'python2-jinja')
-makedepends=('python2' 'python2-setuptools')
+depends=('systemd' 'sudo' 'python-yaml' 'python-prettytable'
+         'python-oauthlib' 'python-configobj'
+         'python-jsonschema' 'python-jsonpatch' 'net-tools'
+         'python-requests' 'python-jinja' 'python-six'
+         'netplan')
+makedepends=('python' 'python-setuptools')
 backup=(etc/cloud/cloud.cfg etc/cloud/cloud.cfg.d/05_logging.cfg)
-source=("https://launchpad.net/$pkgname/trunk/$pkgver/+download/$pkgname-$pkgver.tar.gz"
-        fix-lib.patch
-        ubos.cloud.cfg)
-512sums=('25ccfbd41d46f1375e14094754a92930d589bca3d7f0f016c55d3475751aba4b8c8474fc6aadd48521c68606d9f02f96aa8cd46644f71ba9af958612c4dae55c'
+source=("https://launchpad.net/${pkgname}/trunk/${pkgver}/+download/${pkgname}-${pkgver}.tar.gz"
+        "fix-lib.patch"
+        "ubos.cloud.cfg")
+sha512sums=('4b2c7dbcfeeaa9abc097e4f89035009fe839347041ab93cf33593bf31add3f6e6744cf8cd080de4d937b7e1aa50026f109c8f9240452dbff331b4d477d558e2d'
             '6c435fbe1e0a7093b79f8bb3789b05a39afd1e43b7ff96f13e68c9ad16311cc58270b947bae574cfdc3d2e27c7258789880a101c9bdf2c3c141bcbedc47a8a4b'
             '5a7a433ab50114b362406e8ee7bacd8ed1193414e7adec4434424c16dc373462e43dfa4291adc9c9006c7a93080233650dc8baec8caa084ca01705fab294e78c')
 
-releasepage=('https://launchpad.net/cloud-init')
-pkgverforked=('18.2-1')
+releasepage=('https://git.archlinux.org/svntogit/community.git/tree/trunk?h=packages/cloud-init')
+pkgverforked=('19.3-1')
 
 prepare(){
-  cd $pkgname-$pkgver
-
-  patch -Np1 -i ../fix-lib.patch
-
-  find . -name \*.py -exec sed -i '1s/python$/&2/' {} +
-  sed -i '1s/python$/&2/' tools/read*
-
+  cd "${pkgname}-${pkgver}"
+  patch -Np1 -i "${srcdir}/fix-lib.patch"
   sed -e 's:/etc/systemd:/usr/lib/systemd:g' -e 's:\"/lib\":\"/usr/lib\":g' -i setup.py
 
   patch -Np1 -i "${startdir}/fix-logging.patch"
 }
 
 package() {
-  cd $pkgname-$pkgver
+  cd "${pkgname}-${pkgver}"
 
-  python2 ./setup.py install --root="$pkgdir" --init-system systemd
+  python ./setup.py install --root="${pkgdir}" --init-system systemd
 
   # Use a cloud.cfg crafted for UBOS
   install -m644 ../ubos.cloud.cfg "$pkgdir"/etc/cloud/cloud.cfg
