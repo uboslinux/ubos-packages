@@ -2,7 +2,7 @@ developer=http://zerotier.com/
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=1.2.12
+pkgver=1.4.6
 pkgrel=1
 pkgdesc='ZeroTier is a software defined networking layer for Earth.'
 arch=('x86_64' 'armv6h' 'armv7h' 'aarch64')
@@ -17,7 +17,7 @@ releasepage=('https://www.zerotier.com/download.shtml')
 makedepends=(
     npm
 )
-sha512sums=('a35029993d9266f3529a9922daa606b0d56a332514545f8cfab2092a4c9db4fc7217223f3bd7dbe59e536de325ee9b4f0226d673c0f0ec5859cf2937e8a4a2d4'
+sha512sums=('72f00602f67190d03ac0c8caa6b79e7f346b10745bdf772c68f77a3a940cdd718d05ec642bc862a6235aab9bd3bfefb0c57571f358ae55f38761f45500f0f189'
             '940c260d59728dc6487c8f56d67d926cc78f12394e68aa7c1a54c51f4e243806367f6cbcf14b19cb1e0df1dd5ca78a6afd301ebdb51bee2e66734e1fb9d1f764')
 build() {
     cd "${srcdir}/ZeroTierOne-${pkgver}"

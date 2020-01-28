@@ -1,7 +1,7 @@
 # From Arch, using UBOS configuration
 
 pkgname=tor
-pkgver=0.3.4.9
+pkgver=0.4.2.5
 pkgrel=1
 pkgdesc='Anonymizing overlay network.'
 arch=('x86_64')
@@ -17,7 +17,7 @@ source=("https://www.torproject.org/dist/${pkgname}-${pkgver}.tar.gz"{,.asc}
         'tor.service'
         'tor.sysusers'
         'tor.tmpfiles')
-sha512sums=('cc254a2cc2f21b4511e9cb215ba5f05fefc4dceffcf46a402efa2d3540872a4ed8e0095245df0802ea12c1367451bc16ca60c0aea6a77e2139580f3c5ba8c02f'
+sha512sums=('e63157713caa3590324f652f17c5c5634bab015dcde5c7832eb725351c3a91c1051dd8a95650502703e9c3dd5daefc2867ff3d20530dfec17310bb3dd4bb5b7d'
             'SKIP'
             '430b660feaa00b9b2fb0a2a5b42ebfad1c56252031632fd297f1bf7de1857367fe293233715b7c941b9859895df0ce541f3b5426a393e4d75c1f89f311202233'
             '45bdf0a3afa93b0e48bd4a3ae7702a571041d9ac761035a07505436be7fd6d89d5b4ed046fc5a5a75a3119c6fcb8a1e42b05e7638925ac8b63ff0780461851ee'

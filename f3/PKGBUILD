@@ -6,7 +6,7 @@
 
 maintainer="http://indiecomputing.com/"
 pkgname=f3
-pkgver=7.1
+pkgver=7.2
 pkgrel=1
 pkgdesc="Utilities to detect and repair counterfeit flash storage, i.e. thumb drives and memory cards with less flash than advertised"
 arch=('x86_64')
@@ -19,7 +19,7 @@ conflicts=()
 provides=()
 source=(https://github.com/AltraMayor/${pkgname}/archive/v${pkgver}.zip)
 releasepage=("https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=f3")
-sha512sums=('b13886869f2b6d9e5a988429e499bfd1941f34c78fa83cadf0fb7edeecff6ed4da5e680d19d54559c5c0da045d925f363a6cba9ce62c41418f040a34ddefacd2')
+sha512sums=('4a66dfb5616ee2fa27f903f8de6f9b8bc38a987dbc3c719ebb631abbf0be6630d07b8625e3fdc9e5748f99cad61770ca1fec0641788d852bad6b7c29c33e3541')
 
 build() {
     cd ${srcdir}/${pkgname}-${pkgver}
