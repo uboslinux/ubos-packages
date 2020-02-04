@@ -2,7 +2,7 @@ developer=https://storj.io/
 url=https://github.com/storj/storj
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=0.30.5
+pkgver=0.31.12
 pkgrel=1
 pkgdesc="Storj V3 Network"
 arch=('x86_64' 'armv6l' 'armv7l' 'aarch64')
@@ -42,13 +42,20 @@ package() {
     # code
     install -m0755 -D ${srcdir}/{gateway,identity,linksharing,uplink}_linux_${_platform} -t ${pkgdir}/usr/bin/
     for f in gateway identity linksharing uplink; do
-        ln -s ${f}_linux_${_platform} ${pkgdir}/usr/bin/storj-$f
+        cat <<END > ${pkgdir}/usr/bin/storj-$f
+#!/bin/bash
+# Invoke Storj executable with default arguments for UBOS
+#
+
+/usr/bin/${f}_linux_${_platform} --config-dir /etc/storj \$@
+END
+        chmod 755 ${pkgdir}/usr/bin/storj-$f
     done
 
     # systemd
     install -m0644 -D ${startdir}/systemd/*.service -t ${pkgdir}/usr/lib/systemd/system/
 
     # config
-    mkdir -m0755 -p ${pkgdir}/etc/storj/gateway
+    mkdir -m0755 -p ${pkgdir}/etc/storj
 }
 
