@@ -42,20 +42,23 @@ sub parseLocation {
         return undef;
     }
 
-    my $awsAccessKeyId = undef;
-    my $endpointUrl    = $DEFAULT_ENDPOINT_URL;
+    my $accessKeyId = undef;
+    my $endpointUrl = $DEFAULT_ENDPOINT_URL;
     # Not secret access key
 
     my $parseOk = GetOptionsFromArray(
             $argsP,
-            'aws-access-key-id=s' => \$awsAccessKeyId,
-            'endpoint-url=s'      => \$endpointUrl );
+            'access-key-id=s' => \$accessKeyId,
+            'endpoint-url=s'  => \$endpointUrl );
     unless( $parseOk ) {
         return undef;
     }
 
-    if( $awsAccessKeyId && $awsAccessKeyId !~ m!^[A-Z0-9]{20}$! ) {
-        fatal( 'Invalid AWS access key id:', $awsAccessKeyId );
+    if( $accessKeyId && $accessKeyId !~ m!^.+$! ) { # Can we do better?
+        fatal( 'Invalid access key id:', $accessKeyId );
+    }
+    if( $endpointUrl && endpointUrl !~ m!^https?://.+! ) {
+        fatal( 'Invalid endpoint URL:', $endpointUrl );
     }
 
     unless( ref( $self )) {
@@ -63,20 +66,23 @@ sub parseLocation {
     }
     $self->SUPER::new( $location, protocol() );
 
-    if( $awsAccessKeyId ) {
+    if( $accessKeyId ) {
         $dataTransferConfig->removeValue( 'storj', $uri->authority(), 'secret-access-key' ); # ask the user again
     }
 
-    if( $awsAccessKeyId ) {
-        $dataTransferConfig->setValue( 'storj', $uri->authority(), 'access-key-id', $awsAccessKeyId );
+    if( $accessKeyId ) {
+        $dataTransferConfig->setValue( 'storj', $uri->authority(), 'access-key-id', $accessKeyId );
+    }
+    if( $endpointUrl ) {
+        $dataTransferConfig->setValue( 'storj', $uri->authority(), 'endpoint-url', $endpointUrl );
     }
 
     unless( $dataTransferConfig->getValue( 'storj', $uri->authority(), 'access-key-id' )) {
-        fatal( 'No default Storj access key found. Specify with --aws-access-key-id <keyid>' );
+        fatal( 'No default access key ID found. Specify with --access-key-id <keyid>' );
     }
     unless( $dataTransferConfig->getValue( 'storj', $uri->authority(), 'secret-access-key' )) {
         my $secretAccessKey = askAnswer( 'Storj secret access key: ', '^[A-Za-z0-9/+]{40}$', undef, 1 );
-        $dataTransferConfig->setValue( 's3', $uri->authority(), 'secret-access-key', $secretAccessKey );
+        $dataTransferConfig->setValue( 'storj', $uri->authority(), 'secret-access-key', $secretAccessKey );
     }
 
     return $self;
@@ -162,7 +168,7 @@ sub description {
 Transfer to and from Storj/Tardigrade through a locally running Storj gateway.
 For security reasons, credentials come from the config file, or must be
 entered on the terminal. Options:
---aws-access-key-id <keyid> : AWS access key id to access S3
+--access-key-id <keyid> : Access key id to access the Storj gateway
 TXT
 }
 
@@ -188,7 +194,7 @@ sub _aws {
 
     if( $ret ) {
         if( $out =~ m!AccessDenied! ) {
-            $@ = 'Storj denied access. Check your AWS credentials, and your permissions to write to the bucket.';
+            $@ = 'Storj denied access. Check your credentials, and your permissions to write to the bucket.';
         } else {
             $@ = $out;
         }
