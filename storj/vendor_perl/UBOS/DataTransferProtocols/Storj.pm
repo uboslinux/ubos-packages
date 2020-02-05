@@ -57,7 +57,7 @@ sub parseLocation {
     if( $accessKeyId && $accessKeyId !~ m!^.+$! ) { # Can we do better?
         fatal( 'Invalid access key id:', $accessKeyId );
     }
-    if( $endpointUrl && endpointUrl !~ m!^https?://.+! ) {
+    if( $endpointUrl && $endpointUrl !~ m!^https?://.+! ) {
         fatal( 'Invalid endpoint URL:', $endpointUrl );
     }
 
@@ -81,7 +81,7 @@ sub parseLocation {
         fatal( 'No default access key ID found. Specify with --access-key-id <keyid>' );
     }
     unless( $dataTransferConfig->getValue( 'storj', $uri->authority(), 'secret-access-key' )) {
-        my $secretAccessKey = askAnswer( 'Storj secret access key: ', '^[A-Za-z0-9/+]{40}$', undef, 1 );
+        my $secretAccessKey = askAnswer( 'Storj secret access key: ', '^.+$', undef, 1 ); # Can we do better?
         $dataTransferConfig->setValue( 'storj', $uri->authority(), 'secret-access-key', $secretAccessKey );
     }
 
