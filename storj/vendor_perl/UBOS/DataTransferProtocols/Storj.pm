@@ -11,7 +11,7 @@
 use strict;
 use warnings;
 
-package UBOS::DataTransferProtocols::Stoj;
+package UBOS::DataTransferProtocols::Storj;
 
 use base qw( UBOS::AbstractDataTransferProtocol );
 
@@ -137,7 +137,7 @@ CONTENT
             $awsConfig,
             0600 );
 
-    my $endpointUrl = $dataTransferConfig->getValue( 'storj', $uri->authority(), 'endpoint-url' ));
+    my $endpointUrl = $dataTransferConfig->getValue( 'storj', $uri->authority(), 'endpoint-url' );
 
     info( 'Uploading to', $toFile );
     if( _aws( $awsConfigFile, $endpointUrl, "s3 cp '$localFile' '$toFile'" )) {
@@ -151,7 +151,7 @@ CONTENT
 # The supported protocol.
 # return: the protocol
 sub protocol {
-    return 'storj';
+    return 'sj';
 }
 
 ##
@@ -159,9 +159,9 @@ sub protocol {
 # return: description
 sub description {
     return <<TXT;
-Transfer to and from Storj through a locally running Storj gateway.
-For security reasons, credentials come from the config file, or
-must be entered on the terminal. Options:
+Transfer to and from Storj/Tardigrade through a locally running Storj gateway.
+For security reasons, credentials come from the config file, or must be
+entered on the terminal. Options:
 --aws-access-key-id <keyid> : AWS access key id to access S3
 TXT
 }
