@@ -3,13 +3,14 @@ url=https://github.com/storj/storj
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
 pkgver=0.31.12
-pkgrel=1
+pkgrel=2
 pkgdesc="Storj V3 Network"
 arch=('x86_64' 'armv6l' 'armv7l' 'aarch64')
 license=("AGPL3")
-makedepends=(
-    'go'
+depends=(
+    'aws-cli'
 )
+
 sha512sums=('SKIP'
             'SKIP'
             'SKIP'
@@ -35,6 +36,7 @@ source=(
     "linksharing_linux_${_platform}_${pkgver}.zip::https://github.com/storj/storj/releases/download/v${pkgver}/linksharing_linux_${_platform}.zip"
     "uplink_linux_${_platform}_${pkgver}.zip::https://github.com/storj/storj/releases/download/v${pkgver}/uplink_linux_${_platform}.zip"
 )
+_vendor_perl=/usr/share/perl5/vendor_perl
 releasepage=('https://github.com/storj/storj/releases/latest')
 
 
@@ -57,5 +59,8 @@ END
 
     # config
     mkdir -m0755 -p ${pkgdir}/etc/storj
+
+    # UBOS DataTransferProtocol
+    install -D -m755 ${startdir}/vendor_perl/UBOS/DataTransferProtocols/*.pm -t ${pkgdir}${_vendor_perl}/UBOS/DataTransferProtocols/
 }
 
