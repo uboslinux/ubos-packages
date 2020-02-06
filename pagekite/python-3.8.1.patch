@@ -1,0 +1,56 @@
+diff -u -r PyPagekite-1.5.0.191126/pagekite/httpd.py PyPagekite-1.5.0.191126.new/pagekite/httpd.py
+--- PyPagekite-1.5.0.191126/pagekite/httpd.py	2019-11-26 17:49:29.000000000 +0000
++++ PyPagekite-1.5.0.191126.new/pagekite/httpd.py	2020-02-05 23:59:01.903476371 +0000
+@@ -33,7 +33,7 @@
+ 
+ import base64
+ import cgi
+-from cgi import escape as escape_html
++from html import escape as escape_html
+ import os
+ import re
+ import socket
+diff -u -r PyPagekite-1.5.0.191126/pagekite/pk.py PyPagekite-1.5.0.191126.new/pagekite/pk.py
+--- PyPagekite-1.5.0.191126/pagekite/pk.py	2019-11-26 17:49:29.000000000 +0000
++++ PyPagekite-1.5.0.191126.new/pagekite/pk.py	2020-02-06 00:04:48.357353234 +0000
+@@ -36,7 +36,7 @@
+ 
+ import base64
+ import cgi
+-from cgi import escape as escape_html
++from html import escape as escape_html
+ import errno
+ import gc
+ import getopt
+@@ -3154,8 +3154,8 @@
+           fd.setblocking(1)
+ 
+         fd.connect((host, port))
+-        fd.send('HEAD /ping HTTP/1.1\r\nHost: ping.pagekite\r\n\r\n')
+-        data = fd.recv(1024)
++        fd.send(b('HEAD /ping HTTP/1.1\r\nHost: ping.pagekite\r\n\r\n'))
++        data = s(fd.recv(1024))
+         fd.close()
+         if not data.startswith('HTTP/1.1 503 Unavailable'):
+           raise Exception()
+diff -u -r PyPagekite-1.5.0.191126/pagekite/proto/selectables.py PyPagekite-1.5.0.191126.new/pagekite/proto/selectables.py
+--- PyPagekite-1.5.0.191126/pagekite/proto/selectables.py	2019-11-26 17:49:29.000000000 +0000
++++ PyPagekite-1.5.0.191126.new/pagekite/proto/selectables.py	2020-02-06 00:02:12.933425539 +0000
+@@ -573,7 +573,7 @@
+         sdata = ''.join(data)
+         if self.zw and compress and len(sdata) > 64:
+           try:
+-            zdata = self.zw.compress(sdata) + self.zw.flush(zlib.Z_SYNC_FLUSH)
++            zdata = s(self.zw.compress(sdata) + self.zw.flush(zlib.Z_SYNC_FLUSH))
+             if zhistory:
+               zhistory[0] = len(sdata)
+               zhistory[1] = len(zdata)
+@@ -919,7 +919,7 @@
+           try:
+             if not self.zr:
+               self.zr = zlib.decompressobj()
+-            cchunk = self.zr.decompress(self.chunk)
++            cchunk = s(self.zr.decompress(b(self.chunk)))
+           except zlib.error:
+             cchunk = ''
+ 
