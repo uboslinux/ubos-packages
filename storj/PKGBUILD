@@ -53,6 +53,7 @@ package() {
 END
         chmod 755 ${pkgdir}/usr/bin/storj-$f
     done
+    install -m0755 -D ${startdir}/bin/storj-gateway-credentials -t ${pkgdir}/usr/bin/
 
     # systemd
     install -m0644 -D ${startdir}/systemd/*.service -t ${pkgdir}/usr/lib/systemd/system/
@@ -62,5 +63,6 @@ END
 
     # UBOS DataTransferProtocol
     install -D -m755 ${startdir}/vendor_perl/UBOS/DataTransferProtocols/*.pm -t ${pkgdir}${_vendor_perl}/UBOS/DataTransferProtocols/
+
 }
 
