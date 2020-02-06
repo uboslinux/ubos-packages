@@ -145,8 +145,11 @@ CONTENT
 
     my $endpointUrl = $dataTransferConfig->getValue( 'storj', $uri->authority(), 'endpoint-url' );
 
+    my $toFileWithS3Proto = $toFile;
+    $toFileWithS3Proto =~ s!^sj:!s3:!;
+
     info( 'Uploading to', $toFile );
-    if( _aws( $awsConfigFile, $endpointUrl, "s3 cp '$localFile' '$toFile'" )) {
+    if( _aws( $awsConfigFile, $endpointUrl, "s3 cp '$localFile' '$toFileWithS3Proto'" )) {
         # parent emits error message
         return 0;
     }
