@@ -26,7 +26,7 @@ source=("https://launchpad.net/${pkgname}/trunk/${pkgver}/+download/${pkgname}-$
         "ubos.cloud.cfg")
 sha512sums=('4b2c7dbcfeeaa9abc097e4f89035009fe839347041ab93cf33593bf31add3f6e6744cf8cd080de4d937b7e1aa50026f109c8f9240452dbff331b4d477d558e2d'
             '6c435fbe1e0a7093b79f8bb3789b05a39afd1e43b7ff96f13e68c9ad16311cc58270b947bae574cfdc3d2e27c7258789880a101c9bdf2c3c141bcbedc47a8a4b'
-            '5046d9b65782c05e04e084aed8dbe52bff7eb71f3316f6ad9586a6ac629335ca8afe07d21c5e42616635f194cbd1170820add4d2ba3680ee520190f0039e8cf3')
+            '326b95d75c80aa8b342db26ecc2379921fcc11b3b2e5ddd5d4f9a906dfc241a795c286aa5f9aac4d799e543736b174064377743ab465f9c96b9b13ea99195310')
 
 releasepage=('https://git.archlinux.org/svntogit/community.git/tree/trunk?h=packages/cloud-init')
 pkgverforked=('19.3-1')
