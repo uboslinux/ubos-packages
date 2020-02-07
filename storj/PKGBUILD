@@ -64,5 +64,7 @@ END
     # UBOS DataTransferProtocol
     install -D -m755 ${startdir}/vendor_perl/UBOS/DataTransferProtocols/*.pm -t ${pkgdir}${_vendor_perl}/UBOS/DataTransferProtocols/
 
+    # For data
+    mkdir -m0755 -p ${pkgdir}/ubos/lib/storj/{identity,storage}
 }
 
