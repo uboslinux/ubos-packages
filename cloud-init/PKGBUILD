@@ -9,7 +9,7 @@
 maintainer="http://indiecomputing.com/"
 pkgname=cloud-init
 pkgver=19.3
-pkgrel=2
+pkgrel=3
 pkgdesc="The standard for customising cloud instances"
 arch=('any')
 url="https://cloud-init.io"
