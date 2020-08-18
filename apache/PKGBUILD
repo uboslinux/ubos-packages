@@ -1,7 +1,7 @@
 # From Arch, adapted for UBOS
 
 pkgname=apache
-pkgver=2.4.41
+pkgver=2.4.46
 pkgrel=1
 pkgdesc='A high performance Unix-based HTTP server'
 arch=('x86_64')
@@ -38,7 +38,7 @@ source=(
     httpd.service
     ubos.layout
 )
-sha512sums=('350cc7dcd2c439e0590338fa6da3f44df44f9bb885c381e91f91b14c2f48597f6f0bbac0ea118a8a67eaa70ae7edbb769beace368643ed73f6daee44c307b335'
+sha512sums=('5936784bb662e9d8a4f7fe38b70c043b468114d931cd10ea831bfe74461ea5856b64f88f42c567ab791fc8907640a99884ba4b6a600f86d661781812735b6f13'
             'SKIP'
             '7bf4e6645dd6f9ec5a1a95d8a51b7d65661077338b606745b1a558ae0057547e1709c451138269b6d4c913847e51c57a939262f46fcadb82e1ccb24a35165dba'
             '57fece1a3e4e3cbd6135203172ecf32570405f7205dc84adc076a50cdab20db868270d8e658314f5273616f81b356d7b88c31e0ee8a8ce6a3e77ab15ef6a8f36'
@@ -50,7 +50,7 @@ validpgpkeys=('A93D62ECC3C8EA12DB220EC934EA76E6791485A8' # Jim Jagielski
               'B9E8213AEFB861AF35A41F2C995E35221AD84DFF') # Daniel Ruggeri
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/apache')
-pkgverforked=('2.4.41')
+pkgverforked=('2.4.46')
 
 prepare() {
   cd httpd-${pkgver}

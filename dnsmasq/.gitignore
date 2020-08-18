@@ -1,3 +1,4 @@
+dnsmasq-*.pkg*
 dnsmasq-*tar.xz*
 pkg/
 src/

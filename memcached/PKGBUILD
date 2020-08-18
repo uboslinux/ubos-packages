@@ -4,17 +4,17 @@
 # Forked for UBOS to build without --seccomp, see https://github.com/memcached/memcached/issues/444 and https://bugs.archlinux.org/task/61116
 # Using our own .service files
 
-pkgverforked=('1.5.14-2')
+pkgverforked=('1.6.6-1')
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk/PKGBUILD?h=packages/memcached')
 
 pkgname=memcached
-pkgver=1.5.14
-pkgrel=2
+pkgver=1.6.6
+pkgrel=1
 pkgdesc='Distributed memory object caching system'
 url='https://memcached.org/'
 arch=('x86_64')
 license=('GPL')
-depends=('libevent' 'libseccomp')
+depends=('libevent' 'libseccomp' 'libseccomp.so')
 optdepends=('perl: for memcached-tool usage')
 source=(https://www.memcached.org/files/${pkgname}-${pkgver}.tar.gz
         # memcached.service.patch
@@ -22,7 +22,7 @@ source=(https://www.memcached.org/files/${pkgname}-${pkgver}.tar.gz
         memcached@.service # added
         memcached.tmpfiles
         memcached.sysusers)
-sha512sums=('d06083d971d0a40195b4dfb252a3bf7c3a0d20b2dcad56726ff9e0b87ba84024309300516dad40181f1b7af4d9c4f35924383977c5e1ff9b5f13d2ef05f684ed'
+sha512sums=('dfd19bf42d35fff391bb479338706a83082e3cdd3ff6e225d3d4da9df01b0a1f659a012dc30766651ffd57f0c19128fc4c3df29b721e588c909656d02cfdaa0a'
             'd133e6751ee77854ec01d6e731cc3cae708552d847cb270f9c8e87aa53b5abb9c47cc83bfae631d752b0ca438669be10053d062c620c65d03d72d9448ba749d7'
             '8f495a5a58714ec1feb7fd7175db44fa48675bd36cd8d77ee881fa055610bf2f7c9cb518057721200725fbec01280c4e7f6363d816c5b5a0f6bb629d2ea71911'
             '960705ff74d25afed477e0b2a5872a3a4fb49ed3105a351f0d0224abc947778f9dbda81e80be94ab636da4a8411a9dd56a8fd4513e5b86a3096a14fa67f1548b'
