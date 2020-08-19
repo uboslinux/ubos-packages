@@ -47,7 +47,8 @@ sha512sums=('5936784bb662e9d8a4f7fe38b70c043b468114d931cd10ea831bfe74461ea5856b6
             'd0efb162d50648c389e47ef407604c9cce96dce82e43f8dcc1f8f2c793f361636786d330f03715b8d39963f70fe94e0dce3a419d3a3392ffca9da5c01bfb96d1')
 
 validpgpkeys=('A93D62ECC3C8EA12DB220EC934EA76E6791485A8' # Jim Jagielski
-              'B9E8213AEFB861AF35A41F2C995E35221AD84DFF') # Daniel Ruggeri
+              'B9E8213AEFB861AF35A41F2C995E35221AD84DFF'
+              'E3480043595621FE56105F112AB12A7ADC55C003') # Daniel Ruggeri
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/apache')
 pkgverforked=('2.4.46')
