@@ -6,11 +6,11 @@ pkgbase=mariadb
 pkgname=('mariadb')
 pkgdesc='Fast SQL database server, derived from MySQL'
 pkgver=10.5.5
-pkgrel=2
+pkgrel=2.1
 arch=('x86_64')
 license=('GPL')
 url='https://mariadb.org/'
-makedepends=('rsync' 'boost' 'bzip2' 'cmake' 'jemalloc' 'libaio' 'libxcrypt'
+makedepends=('rsync' 'boost' 'bzip2' 'cmake' 'jemalloc' 'libaio'
              'libxml2' 'lz4' 'lzo' 'openssl' 'systemd' 'zlib' 'zstd' 'curl'
              'krb5')
 validpgpkeys=('199369E5404BD5FC7D2FE43BCBCB082A1BB943DB') # MariaDB Package Signing Key <package-signing-key@mariadb.org>
@@ -30,7 +30,7 @@ releasepage=(
     'https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/mariadb'
     'https://archlinuxarm.org/packages/aarch64/mariadb/files'
 )
-pkgverforked=('10.5.5-2')
+pkgverforked=('10.5.5-1')
 
 prepare() {
   cd $pkgbase-$pkgver/
@@ -119,7 +119,7 @@ check() {
 
 package_mariadb-libs() {
   pkgdesc='MariaDB libraries'
-  depends=('bzip2' 'libaio' 'libxcrypt' 'libcrypt.so' 'lz4' 'lzo' 'openssl' 'xz' 'zlib')
+  depends=('bzip2' 'libaio' 'libcrypt.so' 'lz4' 'lzo' 'openssl' 'xz' 'zlib')
   optdepends=('krb5: for gssapi authentication')
   conflicts=('libmysqlclient' 'libmariadbclient' 'mariadb-connector-c')
   provides=('libmariadbclient' 'mariadb-connector-c' 'libmariadb.so' 'libmariadbd.so')
