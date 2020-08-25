@@ -18,7 +18,7 @@ post_upgrade() {
   oldVersion=$2
 
   # We don't need to upgrade the data; will restore from ubos backup
-  [[ -d /ubos/lib/postgres/data ]] && rm -rf /ubos/lib/postgres/data
+  [[ -d /ubos/lib/postgres/data ]] && mv /ubos/lib/postgres/data /ubos/lib/postgresql/old-data-$(date +%Y%m%d%H%M%S)
 
   post_install $1
 
