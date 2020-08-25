@@ -20,7 +20,7 @@ source=(https://ftp.postgresql.org/pub/source/v${pkgver}/postgresql-${pkgver}.ta
         postgresql-check-db-dir
         postgresql.sysusers
         postgresql.tmpfiles)
-sha512sums=('68e2d244ae2a9f2138d7569bcadc1cf6f62a410fa56ad1d4ac53206f2adefabb5ae136110b41ca9246df0f8b8cb039918997e0f8a81fc7e6efb7ad10b3a59ba1'
+sha512sums=('36daf10878ca153370829178786dd6ee366ab4d4d6dc9c527536740fdb14b688ae4c33f850eb4243a7667d23f87e4bfd1ddee0755447ad4f3996e423e391c2f3'
             '031efe12d18ce386989062327cdbbe611c5ef1f94e4e1bead502304cb3e2d410af533d3c7f1109d24f9da9708214fe32f9a10ba373a3ca8d507bdb521fbb75f7'
             'b6cfda3182e8a0a5c7f023721faaa3fd50354a45c777fa0a504ea372f1420ff4bb72cc563ea5279a29b5924def5fcb5c109b34455c595c2b2828260dd5625684'
             '1e6183ab0eb812b3ef687ac2c26ce78f7cb30540f606d20023669ac00ba04075487fb72e4dc89cc05dab0269ff6aca98fc1167cc75669c225b88b592482fbf67'
