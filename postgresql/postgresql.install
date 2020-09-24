@@ -30,6 +30,8 @@ post_upgrade() {
     chsh -s /bin/bash postgres
   fi
 
-  systemctl daemon-reload
+  # systemctl daemon-reload
+  # per https://github.com/systemd/systemd/issues/9814
+  systemctl daemon-reexec
   systemctl status postgresql.service > /dev/null || systemctl start postgresql.service
 }
