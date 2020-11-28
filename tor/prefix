@@ -29,7 +29,7 @@ DataDirectory /ubos/lib/tor
 #HashedControlPassword 16:872860B76453A77D60CA2BB8C1A7042072093276A3D701AD684053EC4C
 #CookieAuthentication 1
 
-PidFile /run/ubos-tor/pidfile
+PidFile /run/tor/pidfile
 # This file is inside a directory writable by tor:tor, so the tor daemon
 # can write it as non-root
 
