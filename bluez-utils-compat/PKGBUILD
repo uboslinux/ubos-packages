@@ -6,11 +6,11 @@
 # From AUR
 
 releasepage=('https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=bluez-utils-compat')
-pkgverforked=('5.54-1')
+pkgverforked=('5.58-1')
 
 pkgname='bluez-utils-compat'
 _pkgbase='bluez'
-pkgver=5.54
+pkgver=5.58
 pkgrel=1
 url="http://www.bluez.org/"
 arch=('i686' 'x86_64' 'mips64el' 'armv6h' 'armv7h' 'arm' 'aarch64')
@@ -21,18 +21,10 @@ makedepends=('dbus' 'libical' 'systemd' 'alsa-lib' 'json-c' 'ell')
 optdepends=('ell: for btpclient')
 conflicts=('bluez-hcidump' 'bluez-utils' 'bluez-hcitool')
 provides=('bluez-hcidump' "bluez-utils=${pkgver}" 'bluez-hcitool')
-source=(https://www.kernel.org/pub/linux/bluetooth/"${_pkgbase}-${pkgver}".tar.xz #{xz,sign}
-        'refresh_adv_manager_for_non-LE_devices.diff::https://git.archlinux.org/svntogit/packages.git/plain/trunk/refresh_adv_manager_for_non-LE_devices.diff?h=packages/bluez')
+source=(https://www.kernel.org/pub/linux/bluetooth/"${_pkgbase}-${pkgver}".tar.xz) #{xz,sign}
 # see https://www.kernel.org/pub/linux/bluetooth/sha256sums.asc
-sha512sums=('e19d15d3a478a7af47c1921c8827843492e38787b1182152155bd3d8ad9e1d8ee25c5fda1f24e38c54ebbf946b09fe75007dca9a24d1c35f73303558e558dcbe'
-#            'SKIP'
-            'c6ef673956963725edc52d667648e51df5b99f820e87705096b4b9338e8a4540722e734f1e8e67998c2fbbefec30645ff1fa064789c8a858f770d1214399561d')
+sha512sums=('159b554e0afd56af5da6f8333383f2fdf96d77a0e82d762bf4b37786e7312b7e61fbbae0f18b26442a606e0a232f48e0f45a4b38b95de36c7daf384f582315a3')
 #validpgpkeys=('E932D120BC2AEC444E558F0106CA9F5D1DCF2659') # Marcel Holtmann <marcel@holtmann.org>
-
-prepare() {
-  cd "${_pkgbase}-${pkgver}"
-  patch -Np1 -i ../refresh_adv_manager_for_non-LE_devices.diff
-}
 
 build() {
   cd "${_pkgbase}-${pkgver}"
@@ -46,6 +38,7 @@ build() {
           --enable-btpclient \
           --enable-midi \
           --enable-sixaxis \
+          --enable-hid2hci \
           --enable-mesh \
           --enable-experimental \
           --enable-library \
@@ -63,6 +56,7 @@ package() {
   cd "${_pkgbase}-${pkgver}"
   make DESTDIR="${pkgdir}" \
        install-binPROGRAMS \
+       install-dist_zshcompletionDATA \
        install-man1
 
   # add missing tools FS#41132, FS#41687, FS#42716
@@ -73,9 +67,6 @@ package() {
     done
   done
 
-  # libbluetooth.so* are part of libLTLIBRARIES and binPROGRAMS targets
-  #make DESTDIR=${pkgdir} uninstall-libLTLIBRARIES
-  #rmdir ${pkgdir}/usr/lib
   rm -rf "${pkgdir}"/usr/lib
   
   # move the hid2hci man page out

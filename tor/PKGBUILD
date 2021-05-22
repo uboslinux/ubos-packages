@@ -1,27 +1,33 @@
+# Maintainer: Lukas Fleischer <lfleischer@archlinux.org>
+# Maintainer: Levente Polyak <anthraxx[at]archlinux[dot]org>
+# Maintainer: kpcyrd <kpcyrd[at]archlinux[dot]org>
+# Contributor: Daniel Micay <danielmicay@gmail.com>
+# Contributor: simo <simo@archlinux.org>
+# Contributor: Sid Karunaratne
 # From Arch, using UBOS configuration
 
 pkgname=tor
-pkgver=0.4.3.6
-pkgrel=2
+pkgver=0.4.5.8
+pkgrel=1
 pkgdesc='Anonymizing overlay network.'
 arch=('x86_64')
 url='https://www.torproject.org/'
 license=('BSD')
-depends=('openssl' 'libevent' 'bash' 'libseccomp')
+depends=('openssl' 'libevent' 'bash' 'libseccomp' 'zstd' 'libcap' 'systemd-libs'
+         'libsystemd.so' 'libzstd.so' 'libseccomp.so' 'libcap.so')
 optdepends=('torsocks: for torify')
-makedepends=('ca-certificates')
-backup=('etc/tor/torrc'
-        'etc/tor/torrc-dist')
+makedepends=('ca-certificates' 'systemd')
+backup=('etc/tor/torrc')
 source=("https://www.torproject.org/dist/${pkgname}-${pkgver}.tar.gz"{,.asc}
-        # 'torrc'
-        'tor.service'
+        # 'torrc.patch'
         'tor.sysusers'
-        'tor.tmpfiles')
-sha512sums=('f4ab0788d27b3eab40853dde31eaf087ac84616fc3488973e7d01f4dbd3e71ba6ce3a3afcf0c6272223897d0a9c1556aa26dbc4d9b98cc5b43dd729d20a2fcca'
+        'tor.tmpfiles'
+        'tor.service')
+sha512sums=('f5cb32f5d0fc333aa1607370e290e6be85230896bd26e00072a68db4b32293d5dd38cccb57e92941fbe6ac17fb4207c38d11e3095ede289c3a6ebbd64ed70119'
             'SKIP'
-            '430b660feaa00b9b2fb0a2a5b42ebfad1c56252031632fd297f1bf7de1857367fe293233715b7c941b9859895df0ce541f3b5426a393e4d75c1f89f311202233'
             '45bdf0a3afa93b0e48bd4a3ae7702a571041d9ac761035a07505436be7fd6d89d5b4ed046fc5a5a75a3119c6fcb8a1e42b05e7638925ac8b63ff0780461851ee'
-            '262a38979f42a4a675149e058410db4165ed97f8544f2d95838983a1ec9c760332c5857ab182e60c5c44104cd3ac551959a26a80036826c18c1e93e9e387584c')
+            '262a38979f42a4a675149e058410db4165ed97f8544f2d95838983a1ec9c760332c5857ab182e60c5c44104cd3ac551959a26a80036826c18c1e93e9e387584c'
+            '430b660feaa00b9b2fb0a2a5b42ebfad1c56252031632fd297f1bf7de1857367fe293233715b7c941b9859895df0ce541f3b5426a393e4d75c1f89f311202233')
 validpgpkeys=('2133BC600AB133E1D826D173FE43009C4607B1FB'  # Nick Mathewson
               'F65CE37F04BA5B360AE6EE17C218525819F78451') # Roger Dingledine
 
@@ -30,8 +36,10 @@ pkgverforked=('0.4.3.6-1')
 
 build() {
   cd "${srcdir}/${pkgname}-${pkgver}"
-
-  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/ubos
+  ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/ubos
   make
 }
 

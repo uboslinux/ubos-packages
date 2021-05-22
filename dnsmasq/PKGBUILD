@@ -6,7 +6,7 @@
 
 maintainer="http://indiecomputing.com/"
 pkgname=dnsmasq
-pkgver=2.82
+pkgver=2.85
 pkgrel=1
 pkgdesc="Lightweight, easy to configure DNS forwarder and DHCP server"
 url="http://www.thekelleys.org.uk/dnsmasq/doc.html"
@@ -19,7 +19,7 @@ validpgpkeys=('D6EACBD6EE46B834248D111215CDDA6AE19135A2') # Simon Kelley <simon@
 source=("http://www.thekelleys.org.uk/$pkgname/$pkgname-$pkgver.tar.xz"{,.asc}
         'dnsmasq-sysusers.conf'
         'dnsmasq.service')
-sha512sums=('faf36efdaa3abe84994e46aea018b0a324218d42814baac056ca635f6d03f1301e7b4d958f92b272a8e3a7ac358f3a4e2606129a217587b471aedb3ce23e903b'
+sha512sums=('8beefe76b46f7d561f40d0900ba68b260a199cb62ab5b653746e3a1104c04fb8899b9e7a160a1be4fe8782bfb1607b556e9ffb9c25c4e99653e4bc74fcc03b09'
             'SKIP'
             '8e0194a6c5bd2bb6e008681808c0fbf5edbd88c2c039527587479a1850b8199444aaa70cb7252063d322f97111f89a3e8c0d4d6d1afacdf83a5ea6166233735b'
             'b5cb86331dc73f4a2c0ea755423557f7f2d71b2c04350057b720b6a5a5e93998a99d8b4cdde2c95ce283faa19a8f86534857719c580694681c597ecdb1ac67be')
@@ -27,7 +27,7 @@ sha512sums=('faf36efdaa3abe84994e46aea018b0a324218d42814baac056ca635f6d03f1301e7
 _build_copts="-DHAVE_DNSSEC -DHAVE_DBUS -DHAVE_LIBIDN2 -DHAVE_CONNTRACK"
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk/PKGBUILD?h=packages/dnsmasq')
-pkgverforked=('2.80-4')
+pkgverforked=('2.85-1')
 
 build() {
   cd "$pkgname-$pkgver"
@@ -39,6 +39,14 @@ build() {
     PREFIX=/usr \
     BINDIR=/usr/bin \
     all-i18n
+
+  cd "contrib/lease-tools"
+
+  make \
+    CFLAGS="$CPPFLAGS $CFLAGS" \
+    LDFLAGS="$LDFLAGS" \
+    COPTS="$_build_copts" \
+    all
 }
 
 package() {
@@ -67,8 +75,12 @@ package() {
 
   # Currently not doing DNSSEC
   # DNSSEC setup
-  # sed -i 's,%%PREFIX%%,/usr,' "$pkgdir"/etc/dnsmasq.conf
-  # install -Dm644 "trust-anchors.conf" "$pkgdir"/usr/share/dnsmasq/trust-anchors.conf
+  sed -i 's,%%PREFIX%%,/usr,' "$pkgdir"/etc/dnsmasq.conf
+  install -Dm644 "trust-anchors.conf" "$pkgdir"/usr/share/dnsmasq/trust-anchors.conf
+
+  install -Dm0755 -t "$pkgdir"/usr/bin/ 'contrib/lease-tools/dhcp_'{release{,6},lease_time}
+  install -Dm0644 -t "$pkgdir"/usr/share/man/man1 'contrib/lease-tools/dhcp_'{release{,6},lease_time}.1
 }
 
 # vim: ts=2 sw=2 et ft=sh
+

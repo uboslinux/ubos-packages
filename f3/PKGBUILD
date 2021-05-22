@@ -1,36 +1,31 @@
 # from AUR
-# Maintainer: Kyle <kyle@gmx.ca>
+# Maintainer:  Paragoumba <paragoumba@protonmail.com>
+# Contributor: Caltlgin Stsodaat <contact@fossdaily.xyz>
+# Contributor: Kaio Augusto <kaioaugusto.8@gmail.com>
+# Contributor: Kyle <kyle@free2.ml>
 # Contributor: mib1982 <Mi.Bentlage@gmail.com>
 # Contributor: z3ntu <luca.emanuel.weiss@gmail.com>
-# Adapted for UBOS by: Indie Computing Corp.
 
-maintainer="http://indiecomputing.com/"
-pkgname=f3
-pkgver=7.2
-pkgrel=1
-pkgdesc="Utilities to detect and repair counterfeit flash storage, i.e. thumb drives and memory cards with less flash than advertised"
-arch=('x86_64')
-url="http://oss.digirati.com.br/f3/"
+pkgname='f3'
+pkgver=8.0
+pkgrel=2
+pkgdesc='Simple tool that tests flash cards capacity and performance to see if they live up to claimed specifications'
+arch=('x86_64' 'armv7h' 'aarch64')
+url='https://github.com/AltraMayor/f3'
 license=('GPL3')
 depends=('parted')
-options=('!buildflags'
-         '!makeflags')
-conflicts=()
-provides=()
-source=(https://github.com/AltraMayor/${pkgname}/archive/v${pkgver}.zip)
-releasepage=("https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=f3")
-sha512sums=('4a66dfb5616ee2fa27f903f8de6f9b8bc38a987dbc3c719ebb631abbf0be6630d07b8625e3fdc9e5748f99cad61770ca1fec0641788d852bad6b7c29c33e3541')
+makedepends=('systemd')
+source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/v${pkgver}.tar.gz")
+sha256sums=('fb5e0f3b0e0b0bff2089a4ea6af53278804dfe0b87992499131445732e311ab4')
 
 build() {
-    cd ${srcdir}/${pkgname}-${pkgver}
-    make all extra
+  make -C "${pkgname}-${pkgver}" {,extra}
 }
 
 package() {
-    cd ${srcdir}/${pkgname}-${pkgver}
-    install -m 755 -d ${pkgdir}/usr/bin ${pkgdir}/usr/share/man/man1
-    install -m 755 f3brew f3fix f3probe f3read f3write f3write.h2w log-f3wr ${pkgdir}/usr/bin/
-    install -m 644 f3read.1 ${pkgdir}/usr/share/man/man1/
-    cd ${pkgdir}/usr/share/man/man1
-    ln -s f3read.1 f3write.1
+  make DESTDIR="${pkgdir}" PREFIX='/usr' -C "${pkgname}-${pkgver}" install{,-extra}
+  install -Dvm644 "${pkgname}-${pkgver}/README.rst" -t "${pkgdir}/usr/share/doc/${pkgname}"
 }
+
+# vim: ts=2 sw=2 et:
+

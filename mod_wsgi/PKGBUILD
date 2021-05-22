@@ -4,12 +4,12 @@
 # Contributor: Andrea Scarpino <andrea@archlinux.org>
 # Contributor: Ryan Coyner <rcoyner@gmail.com>
 
-pkgverforked=('4.7.1-1')
+pkgverforked=('4.7.1-2')
 releasepage=('https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=mod_wsgi')
 
 pkgname=mod_wsgi
 pkgver=4.7.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Python WSGI adapter module for Apache'
 arch=('x86_64')
 url='http://www.modwsgi.org/'

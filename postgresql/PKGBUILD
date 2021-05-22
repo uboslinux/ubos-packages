@@ -1,16 +1,18 @@
+# Maintainer: Levente Polyak <anthraxx[at]archlinux[dot]org>
+# Maintainer: Dan McGee <dan@archlinux.org>
 # From Arch, adapted for UBOS
 
 pkgbase=postgresql
 pkgname=('postgresql-libs' 'postgresql-docs' 'postgresql')
-pkgver=12.4
+pkgver=13.3
 _majorver=${pkgver%.*}
-pkgrel=3
+pkgrel=1
 pkgdesc='Sophisticated object-relational DBMS'
 url='https://www.postgresql.org/'
 arch=('x86_64')
 license=('custom:PostgreSQL')
 makedepends=('krb5' 'libxml2' 'python' 'python2' 'perl' 'tcl>=8.6.0' 'openssl>=1.0.0'
-             'pam' 'zlib' 'icu' 'systemd' 'libldap' 'llvm' 'clang')
+             'pam' 'zlib' 'icu' 'systemd' 'libldap' 'llvm' 'clang' 'libxslt')
 source=(https://ftp.postgresql.org/pub/source/v${pkgver}/postgresql-${pkgver}.tar.bz2
         postgresql-run-socket.patch
         postgresql-perl-rpath.patch
@@ -20,9 +22,9 @@ source=(https://ftp.postgresql.org/pub/source/v${pkgver}/postgresql-${pkgver}.ta
         postgresql-check-db-dir
         postgresql.sysusers
         postgresql.tmpfiles)
-sha512sums=('36daf10878ca153370829178786dd6ee366ab4d4d6dc9c527536740fdb14b688ae4c33f850eb4243a7667d23f87e4bfd1ddee0755447ad4f3996e423e391c2f3'
-            '031efe12d18ce386989062327cdbbe611c5ef1f94e4e1bead502304cb3e2d410af533d3c7f1109d24f9da9708214fe32f9a10ba373a3ca8d507bdb521fbb75f7'
-            'b6cfda3182e8a0a5c7f023721faaa3fd50354a45c777fa0a504ea372f1420ff4bb72cc563ea5279a29b5924def5fcb5c109b34455c595c2b2828260dd5625684'
+sha512sums=('1560cc766982a9ea9d33c77835b20e33e11b03acb77fc75d905c565883935a7dbcd27b9b2ab6a0ecdb815261f7c259865cb3dac85c10a3181c3fcaeb4d28bf60'
+            '6e525f47fbcdf149cfaf4c4815561819e80a1a42a0139be92ae4b268834fb8e9ef8cb78fe8f009af5f6d41fa16bc7da500c4afbe5293c902e9350275ade52b58'
+            '1a610c9cb89e07dbce7711c4b2dd8ee45842bc6be9dec24eb9060ac8660e868bc222ea666632550b384e89c3617f79bc450ae264deb0d3481864a212ebd14c27'
             '1e6183ab0eb812b3ef687ac2c26ce78f7cb30540f606d20023669ac00ba04075487fb72e4dc89cc05dab0269ff6aca98fc1167cc75669c225b88b592482fbf67'
             '9ab4da01337ffbab8faec0e220aaa2a642dbfeccf7232ef2645bdc2177a953f17ee3cc14a4d8f8ebd064e1dae8b3dba6029adbffb8afaabea383963213941ba8'
             '572a9342a047a74c493a29c7364593168ba65b2d06167cd536c7584361ee6e199815b6485ef544dbc4a7d3591575b0b5dca02dbf5eb657620266e10b03afe6f6'
@@ -31,7 +33,7 @@ sha512sums=('36daf10878ca153370829178786dd6ee366ab4d4d6dc9c527536740fdb14b688ae4
             '62173445abe39aed32bbf1799d930af2f5a3dac025cab96cf0b5b38ca9c53c568fe776cd3fd81f8bedc7a5047ba4f1f3d026eb5af4974c38410891ca5059c334')
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/postgresql')
-pkgverforked=('12.3-2')
+pkgverforked=('13.3-1')
 
 prepare() {
   cd postgresql-${pkgver}
@@ -59,6 +61,7 @@ build() {
     --with-systemd
     --with-ldap
     --with-llvm
+    --with-libxslt
     --enable-nls
     --enable-thread-safety
     --disable-rpath
@@ -89,7 +92,7 @@ build() {
 package_postgresql-libs() {
   pkgdesc="Libraries for use with PostgreSQL"
   depends=('krb5' 'openssl>=1.0.0' 'readline>=6.0' 'zlib' 'libldap')
-  provides=('postgresql-client')
+  provides=('postgresql-client' 'libpq.so' 'libecpg.so' 'libecpg_compat.so' 'libpgtypes.so')
   conflicts=('postgresql-client')
 
   cd postgresql-${pkgver}
@@ -145,12 +148,14 @@ package_postgresql-docs() {
 package_postgresql() {
   pkgdesc='Sophisticated object-relational DBMS'
   backup=('etc/pam.d/postgresql' 'etc/logrotate.d/postgresql')
-  depends=("postgresql-libs>=${pkgver}" 'krb5' 'libxml2' 'readline>=6.0' 'openssl>=1.0.0' 'pam' 'icu' 'systemd-libs' 'libldap' 'llvm-libs')
+  depends=("postgresql-libs>=${pkgver}" 'krb5' 'libxml2' 'readline>=6.0'
+           'openssl>=1.0.0' 'pam' 'icu' 'systemd-libs' 'libldap' 'llvm-libs' 'libxslt')
   optdepends=('python2: for PL/Python 2 support'
               'python: for PL/Python 3 support'
               'perl: for PL/Perl support'
               'tcl: for PL/Tcl support'
-              'postgresql-old-upgrade: upgrade from previous major version using pg_upgrade')
+              'postgresql-old-upgrade: upgrade from previous major version using pg_upgrade'
+              'logrotate: rotates system logs automatically')
   options=('staticlibs')
   install=postgresql.install
 

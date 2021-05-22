@@ -1,3 +1,10 @@
+# Maintainer: Bartłomiej Piotrowski <bpiotrowski@archlinux.org>
+# Maintainer: Christian Hesse <mail@eworm.de>
+
+# ALARM: Kevin Mihelich <kevin@archlinuxarm.org>
+#  - disable mroonga storage engine (doesn't build on ARM)
+#  - patch to link (unused) static libs against libatomic on v5/v6 to fix FTBFS
+
 # From Arch, adapted for UBOS
 # This also includes changes made by Arch Linux ARM, because it otherwise
 # does not compile
@@ -5,32 +12,32 @@
 pkgbase=mariadb
 pkgname=('mariadb')
 pkgdesc='Fast SQL database server, derived from MySQL'
-pkgver=10.5.5
-pkgrel=2.2
+pkgver=10.5.10
+pkgrel=1
 arch=('x86_64')
 license=('GPL')
 url='https://mariadb.org/'
-makedepends=('rsync' 'boost' 'bzip2' 'cmake' 'jemalloc' 'libaio' 'libxcrypt'
+makedepends=('boost' 'bzip2' 'cmake' 'jemalloc' 'libaio' 'libxcrypt'
              'libxml2' 'lz4' 'lzo' 'openssl' 'systemd' 'zlib' 'zstd' 'curl'
-             'krb5')
+             'krb5' 'cracklib')
 validpgpkeys=('199369E5404BD5FC7D2FE43BCBCB082A1BB943DB') # MariaDB Package Signing Key <package-signing-key@mariadb.org>
 # The default links with mirror redirection fail for signatures, specific
 # mirrors may be out of date every now and then. Let's use the upstream
 # rsync source and hope it does not hurt them too much.
 # https://mariadb.com/kb/en/library/mirror-sites-for-mariadb/
-source=("rsync://rsync.osuosl.org/mariadb/mariadb-${pkgver}/source/mariadb-${pkgver}.tar.gz"{,.asc}
+source=("https://rsync.osuosl.org/pub/mariadb/mariadb-${pkgver}/source/mariadb-${pkgver}.tar.gz"{,.asc}
         '0001-arch-specific.patch'
         '0001-libatomic.patch')
-sha256sums=('cf6b2c061754c07bbb1d20b29ae111bf2d098297c9b8c321b810638a179088a4'
+sha256sums=('a5ff32f9fcaaf26bf5cba94accc7b246d2d5eb75710d027e40122df6bac0babb'
             'SKIP'
             '3289efb3452d199aec872115f35da3f1d6fd4ce774615076690e9bc8afae1460'
-            '1c7360453b6e964c6546cbbb10fff697f6227554eba716b2a1df74f7c2613d95')
+            'abb69621de8cccaba67dfe345aaf1d63afaa9a53fb889c9fe0ac8dae2782a07f')
 
 releasepage=(
     'https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/mariadb'
     'https://archlinuxarm.org/packages/aarch64/mariadb/files'
 )
-pkgverforked=('10.5.5-2')
+pkgverforked=('10.5.10-1')
 
 prepare() {
   cd $pkgbase-$pkgver/
@@ -171,7 +178,8 @@ package_mariadb() {
           'etc/security/user_map.conf')
   install=mariadb.install
   depends=("mariadb-clients=${pkgver}" 'inetutils' 'systemd-libs' 'libxml2' 'zstd')
-  optdepends=('curl: for ha_s3 plugin'
+  optdepends=('cracklib: for cracklib plugin'
+              'curl: for ha_s3 plugin'
               'galera: for MariaDB cluster with Galera WSREP'
               'mysql-python: for myrocks_hotbackup'
               'perl-dbd-mysql: for mysqlhotcopy, mysql_convert_table_format and mysql_setpermission')
@@ -195,7 +203,7 @@ package_mariadb() {
   mv usr/share/doc/mariadb/COPYING* usr/share/licenses/mariadb/
 
   # move it where one might look for it
-#  mv usr/share/{groonga{,-normalizer-mysql},doc/mariadb/}
+  # cannot find: mv usr/share/{groonga{,-normalizer-mysql},doc/mariadb/}
 
   # move to pam directories
   install -d {etc,usr/lib}/security
@@ -207,8 +215,7 @@ package_mariadb() {
   rm -r usr/lib/systemd/system/mariadb@bootstrap.service.d
 
   # provided by mariadb-libs
-  rm usr/bin/mariadb_config
-  rm usr/bin/mysql_config
+  rm usr/bin/{mariadb{_,-},mysql_}config
   rm -r usr/include/
   rm usr/share/man/man1/mysql_config.1
   rm -r usr/share/aclocal
