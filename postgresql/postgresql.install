@@ -6,7 +6,7 @@ post_install() {
     mkdir -p '/ubos/lib/postgres/data'
   fi
   chown postgres:postgres '/ubos/lib/postgres/data'
-  chattr +C '/ubos/lib/postgres/data'
+  chattr +C '/ubos/lib/postgres/data' 2> /dev/null
 }
 
 pre_upgrade() {
