@@ -12,6 +12,7 @@ use UBOS::Logging;
 use UBOS::Utils;
 
 my $prefixFile   = '/etc/tor/prefix';
+my $postfixFile  = '/etc/tor/postfix';
 my $torSitesDir  = '/etc/tor/sites.d';
 my $openPortsDir = '/etc/ubos/open-ports.d';
 
@@ -63,6 +64,10 @@ if( -e $prefixFile ) {
 HiddenServicePort $port 127.0.0.1:$port
 CONTENT
         }
+    }
+
+    if( -e $postfixFile ) {
+        $content .= UBOS::Utils::slurpFile( $postfixFile );
     }
 }
 
