@@ -57,12 +57,16 @@ if( 'deploy' eq $operation || 'undeploy' eq $operation ) {
     opendir( my $sshDirFh, $sshDir ) or error( "Cannot read directory $sshDir" );
     foreach my $file ( readdir( $sshDirFh )) {
         if( $file =~ m!^(a[0-9a-f]{40})\.key$! ) {
-            my $id  = $1;
-            my $key = UBOS::Utils::slurpFile( "$sshDir/$file" );
-            unless( exists( $keyToAppConfigIds{$key} )) {
-                $keyToAppConfigIds{$key} = [];
+            my $id   = $1;
+            my $keys = UBOS::Utils::slurpFile( "$sshDir/$file" );
+
+            # This may be more than one key
+            foreach my $key ( split /\n/, $keys ) {
+                unless( exists( $keyToAppConfigIds{$key} )) {
+                    $keyToAppConfigIds{$key} = [];
+                }
+                push @{$keyToAppConfigIds{$key}}, $id;
             }
-            push @{$keyToAppConfigIds{$key}}, $id;
         }
     }
     close $sshDirFh;
