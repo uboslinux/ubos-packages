@@ -17,6 +17,7 @@ PrivateTmp=true
 LimitNOFILE=infinity
 TimeoutStartSec=180
 # This may take long on slow hardware (e.g. Raspberry Pi) for the initial boot
+Restart=Always
 
 [Install]
 WantedBy=multi-user.target
