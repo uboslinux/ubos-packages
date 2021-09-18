@@ -49,6 +49,8 @@ sha512sums=('6c250626f1e7d10428a92d984fd48ff841effcc8705f7816ab71b681bbd51d0012a
 
 validpgpkeys=('A93D62ECC3C8EA12DB220EC934EA76E6791485A8' # Jim Jagielski
               'B9E8213AEFB861AF35A41F2C995E35221AD84DFF'
+              'C55AB7B9139EB2263CD1AABC19B033D1760C227B' # christophe.jaillet@wanadoo.fr
+              '26F51EF9A82F4ACB43F1903ED377C9E7D1944C66' # Stefan Eissing (icing) <stefan@eissing.org>
               'E3480043595621FE56105F112AB12A7ADC55C003') # Daniel Ruggeri
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/apache')
