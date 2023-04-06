@@ -1,7 +1,7 @@
 developer="https://pagekite.org/"
 maintainer="http://indiecomputing.com/"
 pkgname=$(basename $(pwd))
-pkgver=1.5.2.200725
+pkgver=1.5.2.201011
 pkgrel=1
 pkgdesc='localhost tunneling via pagekite.net, integrated into ubos-admin'
 arch=('any')
@@ -10,14 +10,10 @@ license=('AGPL2')
 depends=('python' 'python-setuptools' 'python-socksipychain' 'ubos-admin')
 source=("pagekite-${pkgver}.tar.gz::https://github.com/pagekite/PyPagekite/archive/v${pkgver}.tar.gz")
 releasepage=('https://github.com/pagekite/PyPagekite/releases')
-sha512sums=('7dae6dafe66c37f27b77746189efc4e27e8f2a6c45294223aff838c4d3384698b7a6347339ad21c59122a8d736e14876d24bc05b4e5729f9c67f852ca3b7a706')
+sha512sums=('094f03fc35974c2b5e6b7e704ea8aa0163c3b49c21cfdda2a883f959b2473fc962d08588391c787b7a7ed7bf9f1eec7c695ad5826c378484ac4fc2c946831051')
 
 _vendor_perl=/usr/share/perl5/vendor_perl
 
-# prepare() {
-#     cd "${srcdir}/PyPagekite-${pkgver}"
-#     patch -p1 < ${startdir}/python-3.8.1.patch
-# }
 
 package() {
 # Pagekite code
