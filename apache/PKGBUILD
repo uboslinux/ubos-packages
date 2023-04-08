@@ -1,8 +1,8 @@
 # From Arch, adapted for UBOS
 
 pkgname=apache
-pkgver=2.4.48
-pkgrel=1.1
+pkgver=2.4.57
+pkgrel=1
 pkgdesc='A high performance Unix-based HTTP server'
 arch=('x86_64')
 url='http://www.apache.org/dist/httpd'
@@ -19,8 +19,8 @@ backup=(
 provides=('mod_proxy_uwsgi')
 conflicts=('mod_proxy_uwsgi')
 replaces=('mod_proxy_uwsgi')
-depends=('zlib' 'apr-util' 'pcre' 'libnghttp2' 'openssl' 'libxcrypt')
-makedepends=('libxml2' 'lua' 'curl' 'brotli' 'jansson')
+depends=('zlib' 'apr-util' 'pcre2' 'libnghttp2' 'openssl' 'libxcrypt')
+makedepends=('libxml2' 'lua' 'curl' 'brotli' 'jansson' 'db' 'systemd' )
 optdepends=(
      'lua: for mod_lua module'
      'libxml2: for mod_proxy_html, mod_xml2enc modules'
@@ -30,18 +30,17 @@ optdepends=(
      'uwsgi: for mod_proxy_uwsgi module'
      'lynx: apachectl status'
      'perl: for apxs and dbmmanage'
+     'systemd-libs: for mod_systemd module'
 )
 source=(
     https://www.apache.org/dist/httpd/httpd-${pkgver}.tar.bz2{,.asc}
-    openssl-malloc-init.patch
     apache.tmpfiles.conf
     httpd.logrotate
     httpd.service
     ubos.layout
 )
-sha512sums=('6c250626f1e7d10428a92d984fd48ff841effcc8705f7816ab71b681bbd51d0012ad158dcd13763fe7d630311f2de258b27574603140d648be42796ab8326724'
+sha512sums=('4d1e0a274ee90bdfb5f38d4a7d73a7367ed1c6388e26280e640014e49abc0df03683705b88dcfe2ec2da313dda4c7b4a3b86daffa1911f58e224eba89d82d155'
             'SKIP'
-            '7bf4e6645dd6f9ec5a1a95d8a51b7d65661077338b606745b1a558ae0057547e1709c451138269b6d4c913847e51c57a939262f46fcadb82e1ccb24a35165dba'
             '57fece1a3e4e3cbd6135203172ecf32570405f7205dc84adc076a50cdab20db868270d8e658314f5273616f81b356d7b88c31e0ee8a8ce6a3e77ab15ef6a8f36'
             '986c687aa5312b3afd6bf115565254007c3f4e6e9b5f8c35aae3a3f25315e4514d651816fb3c0381e08ea033eb322ec9808b72b828c4107da6b16b1ecd0447ba'
             'f1f29600d7b1abd1aa7c0e1e1b5320dc275fd2eb61275a4efe79be3257df1b7dccac082d99c521543c8a002854e9187fa50f5df09ee183a391bda44b6960981a'
@@ -51,10 +50,11 @@ validpgpkeys=('A93D62ECC3C8EA12DB220EC934EA76E6791485A8' # Jim Jagielski
               'B9E8213AEFB861AF35A41F2C995E35221AD84DFF'
               'C55AB7B9139EB2263CD1AABC19B033D1760C227B' # christophe.jaillet@wanadoo.fr
               '26F51EF9A82F4ACB43F1903ED377C9E7D1944C66' # Stefan Eissing (icing) <stefan@eissing.org>
-              'E3480043595621FE56105F112AB12A7ADC55C003') # Daniel Ruggeri
+              'E3480043595621FE56105F112AB12A7ADC55C003' # Daniel Ruggeri
+	      '65B2D44FE74BD5E3DE3AC3F082781DE46D5954FA')  # Eric Covener <covener@apache.org>
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/apache')
-pkgverforked=('2.4.46')
+pkgverforked=('2.4.56')
 
 prepare() {
   cd httpd-${pkgver}
@@ -65,9 +65,6 @@ prepare() {
       -i docs/conf/httpd.conf.in
 
   cat "${startdir}/ubos.layout" >> config.layout
-
-  # https://github.com/openssl/openssl/issues/2865
-  patch -Np1 -i ${startdir}/openssl-malloc-init.patch
 }
 
 build() {
@@ -93,10 +90,10 @@ build() {
       --enable-proxy-http --enable-proxy-ftp \
       --enable-dbd --enable-imagemap --enable-ident --enable-cern-meta \
       --enable-lua --enable-xml2enc --enable-http2 \
-      --enable-proxy-http2 --enable-md --enable-brotli \
+      --enable-proxy-http2 --enable-md --enable-brotli -enable-systemd \
       --with-apr=/usr/bin/apr-1-config \
       --with-apr-util=/usr/bin/apu-1-config \
-      --with-pcre=/usr
+      --with-pcre2
 
   make
 }
