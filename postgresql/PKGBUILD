@@ -4,15 +4,16 @@
 
 pkgbase=postgresql
 pkgname=('postgresql-libs' 'postgresql-docs' 'postgresql')
-pkgver=13.3
+pkgver=15.2
 _majorver=${pkgver%.*}
-pkgrel=1.1
+pkgrel=2
 pkgdesc='Sophisticated object-relational DBMS'
 url='https://www.postgresql.org/'
 arch=('x86_64')
 license=('custom:PostgreSQL')
 makedepends=('krb5' 'libxml2' 'python' 'perl' 'tcl>=8.6.0' 'openssl>=1.0.0'
-             'pam' 'zlib' 'icu' 'systemd' 'libldap' 'llvm' 'clang' 'libxslt')
+             'pam' 'zlib' 'icu' 'systemd' 'libldap' 'llvm' 'clang' 'libxslt',
+             'util-linux')
 source=(https://ftp.postgresql.org/pub/source/v${pkgver}/postgresql-${pkgver}.tar.bz2
         postgresql-run-socket.patch
         postgresql-perl-rpath.patch
@@ -33,7 +34,7 @@ sha512sums=('1560cc766982a9ea9d33c77835b20e33e11b03acb77fc75d905c565883935a7dbcd
             '62173445abe39aed32bbf1799d930af2f5a3dac025cab96cf0b5b38ca9c53c568fe776cd3fd81f8bedc7a5047ba4f1f3d026eb5af4974c38410891ca5059c334')
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/postgresql')
-pkgverforked=('13.3-1')
+pkgverforked=('15.2-1')
 
 prepare() {
   cd postgresql-${pkgver}
@@ -55,6 +56,7 @@ build() {
     --with-python
     --with-tcl
     --with-pam
+    --with-readline
     --with-system-tzdata=/usr/share/zoneinfo
     --with-uuid=e2fs
     --with-icu
@@ -62,28 +64,17 @@ build() {
     --with-ldap
     --with-llvm
     --with-libxslt
+    --with-lz4
+    --with-zstd
     --enable-nls
     --enable-thread-safety
     --disable-rpath
   )
 
-  # only build plpython3 for now
-  ./configure ${options[@]} \
-    PYTHON=/usr/bin/python
-  make -C src/pl/plpython all
-  make -C contrib/hstore_plpython all
-  make -C contrib/ltree_plpython all
+  # Fix static libs
+  CFLAGS+=" -ffat-lto-objects"
 
-  # save plpython3 build and Makefile.global
-  cp -a src/pl/plpython{,3}
-  cp -a contrib/hstore_plpython{,3}
-  cp -a contrib/ltree_plpython{,3}
-  cp -a src/Makefile.global{,.python3}
-  make distclean
-
-  # regular build with everything
-  ./configure ${options[@]} \
-    PYTHON=/usr/bin/python
+  ./configure "${configure_options[@]}"
   make world
 }
 
@@ -149,9 +140,9 @@ package_postgresql() {
   pkgdesc='Sophisticated object-relational DBMS'
   backup=('etc/pam.d/postgresql' 'etc/logrotate.d/postgresql')
   depends=("postgresql-libs>=${pkgver}" 'krb5' 'libxml2' 'readline>=6.0'
-           'openssl>=1.0.0' 'pam' 'icu' 'systemd-libs' 'libldap' 'llvm-libs' 'libxslt')
-  optdepends=('python2: for PL/Python 2 support'
-              'python: for PL/Python 3 support'
+           'openssl>=1.0.0' 'pam' 'icu' 'systemd-libs' 'libldap' 'llvm-libs'
+           'libxslt' 'lz4' 'zstd')
+  optdepends=('python: for PL/Python 3 support'
               'perl: for PL/Perl support'
               'tcl: for PL/Tcl support'
               'postgresql-old-upgrade: upgrade from previous major version using pg_upgrade'
@@ -165,14 +156,6 @@ package_postgresql() {
   make DESTDIR="${pkgdir}" install
   make -C contrib DESTDIR="${pkgdir}" install
   make -C doc/src/sgml DESTDIR="${pkgdir}" install-man
-
-  # install plpython3
-  mv src/Makefile.global src/Makefile.global.save
-  cp src/Makefile.global.python3 src/Makefile.global
-  touch -r src/Makefile.global.save src/Makefile.global
-  make -C src/pl/plpython3 DESTDIR="${pkgdir}" install
-  make -C contrib/hstore_plpython3 DESTDIR="${pkgdir}" install
-  make -C contrib/ltree_plpython3 DESTDIR="${pkgdir}" install
 
   # we don't want these, they are in the -libs package
   for dir in src/interfaces src/bin/pg_config src/bin/pg_dump src/bin/psql src/bin/scripts; do
