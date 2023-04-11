@@ -7,7 +7,7 @@ pkgbase=postgresql
 pkgname=('postgresql')
 pkgver=15.2
 _majorver=${pkgver%.*}
-pkgrel=2.1
+pkgrel=2.2
 pkgdesc='Sophisticated object-relational DBMS'
 url='https://www.postgresql.org/'
 arch=('x86_64')
@@ -125,14 +125,11 @@ package_postgresql-docs() {
   pkgdesc="HTML documentation for PostgreSQL"
   options=('docs')
 
-echo "XXXX Docs 1"
   cd postgresql-${pkgver}
 
   install -Dm 644 COPYRIGHT -t "${pkgdir}/usr/share/licenses/${pkgname}"
 
-echo "XXXX Docs 2"
   make -C doc/src/sgml DESTDIR="${pkgdir}" install-html
-echo "XXXX Docs 3"
   chown -R root:root "${pkgdir}/usr/share/doc/postgresql/html"
 
   # clean up
@@ -185,8 +182,8 @@ package_postgresql() {
   # clean up unneeded installed items
   rm -rf "${pkgdir}/usr/include/postgresql/internal"
   rm -rf "${pkgdir}/usr/include/libpq"
-  # find "${pkgdir}/usr/include" -maxdepth 1 -type f -execdir rm {} +
-  # rmdir "${pkgdir}/usr/share/doc/postgresql/html"
+  find "${pkgdir}/usr/include" -maxdepth 1 -type f -execdir rm {} +
+  rmdir "${pkgdir}/usr/share/doc/postgresql/html"
 }
 
 # vim: ts=2 sw=2 et:
