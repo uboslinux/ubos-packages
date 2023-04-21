@@ -22,7 +22,7 @@ post_upgrade() {
 
   post_install $1
 
-  sudo -u postgres initdb -D /ubos/lib/postgres/data
+  sudo -u postgres initdb --locale en_US.UTF-8 -D /ubos/lib/postgres/data
 
   # FS#23858, fix postgres user shell issue
   postgres_shell=$(getent passwd postgres | cut -d: -f7)
