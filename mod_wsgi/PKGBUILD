@@ -9,7 +9,7 @@ releasepage=('https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=mod_wsgi')
 
 pkgname=mod_wsgi
 pkgver=4.9.4
-pkgrel=1
+pkgrel=2
 pkgdesc='Python WSGI adapter module for Apache'
 arch=('x86_64')
 url='http://www.modwsgi.org/'
@@ -20,7 +20,6 @@ makedepends=('apache' 'python')
 install='mod_wsgi.install'
 source=($pkgname-$pkgver.tar.gz::"https://github.com/GrahamDumpleton/mod_wsgi/archive/$pkgver.tar.gz")
 sha256sums=('ee926a3fd5675890b908ebc23db1f8f7f03dc3459241abdcf35d46c68e1be29b')
-
 
 build() {
   cd $pkgname-$pkgver
