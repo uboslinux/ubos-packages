@@ -10,7 +10,7 @@
 maintainer="http://indiecomputing.com/"
 pkgname=cloud-init
 pkgver=23.2
-pkgrel=1
+pkgrel=1.1
 pkgdesc="Cloud instance initialization"
 arch=(any)
 url="https://cloud-init.io"
@@ -57,17 +57,11 @@ backup=(
 source=(
   https://github.com/canonical/cloud-init/archive/$pkgver/$pkgname-$pkgver.tar.gz
   $pkgname-22.1-lib_dir.patch
-  "ubos.cloud.cfg"
 )
 sha512sums=('8b46cbbfcc80d5f7731941f4382826b41b1cc4961e6e7044b0dd8668fba232a0be6d3b402ec010154318801f6466b0fc268dd74e02e4bc1dc54a92203d1f4793'
-            'f6f9630ca3fb19f408f7ebb2c29775467e7fe2e5a21c8bd6ff36c1bca01cbd54ee140736c6e094281941576c688abaea7a5859a56ca6c1ca2c315d5be4b533e7'
-            '326b95d75c80aa8b342db26ecc2379921fcc11b3b2e5ddd5d4f9a906dfc241a795c286aa5f9aac4d799e543736b174064377743ab465f9c96b9b13ea99195310')
+            '32b7521f0ae4d61a4d86f2f840fb0670e2cdc7bab708fc7b7676b5178b6d660beb3a46b803f5bcd7e0f18c6d6339fc96e20a951dfafadbb0312e4a0cafce325f')
 b2sums=('641fe5fec9e934e7ed845f49d4e62cc1e4acd1cd86cc65c60c9d6f4523babd71c02a99dbe3c5dc5d9966eff854f4d20e38ad641c799a37065a1d6e238ef5b846'
-        'f3893e06f57cd891cac634e70f7488a91542f69a334352083cf051326ce14ea4f030eae421e56b1754137ef184ed0a24044824a3115d4ff5a0aa1ab3d5edeaea'
-        '2bb333f2ce56fecac9773810e9feab2ebdf2bd182faaf3284cd033a4d04e603f24580cc4487c77c87c902702b152e3a2c2dedb06c900d48e1dd6077feef9cfda')
-
-releasepage=('https://git.archlinux.org/svntogit/community.git/tree/trunk?h=packages/cloud-init')
-pkgverforked=('23.2-1')
+        '4e03bd647ca9e1bc3d9c507824d43e4013a20d5bbcb7215755b427d0c7ded9ee48dbfb9faaae703ab2d519aee7c48a40277603c8f874347b574b7ac2b1e1a9fd')
 
 prepare() {
   cd $pkgname-$pkgver
@@ -123,5 +117,8 @@ package() {
   ./tools/render-cloudcfg --variant arch ./systemd/cloud-init-generator.tmpl "$pkgdir/usr/lib/systemd/system-generators/cloud-init-generator"
   chmod 755 "$pkgdir/usr/lib/systemd/system-generators/cloud-init-generator"
   install -vDm 644 systemd/disable-sshd-keygen-if-cloud-init-active.conf -t "$pkgdir/usr/lib/systemd/system/sshd-keygen@.service.d/"
+
+## Override
+  install -vDm 644 ${startdir}/ubos.cloud.cfg "${pkgdir}/etc/cloud/cloud.cfg"
 }
 
