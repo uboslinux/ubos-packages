@@ -7,18 +7,28 @@
 # From Arch, using UBOS configuration
 
 pkgname=tor
-pkgver=0.4.5.8
-pkgrel=2
+pkgver=0.4.8.10
+pkgrel=1
 pkgdesc='Anonymizing overlay network.'
 arch=('x86_64')
-url='https://www.torproject.org/'
-license=('BSD')
-depends=('openssl' 'libevent' 'bash' 'libseccomp' 'zstd' 'libcap' 'systemd-libs'
-         'libsystemd.so' 'libzstd.so' 'libseccomp.so' 'libcap.so')
+url='https://www.torproject.org/download/tor/'
+license=("BSD-3-Clause" "LGPL-3.0-only" "MIT")
+depends=(
+  'bash'
+  'libcap.so'
+  'libcrypto.so'
+  'libevent'
+  'liblzma.so'
+  'libseccomp.so'
+  'libssl.so'
+  'libsystemd.so'
+  'libz.so'
+  'libzstd.so'
+)
 optdepends=('torsocks: for torify')
 makedepends=('ca-certificates' 'systemd')
 backup=('etc/tor/torrc')
-source=("https://www.torproject.org/dist/${pkgname}-${pkgver}.tar.gz"{,.asc}
+source=("https://dist.torproject.org/${pkgname}-${pkgver}.tar.gz"{,.sha256sum{,.asc}}
         # 'torrc.patch'
         'tor.sysusers'
         'tor.tmpfiles'
@@ -31,27 +41,36 @@ sha512sums=('f5cb32f5d0fc333aa1607370e290e6be85230896bd26e00072a68db4b32293d5dd3
 validpgpkeys=('2133BC600AB133E1D826D173FE43009C4607B1FB'  # Nick Mathewson
               'F65CE37F04BA5B360AE6EE17C218525819F78451') # Roger Dingledine
 
-releasepage=('https://git.archlinux.org/svntogit/community.git/tree/trunk?h=packages/tor')
-pkgverforked=('0.4.3.6-1')
+releasepage=('https://archlinux.org/packages/extra/x86_64/tor/')
+pkgverforked=('0.4.8.10-1')
+
+prepare() {
+  # verify the signed sums match the expected source tarball
+  sha256sum -c ${pkgname}-${pkgver}.tar.gz.sha256sum
+  # cd ${pkgname}-${pkgver}
+  # uncomment essential config sections in the torrc file
+  # patch -Np1 < "${srcdir}/torrc.patch"
+}
 
 build() {
   cd "${srcdir}/${pkgname}-${pkgver}"
   ./configure \
     --prefix=/usr \
     --sysconfdir=/etc \
-    --localstatedir=/ubos
+    --localstatedir=/ubos \
+    --enable-gpl
   make
 }
 
 package() {
-  cd "${srcdir}/${pkgname}-${pkgver}"
+  cd ${pkgname}-${pkgver}
 
   make DESTDIR="${pkgdir}" install
 
   mkdir -p -m755 ${pkgdir}/etc/tor/sites.d
   install -Dm0644 ${startdir}/{pre,post}fix -t ${pkgdir}/etc/tor/
 
-  install -Dm0644 "${srcdir}/tor.service" "${pkgdir}/usr/lib/systemd/system/tor.service"
+  install -Dm0644 "${srcdir}/*.service" -t "${pkgdir}/usr/lib/systemd/system"
   install -Dm0644 "${srcdir}/tor.sysusers" "${pkgdir}/usr/lib/sysusers.d/tor.conf"
   install -Dm0644 "${srcdir}/tor.tmpfiles" "${pkgdir}/usr/lib/tmpfiles.d/tor.conf"
 

@@ -6,28 +6,28 @@
 
 maintainer="http://indiecomputing.com/"
 pkgname=dnsmasq
-pkgver=2.85
+pkgver=2.89
 pkgrel=1
 pkgdesc="Lightweight, easy to configure DNS forwarder and DHCP server"
 url="http://www.thekelleys.org.uk/dnsmasq/doc.html"
-arch=('x86_64' 'armv6h' 'armv7h' 'aarch64')
+arch=('x86_64')
 license=('GPL')
-depends=('glibc' 'gmp' 'libidn2' 'libidn2.so' 'libdbus' 'libdbus-1.so'
+depends=('glibc' 'gmp' 'libidn2' 'libidn2.so' 'libdbus' 'libdbus-1.so' 'nftables'
          'libnetfilter_conntrack' 'nettle' 'libnettle.so' 'libhogweed.so')
 backup=('etc/dnsmasq.conf')
 validpgpkeys=('D6EACBD6EE46B834248D111215CDDA6AE19135A2') # Simon Kelley <simon@thekelleys.org.uk>
 source=("http://www.thekelleys.org.uk/$pkgname/$pkgname-$pkgver.tar.xz"{,.asc}
         'dnsmasq-sysusers.conf'
         'dnsmasq.service')
-sha512sums=('8beefe76b46f7d561f40d0900ba68b260a199cb62ab5b653746e3a1104c04fb8899b9e7a160a1be4fe8782bfb1607b556e9ffb9c25c4e99653e4bc74fcc03b09'
+sha512sums=('4384ed5b673e10eaf6532e6eaeb5c0a6b817581433cc28c632bdcbadbfc050a0ab73bc5b73c98d708cd39515bb3f72168714b0aa5f16436cebdd18020648d428'
             'SKIP'
             '8e0194a6c5bd2bb6e008681808c0fbf5edbd88c2c039527587479a1850b8199444aaa70cb7252063d322f97111f89a3e8c0d4d6d1afacdf83a5ea6166233735b'
-            'b5cb86331dc73f4a2c0ea755423557f7f2d71b2c04350057b720b6a5a5e93998a99d8b4cdde2c95ce283faa19a8f86534857719c580694681c597ecdb1ac67be')
+            'd99577e2ae2b22fac6952c9e627e58cb1b79ce132826c838c96a509ab8ef5d2501badbdaa37c3fad1a52786f1cf1e6bd34ad5ac8d0414e2ba3f0ee68b84fd178')
 
-_build_copts="-DHAVE_DNSSEC -DHAVE_DBUS -DHAVE_LIBIDN2 -DHAVE_CONNTRACK"
+_build_copts="-DHAVE_DNSSEC -DHAVE_DBUS -DHAVE_LIBIDN2 -DHAVE_CONNTRACK -DHAVE_NFTSET"
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk/PKGBUILD?h=packages/dnsmasq')
-pkgverforked=('2.85-1')
+pkgverforked=('2.89-1')
 
 build() {
   cd "$pkgname-$pkgver"

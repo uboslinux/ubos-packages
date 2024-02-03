@@ -6,24 +6,26 @@
 # From AUR
 
 releasepage=('https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=bluez-utils-compat')
-pkgverforked=('5.58-1')
+pkgverforked=('5.70-1')
 
 pkgname='bluez-utils-compat'
 _pkgbase='bluez'
-pkgver=5.58
+pkgver=5.70
 pkgrel=1
 url="http://www.bluez.org/"
 arch=('i686' 'x86_64' 'mips64el' 'armv6h' 'armv7h' 'arm' 'aarch64')
 license=('GPL2')
 pkgdesc="Development and debugging utilities for the bluetooth protocol stack. Includes deprecated tools."
-depends=('dbus' 'systemd' 'glib2')
-makedepends=('dbus' 'libical' 'systemd' 'alsa-lib' 'json-c' 'ell')
-optdepends=('ell: for btpclient')
-conflicts=('bluez-hcidump' 'bluez-utils' 'bluez-hcitool')
-provides=('bluez-hcidump' "bluez-utils=${pkgver}" 'bluez-hcitool')
-source=(https://www.kernel.org/pub/linux/bluetooth/"${_pkgbase}-${pkgver}".tar.xz) #{xz,sign}
+depends=('dbus' 'systemd' 'systemd-libs' 'glib2' 'glibc' 'readline')
+optdepends=('ell: for btpclient'
+            'json-c: for mesh-cfgclient')
+makedepends=('dbus' 'libical' 'systemd' 'alsa-lib' 'json-c' 'ell' 'python-docutils')
+conflicts=('bluez-hcidump' 'bluez-utils' 'bluez-hcitool' 'bluez-rfcomm')
+provides=('bluez-hcidump' "bluez-utils=${pkgver}" 'bluez-hcitool' 'bluez-rfcomm')
+backup=('etc/bluetooth/mesh-main.conf')
+source=(https://www.kernel.org/pub/linux/bluetooth/"${_pkgbase}-${pkgver}".tar.xz) #{xz,sign})
 # see https://www.kernel.org/pub/linux/bluetooth/sha256sums.asc
-sha512sums=('159b554e0afd56af5da6f8333383f2fdf96d77a0e82d762bf4b37786e7312b7e61fbbae0f18b26442a606e0a232f48e0f45a4b38b95de36c7daf384f582315a3')
+sha512sums=('3a5f8caf7730dcdbbe0bb92154b41651a9d6619038447bf4c25e5e3e5316effcd7242a7a0456d731ce21d55b8daea5212a359acc5e5fc460499b9356b7d364cf')
 #validpgpkeys=('E932D120BC2AEC444E558F0106CA9F5D1DCF2659') # Marcel Holtmann <marcel@holtmann.org>
 
 build() {
@@ -60,7 +62,7 @@ package() {
        install-man1
 
   # add missing tools FS#41132, FS#41687, FS#42716
-  for _dir in tools attrib ; do 
+  for _dir in tools attrib ; do
     for _files in $( find "$_dir"/ -type f -perm -755 ); do
       _filename="$( basename "${_files}" )"
       install -Dm755 "${srcdir}/${_pkgbase}-${pkgver}/${_dir}/${_filename}" "${pkgdir}/usr/bin/${_filename}"
@@ -68,7 +70,11 @@ package() {
   done
 
   rm -rf "${pkgdir}"/usr/lib
-  
+
+  # ship upstream mesh config file
+  install -dm555 "${pkgdir}"/etc/bluetooth
+  install -Dm644 "${srcdir}/${_pkgbase}-${pkgver}"/mesh/mesh-main.conf "${pkgdir}"/etc/bluetooth/mesh-main.conf
+
   # move the hid2hci man page out
   rm "${pkgdir}"/usr/share/man/man1/hid2hci.1
 }

@@ -4,7 +4,7 @@
 releasepage=('https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=dlib')
 
 pkgname=dlib
-pkgver=19.22
+pkgver=19.24.2
 pkgrel=1
 pkgdesc="A general purpose cross-platform C++ library designed using contract programming and modern C++ techniques"
 arch=('x86_64')
@@ -16,11 +16,13 @@ depends=('cblas'
          'libjpeg-turbo'
          'libpng'
          'libx11')
-optdepends=('giflib: for GIF support'
+optdepends=('ffmpeg: for FFmpeg support'
+            'giflib: for GIF support'
+            'libwebp: for WebP support'
             'sqlite: for sqlite support')
 makedepends=('cmake' 'ninja')
-source=("http://dlib.net/files/${pkgname}-${pkgver}.tar.bz2")
-sha256sums=('20b8aad5d65594a34e22f59abbf0bf89450cb4a2a6a8c3b9eb49c8308f51d572')
+source=("https://codeload.github.com/davisking/dlib/tar.gz/refs/tags/v${pkgver}")
+sha256sums=('0f5c7e3de6316a513635052c5f0a16a84e1cef26a7d233bf00c21348462b6d6f')
 
 build() {
     cd "${srcdir}"

@@ -5,42 +5,47 @@
 pkgbase=postgresql
 # pkgname=('postgresql-libs' 'postgresql-docs' 'postgresql')
 pkgname=('postgresql')
-pkgver=15.2
+pkgver=16.1
 _majorver=${pkgver%.*}
-pkgrel=2.3
+pkgrel=5
 pkgdesc='Sophisticated object-relational DBMS'
 url='https://www.postgresql.org/'
 arch=('x86_64')
 license=('custom:PostgreSQL')
-makedepends=('krb5' 'libxml2' 'python' 'perl' 'tcl>=8.6.0' 'openssl>=1.0.0'
-             'pam' 'zlib' 'icu' 'systemd' 'libldap' 'llvm' 'clang' 'libxslt'
-             'util-linux')
+makedepends=('krb5' 'libxml2' 'python' 'perl' 'tcl' 'openssl' 'pam' 'zlib'
+             'icu' 'systemd' 'libldap' 'llvm' 'clang' 'libxslt' 'util-linux')
 source=(https://ftp.postgresql.org/pub/source/v${pkgver}/postgresql-${pkgver}.tar.bz2
-        postgresql-run-socket.patch
-        postgresql-perl-rpath.patch
+        0001-Set-DEFAULT_PGSOCKET_DIR-to-run-postgresql.patch
+        0002-Force-RPATH-to-be-used-for-the-PL-Perl-plugin.patch
         postgresql.pam
         postgresql.logrotate
         postgresql.service
-        postgresql-check-db-dir
+        postgresql-check-db-dir.in
         postgresql.sysusers
-        postgresql.tmpfiles)
-sha512sums=('115a8a4234791bba4e6dcc4617e9dd77abedcf767894ce9472c59cce9d5d4ef2d4e1746f3a0c7a99de4fc4385fb716652b70dce9f48be45a9db5a682517db7e8'
-            '7a3911bed75e3b9261a45f7de120c922039b0911e19fe71cc6902b50ea4f165efb88163138f671dff3ec1b28a3a6a6a8030721c20396aa973e0e1644bdc50f7f'
-            '1c72a4c7e5d6292bc38556e13fdebc9a0cb775ba23016153c8bae43d105cd30d4726623230affbe7d9506ff9577a54133e9fe9e7dd2039bb8ed7eb64ce9d0e8b'
+        postgresql.tmpfiles
+        libxml2-2.12.patch
+        openssl3.2.patch)
+sha512sums=('69f4635e5841452599f13b47df41ce2425ab34b4e4582fd2c635bc78d561fa36c5b03eccb4ae6569872dc74775be1b5a62dee20c9a4f12a43339250128352918'
+            '2601f1c3089b0ae2d0253f14b189498a68c58a59d0af1d7337fb10d841d6e156b7a5b5b9609a700b7f41a39f5505c5ef7964c957d8814f96bbd437ec00e520bc'
+            'e3a24a468b9fc35d18f36f06114eaf140aa4086f6747c227ad9d622fd01be679c31ea268aa971fb165e99fc035e07f37f97da5084d018221953e46b0050474cc'
             '1e6183ab0eb812b3ef687ac2c26ce78f7cb30540f606d20023669ac00ba04075487fb72e4dc89cc05dab0269ff6aca98fc1167cc75669c225b88b592482fbf67'
             '9ab4da01337ffbab8faec0e220aaa2a642dbfeccf7232ef2645bdc2177a953f17ee3cc14a4d8f8ebd064e1dae8b3dba6029adbffb8afaabea383963213941ba8'
             '572a9342a047a74c493a29c7364593168ba65b2d06167cd536c7584361ee6e199815b6485ef544dbc4a7d3591575b0b5dca02dbf5eb657620266e10b03afe6f6'
             '5eabf6f315f23fd600d64d1f4fd801ddc03821a0f48a427465c7069274afe1c2f2341b91f3095ed1d8fb6701a1e8b5eaf2f6df5c6877f39add47789162299387'
             '8c6fa964dfb46a1eed6a19f0496a00ebb7495056248a4b8179df66efc6e931baf0c4c4f94fb44b3b83516d943faca78fbb10460457c615bdcca0eb9f2391a3c7'
-            '62173445abe39aed32bbf1799d930af2f5a3dac025cab96cf0b5b38ca9c53c568fe776cd3fd81f8bedc7a5047ba4f1f3d026eb5af4974c38410891ca5059c334')
+            '62173445abe39aed32bbf1799d930af2f5a3dac025cab96cf0b5b38ca9c53c568fe776cd3fd81f8bedc7a5047ba4f1f3d026eb5af4974c38410891ca5059c334'
+            '4669810a22419feb09e2b90e3a3cb27e1ade9d4be1e3241583fbf428e49ce957d1f5a32ca0fe2f965e59f605d688d8e2c45daa137887adf939bd67eb6d1fa8d5'
+            '0fbb8b29ef407725c8856c7807ccb723df0fb76fd4a1710aa1df6861b5eb2629b78253d8ba6e2d3be31186fa334c219fb459c4a712f0ce0240f605997a0ab6fe')
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/postgresql')
-pkgverforked=('15.2-2')
+pkgverforked=('16.1-5')
 
 prepare() {
   cd postgresql-${pkgver}
-  patch -p1 < ../postgresql-run-socket.patch
-  patch -p1 < ../postgresql-perl-rpath.patch
+  patch -p1 < ../0001-Set-DEFAULT_PGSOCKET_DIR-to-run-postgresql.patch
+  patch -p1 < ../0002-Force-RPATH-to-be-used-for-the-PL-Perl-plugin.patch
+  patch -p1 < ../libxml2-2.12.patch
+  patch -p1 < ../openssl3.2.patch
 }
 
 build() {
@@ -83,7 +88,7 @@ build() {
 
 package_postgresql-libs() {
   pkgdesc="Libraries for use with PostgreSQL"
-  depends=('krb5' 'openssl>=1.0.0' 'readline>=6.0' 'zlib' 'libldap')
+  depends=('krb5' 'openssl' 'readline' 'zlib' 'libldap')
   provides=('postgresql-client' 'libpq.so' 'libecpg.so' 'libecpg_compat.so' 'libpgtypes.so')
   conflicts=('postgresql-client')
 
@@ -140,9 +145,9 @@ package_postgresql-docs() {
 package_postgresql() {
   pkgdesc='Sophisticated object-relational DBMS'
   backup=('etc/pam.d/postgresql' 'etc/logrotate.d/postgresql')
-  depends=("postgresql-libs>=${pkgver}" 'krb5' 'libxml2' 'readline>=6.0'
-           'openssl>=1.0.0' 'pam' 'icu' 'systemd-libs' 'libldap' 'llvm-libs'
-           'libxslt' 'lz4' 'zstd')
+  depends=("postgresql-libs>=${pkgver}" 'krb5' 'libxml2' 'readline' 'openssl'
+           'pam' 'icu' 'systemd-libs' 'libldap' 'llvm-libs' 'libxslt' 'lz4'
+           'zstd')
   optdepends=('python: for PL/Python 3 support'
               'perl: for PL/Perl support'
               'tcl: for PL/Tcl support'
@@ -170,7 +175,10 @@ package_postgresql() {
   install -Dm 644 COPYRIGHT -t "${pkgdir}/usr/share/licenses/${pkgname}"
 
   cd "${srcdir}"
-  install -Dm 755 postgresql-check-db-dir -t "${pkgdir}/usr/bin"
+  sed -e "s/%PGMAJORVERSION%/$_majorver/g" \
+      -e "s/%PREVMAJORVERSION%/$((_majorver - 1))/g" \
+      postgresql-check-db-dir.in |
+    install -Dm 755 /dev/stdin "${pkgdir}/usr/bin/postgresql-check-db-dir"
 
   install -Dm 644 ${pkgname}.pam "${pkgdir}/etc/pam.d/${pkgname}"
   install -Dm 644 ${pkgname}.logrotate "${pkgdir}/etc/logrotate.d/${pkgname}"

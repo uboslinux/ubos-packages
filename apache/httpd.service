@@ -15,6 +15,7 @@ ExecReload=/usr/bin/perl -MUBOS::Apache2 -e 'UBOS::Apache2::ensureConfigFiles();
 ExecReload=/usr/bin/httpd -k graceful
 PrivateTmp=true
 LimitNOFILE=infinity
+KillMode=mixed
 TimeoutStartSec=180
 # This may take long on slow hardware (e.g. Raspberry Pi) for the initial boot
 Restart=always

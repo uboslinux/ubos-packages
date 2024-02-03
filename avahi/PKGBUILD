@@ -4,35 +4,60 @@
 # From Arch, adapted for UBOS
 
 pkgname=avahi
-pkgver=0.8+20+gd1e71b3
+pkgver=0.8+r194+g3f79789
 pkgrel=1
+epoch=1
 pkgdesc='Service Discovery for Linux using mDNS/DNS-SD -- compatible with Bonjour'
 url='https://github.com/lathiat/avahi'
 license=(LGPL)
 arch=(x86_64)
-depends=(expat libdaemon glib2 libcap gdbm dbus)
-makedepends=(git gobject-introspection gtk3 qt5-base xmltoman python-dbus
-             python-gobject doxygen graphviz libevent)
-optdepends=('gtk3: avahi-discover, avahi-discover-standalone, bshell, bssh, bvnc'
-            'qt5-base: qt5 bindings'
-            'libevent: libevent bindings'
-            'nss-mdns: NSS support for mDNS'
-            'python-twisted: avahi-bookmarks'
-            'python-gobject: avahi-bookmarks, avahi-discover'
-            'python-dbus: avahi-bookmarks, avahi-discover')
-provides=(libavahi-client.so libavahi-common.so libavahi-core.so
-          libavahi-glib.so libavahi-gobject.so libavahi-libevent.so
-          libavahi-qt5.so libavahi-ui-gtk3.so libdns_sd.so)
-backup=(etc/avahi/{hosts,avahi-daemon.conf,avahi-{autoip,dnsconf}d.action}
-        usr/lib/avahi/service-types.db)
-_commit=d1e71b320d96d0f213ecb0885c8313039a09f693  # master
-source=("git+https://github.com/lathiat/avahi#commit=$_commit"
-        282.patch)
+depends=(
+  dbus
+  expat
+  gdbm
+  glib2
+  libcap
+  libdaemon
+)
+makedepends=(
+  doxygen
+  git
+  gobject-introspection
+  graphviz
+  gtk3
+  libevent
+  python-dbus
+  python-gobject
+  qt5-base
+  xmltoman
+)
+optdepends=(
+  'gtk3: avahi-discover, avahi-discover-standalone, bshell, bssh, bvnc'
+  'libevent: libevent bindings'
+  'nss-mdns: NSS support for mDNS'
+  'python-dbus: avahi-bookmarks, avahi-discover'
+  'python-gobject: avahi-bookmarks, avahi-discover'
+  'python-twisted: avahi-bookmarks'
+ 'qt5-base: qt5 bindings'
+)
+provides=(
+  libavahi-{client,common,core,glib,gobject,libevent,qt5,ui-gtk3}.so
+  libdns_sd.so
+)
+backup=(
+  etc/avahi/{hosts,avahi-daemon.conf,avahi-{autoip,dnsconf}d.action}
+        usr/lib/avahi/service-types.db
+)
+_commit=3f79789c484518f82c36ff59c0f45abe7e6580a2  # master
+source=(
+  "git+https://github.com/lathiat/avahi#commit=$_commit"
+  0001-HACK-Install-fixes.patch
+)
 sha512sums=('SKIP'
-            '26b1e74450944f5c4385d2f5df18523cfb953e4138f6d9e81061a626453e40d8ed2dee44535cfbb547848eefb3cdca408009d5f0e0c465f144a8803db8593b46' )
+            '0cbea74889b2f9d767ff6d8df93f020112eac5ca64a6b9f9ecf3dda1d1b5423a5fe0c46f3845351502ec6d990c51d58434c394182f159bccd38c38c2ddc65f6d' )
 
 releasepage=('https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/avahi')
-pkgverforked='0.8+15+ge8a3dd0-1'
+pkgverforked='1:0.8+r194+g3f79789'
 
 # pkgver() {
 #   cd $pkgname
@@ -42,49 +67,41 @@ pkgverforked='0.8+15+ge8a3dd0-1'
 prepare() {
   cd $pkgname
 
-  # https://bugs.archlinux.org/task/68518
-  # https://github.com/lathiat/avahi/pull/282
-  git apply -3 ../282.patch
+  # https://bugs.archlinux.org/task/47822
+  git apply -3 ../0001-HACK-Install-fixes.patch
 
   NOCONFIGURE=1 ./autogen.sh
 }
 
 build() {
-  cd $pkgname
-
-  ./configure \
-    --prefix=/usr \
-    --sysconfdir=/etc \
-    --localstatedir=/var \
-    --sbindir=/usr/bin \
-    with_dbus_sys=/usr/share/dbus-1/system.d \
-    --disable-mono \
-    --enable-compat-libdns_sd \
-    --with-distro=archlinux \
-    --with-avahi-priv-access-group=network \
-    --with-autoipd-user=avahi \
-    --with-autoipd-group=avahi \
+  local configure_options=(
+    --prefix=/usr
+    --sysconfdir=/etc
+    --localstatedir=/var
+    --sbindir=/usr/bin
+    --runstatedir=/run
+    --disable-mono
+    --enable-compat-libdns_sd
+    --with-autoipd-group=avahi
+    --with-autoipd-user=avahi
+    --with-avahi-priv-access-group=network
+    --with-distro=archlinux
     --with-systemdsystemunitdir=/usr/lib/systemd/system
-  sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
+    with_dbus_sys=/usr/share/dbus-1/system.d
+  )
 
+  cd avahi
+
+  ./configure "${configure_options[@]}"
+  sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
   make
 }
 
 package() {
   depends+=(libdbus-1.so)
 
-  cd $pkgname
+  cd avahi
   make DESTDIR="$pkgdir" install
-
-  rmdir "$pkgdir/run"
-
-  # mdnsresponder compat
-  ln -s avahi-compat-libdns_sd/dns_sd.h "$pkgdir/usr/include/dns_sd.h"
-
-  # move example services https://bugs.archlinux.org/task/47822
-  install -d "$pkgdir/usr/share/doc/$pkgname"
-  mv "$pkgdir"/etc/avahi/services/{,sftp-}ssh.service \
-    "$pkgdir/usr/share/doc/$pkgname/"
 
   echo 'u avahi - "Avahi mDNS/DNS-SD daemon"' |
     install -Dm644 /dev/stdin "$pkgdir/usr/lib/sysusers.d/$pkgname.conf"
