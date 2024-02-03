@@ -1,0 +1,11 @@
+diff -Naur src.org/httpd-2.4.58/modules/filters/mod_xml2enc.c src/httpd-2.4.58/modules/filters/mod_xml2enc.c
+--- src.org/httpd-2.4.58/modules/filters/mod_xml2enc.c	2020-02-20 16:33:40.000000000 -0800
++++ src/httpd-2.4.58/modules/filters/mod_xml2enc.c	2024-02-03 13:57:56.000000000 -0800
+@@ -36,6 +36,7 @@
+ 
+ /* libxml2 */
+ #include <libxml/encoding.h>
++#include <libxml/xmlstring.h>
+ 
+ #if defined(__clang__)
+ #pragma clang diagnostic pop

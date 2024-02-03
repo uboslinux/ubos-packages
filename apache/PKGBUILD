@@ -66,6 +66,8 @@ prepare() {
       -i docs/conf/httpd.conf.in
 
   cat "${startdir}/ubos.layout" >> config.layout
+
+  patch -p2 < ${startdir}/xmlchar-include.patch
 }
 
 build() {
