@@ -33,14 +33,17 @@ source=("https://dist.torproject.org/${pkgname}-${pkgver}.tar.gz"{,.sha256sum{,.
         'tor.sysusers'
         'tor.tmpfiles'
         'tor.service')
-sha512sums=('f5cb32f5d0fc333aa1607370e290e6be85230896bd26e00072a68db4b32293d5dd38cccb57e92941fbe6ac17fb4207c38d11e3095ede289c3a6ebbd64ed70119'
+sha512sums=('3827902541a0289ed1bfcae9bb0ac8bf8dee7bedacbfdf9c703bb38c3c586d1cfe5eeb20a477664e10a2b81b90a7fd5d623e556f3ee32aad4f8a9f828bc4dd83'
+            '853a88b75ecd195e6b155361c8321b575c5fd526f5d73da8b5de99ac875b2f22f2b8668f7c9a68a8e599170290041533345fd324dd56a0102d5cd5ddf8020461'
             'SKIP'
             '45bdf0a3afa93b0e48bd4a3ae7702a571041d9ac761035a07505436be7fd6d89d5b4ed046fc5a5a75a3119c6fcb8a1e42b05e7638925ac8b63ff0780461851ee'
             '262a38979f42a4a675149e058410db4165ed97f8544f2d95838983a1ec9c760332c5857ab182e60c5c44104cd3ac551959a26a80036826c18c1e93e9e387584c'
-            '430b660feaa00b9b2fb0a2a5b42ebfad1c56252031632fd297f1bf7de1857367fe293233715b7c941b9859895df0ce541f3b5426a393e4d75c1f89f311202233')
-validpgpkeys=('2133BC600AB133E1D826D173FE43009C4607B1FB'  # Nick Mathewson
-              'F65CE37F04BA5B360AE6EE17C218525819F78451') # Roger Dingledine
-
+            '9ef34915a84426d425e21aea5c668aa67aff56e5fdf84f1847b5356fde50f438fe57d61a1331f05964148205847e618604d575086968d1ce9f54c981696ee277')
+validpgpkeys=(
+  '2133BC600AB133E1D826D173FE43009C4607B1FB' # Nick Mathewson
+  'B74417EDDF22AC9F9E90F49142E86A2A11F48D36' # David Goulet
+  '1C1BC007A9F607AA8152C040BEA7B180B1491921' # Alexander Færøy
+)
 releasepage=('https://archlinux.org/packages/extra/x86_64/tor/')
 pkgverforked=('0.4.8.10-1')
 
@@ -70,11 +73,11 @@ package() {
   mkdir -p -m755 ${pkgdir}/etc/tor/sites.d
   install -Dm0644 ${startdir}/{pre,post}fix -t ${pkgdir}/etc/tor/
 
-  install -Dm0644 "${srcdir}/*.service" -t "${pkgdir}/usr/lib/systemd/system"
-  install -Dm0644 "${srcdir}/tor.sysusers" "${pkgdir}/usr/lib/sysusers.d/tor.conf"
-  install -Dm0644 "${srcdir}/tor.tmpfiles" "${pkgdir}/usr/lib/tmpfiles.d/tor.conf"
+  install -Dm0644 "${srcdir}"/*.service -t "${pkgdir}"/usr/lib/systemd/system
+  install -Dm0644 "${srcdir}"/tor.sysusers "${pkgdir}"/usr/lib/sysusers.d/tor.conf
+  install -Dm0644 "${srcdir}"/tor.tmpfiles "${pkgdir}"/usr/lib/tmpfiles.d/tor.conf
 
-  install -Dm0755 "${startdir}/bin/recreate-torrc" "${pkgdir}/usr/share/tor/bin/recreate-torrc"
+  install -Dm0755 "${startdir}"/bin/recreate-torrc "${pkgdir}"/usr/share/tor/bin/recreate-torrc
 
-  install -Dm0644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  install -Dm0644 LICENSE "${pkgdir}"/usr/share/licenses/${pkgname}/LICENSE
 }
