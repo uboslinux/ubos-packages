@@ -1,0 +1,43 @@
+diff -Naur davfs2-1.7.0.org/configure davfs2-1.7.0/configure
+--- davfs2-1.7.0.org/configure	2022-11-02 02:00:07.000000000 -0700
++++ davfs2-1.7.0/configure	2024-02-03 17:02:52.000000000 -0800
+@@ -7602,7 +7602,7 @@
+ printf "%s\n" "$ne_cv_lib_neon" >&6; }
+     if test "$ne_cv_lib_neon" = "yes"; then
+        ne_cv_lib_neonver=no
+-       for v in 27 28 29 30 31 32; do
++       for v in 27 28 29 30 31 32 33; do
+           case $ne_libver in
+           0.$v.*) ne_cv_lib_neonver=yes ;;
+           esac
+@@ -7777,8 +7777,8 @@
+     neon_got_library=yes
+ 
+ else
+-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: incompatible neon library version $ne_libver: wanted 0.27 28 29 30 31 32" >&5
+-printf "%s\n" "$as_me: incompatible neon library version $ne_libver: wanted 0.27 28 29 30 31 32" >&6;}
++    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: incompatible neon library version $ne_libver: wanted 0.27 28 29 30 31 32 33" >&5
++printf "%s\n" "$as_me: incompatible neon library version $ne_libver: wanted 0.27 28 29 30 31 32 33" >&6;}
+     neon_got_library=no
+ fi
+ 
+@@ -7836,7 +7836,7 @@
+ printf "%s\n" "$ne_cv_lib_neon" >&6; }
+     if test "$ne_cv_lib_neon" = "yes"; then
+        ne_cv_lib_neonver=no
+-       for v in 27 28 29 30 31 32; do
++       for v in 27 28 29 30 31 32 33; do
+           case $ne_libver in
+           0.$v.*) ne_cv_lib_neonver=yes ;;
+           esac
+@@ -8011,8 +8011,8 @@
+     neon_got_library=yes
+ 
+ else
+-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: incompatible neon library version $ne_libver: wanted 0.27 28 29 30 31 32" >&5
+-printf "%s\n" "$as_me: incompatible neon library version $ne_libver: wanted 0.27 28 29 30 31 32" >&6;}
++    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: incompatible neon library version $ne_libver: wanted 0.27 28 29 30 31 32 33" >&5
++printf "%s\n" "$as_me: incompatible neon library version $ne_libver: wanted 0.27 28 29 30 31 32 33" >&6;}
+     neon_got_library=no
+ fi
+ 
