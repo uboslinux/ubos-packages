@@ -24,7 +24,8 @@ validpgpkeys=('177F4010FE56CA3336300305F1656F24C74CD1D8') # MariaDB Package Sign
 # mirrors may be out of date every now and then. Let's use the upstream
 # rsync source and hope it does not hurt them too much.
 # https://mariadb.com/kb/en/library/mirror-sites-for-mariadb/
-source=("https://rsync.osuosl.org/pub/mariadb/mariadb-${pkgver}/source/mariadb-${pkgver}.tar.gz"{,.asc}
+# Only has latest release: source=("https://rsync.osuosl.org/pub/mariadb/mariadb-${pkgver}/source/mariadb-${pkgver}.tar.gz"{,.asc}
+source=("https://archive.mariadb.org/mariadb-${pkgver}/source/mariadb-${pkgver}.tar.gz"{,.asc}
         '0001-arch-specific.patch')
 sha256sums=('faedbd8790c7ee65b348c0169706b4bae91eb6ce7335a76b27dbd8813c42e21b'
             'SKIP'
