@@ -43,12 +43,13 @@ prepare() {
   # Arch Linux specific patches:
   #  * enable PrivateTmp for a little bit more security
   #  * force preloading jemalloc for memory management
-  #  * remove aliases in systemd unit files
+  #  * make systemd-tmpfiles create MYSQL_DATADIR
   patch -Np1 < ../0001-arch-specific.patch
 }
 
 build() {
-  local _cmake_options=(
+  [[ $CARCH == "armv7h" ]] && MAKEFLAGS="-j1"
+    local _cmake_options=(
     # build options
     -DCOMPILATION_COMMENT="UBOS"
     -DCMAKE_BUILD_TYPE=RelWithDebInfo
