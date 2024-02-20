@@ -13,7 +13,7 @@ pkgbase=mariadb
 pkgname=('mariadb')
 pkgdesc='Fast SQL database server, derived from MySQL'
 pkgver=11.3.2
-pkgrel=1
+pkgrel=2
 arch=('x86_64')
 license=('GPL')
 url='https://mariadb.org/'
@@ -185,7 +185,8 @@ package_mariadb() {
           'etc/my.cnf.d/spider.cnf'
           'etc/security/user_map.conf')
   install=mariadb.install
-  depends=("mariadb-clients=${pkgver}" 'bzip2' 'libxml2' 'lz4' 'systemd-libs' 'libxml2' 'zstd')
+  depends=("mariadb-clients=${pkgver}" 'bzip2' 'libxml2' 'lz4' 'systemd-libs' 'libxml2' 'zstd' 'numactl')
+# NOTE: added numactl for libnuma: Arch does not seem to need it but we do, why is unclear
   optdepends=('cracklib: for cracklib plugin'
               'curl: for ha_s3 plugin'
               'galera: for MariaDB cluster with Galera WSREP'
