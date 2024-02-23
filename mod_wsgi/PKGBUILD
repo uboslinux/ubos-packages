@@ -9,7 +9,7 @@ releasepage=('https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=mod_wsgi')
 
 pkgname=mod_wsgi
 pkgver=4.9.4
-pkgrel=2
+pkgrel=2.1
 pkgdesc='Python WSGI adapter module for Apache'
 arch=('x86_64')
 url='http://www.modwsgi.org/'
